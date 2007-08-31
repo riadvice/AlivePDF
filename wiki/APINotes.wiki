@@ -67,6 +67,7 @@ pdf.setXY( 120, 400 );
 pdf.addMultiCell( 200, 20,"This text added with addMultiCell() and is constrained within a cell.  It will word wrap, but won't go outside the bounding box.  It starts at the current position.");			
 }}}
 
+will produce the following pdf:
 
 [http://picasaweb.google.com/marc.hughes/MarcSMusings/photo?authkey=_A3wwBLXd1A#5104847287772705554 http://lh6.google.com/marc.hughes/RtgPj8RO8xI/AAAAAAAABnA/SsvOw3EWeTw/s144/examplePdf.jpg]
 
