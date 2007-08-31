@@ -1,0 +1,45 @@
+#Some notes about different parts of the API, as found from users.
+
+= Introduction =
+
+I've been using the AlivePDF library for a few days now and have some observations that might help others just starting off.  I invite others to post what you've found here as well.
+
+
+= Saving to a file in an AIR application =
+{{{
+public class ProjectPDFExporter
+{
+private var filename:String = “test.pdf”;
+private var pdf:PDF;
+
+ public function exportPdf(filename:String) : void
+ {
+  this.filename = filename;
+
+  pdf = new PDF();
+
+  pdf.addEventListener(Event.COMPLETE, onComplete);
+
+  pdf.setDisplayMode (Display.FULL_PAGE,
+  Layout.SINGLE_PAGE);
+
+  pdf.addPage();
+  pdf.setFont( FontFamily.ARIAL );
+  pdf.addText(”My Teax”,1,10);
+  pdf.setFont( FontFamily.ARIAL , “”, 32);
+  pdf.addText(”Some more text”,10,30);
+  pdf.finish();
+ }
+
+ protected function onComplete(event:Event)
+ {
+  var f:FileStream = new FileStream();
+  var file:File =
+  File.applicationStorageDirectory.resolve( filename );
+  f.open( file, FileMode.WRITE);
+  var bytes:ByteArray = pdf.getPDF()
+  f.writeBytes(bytes);
+  f.close();
+ }
+}
+}}}
