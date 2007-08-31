@@ -43,3 +43,12 @@ private var pdf:PDF;
  }
 }
 }}}
+
+== Opening the PDF from AIR ==
+
+This isn't strictly an AlivePDF specific thing, but I bet there's a lot of people who would like to open the PDF for the user once it's written out.
+
+{{{
+var request:URLRequest = new URLRequest( file.url );
+navigateToURL(request);	
+}}}
