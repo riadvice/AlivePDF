@@ -46,7 +46,7 @@ private var pdf:PDF;
 
 == Opening the PDF from AIR ==
 
-This isn't strictly an AlivePDF specific thing, but I bet there's a lot of people who would like to open the PDF for the user once it's written out.
+This isn't strictly an AlivePDF specific thing, but I bet there's a lot of people who would like to open the PDF for the user once it's written out.  This will cause the user's browser to attempt to open the file.  If no browser is running, one should be opened.
 
 {{{
 var request:URLRequest = new URLRequest( file.url );
