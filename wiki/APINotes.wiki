@@ -1,4 +1,4 @@
-#Some notes about different parts of the API, as found from users.
+# Some notes about different parts of the API, as found from users.
 
 = Introduction =
 
