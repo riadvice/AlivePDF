@@ -71,6 +71,9 @@ pdf.addMultiCell( 200, 20,"This text added with addMultiCell() and is constraine
 [http://picasaweb.google.com/marc.hughes/MarcSMusings/photo?authkey=_A3wwBLXd1A#5104847287772705554 http://lh6.google.com/marc.hughes/RtgPj8RO8xI/AAAAAAAABnA/SsvOw3EWeTw/s144/examplePdf.jpg]
 
 
+
+
+
 = Saving to a file in an AIR application =
 {{{
 public class ProjectPDFExporter
@@ -118,4 +121,3 @@ This isn't strictly an AlivePDF specific thing, but I bet there's a lot of peopl
 var request:URLRequest = new URLRequest( file.url );
 navigateToURL(request);	
 }}}
-
