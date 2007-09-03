@@ -121,6 +121,7 @@ navigateToURL(request);
 You can also use AIR's HTML control to view PDF's
 
 {{{
+var request:URLRequest = new URLRequest( file.url );
 var window:Window = new Window();
 var html:HTML = new HTML();
 			
