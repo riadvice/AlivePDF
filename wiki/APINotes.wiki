@@ -92,7 +92,6 @@ private var pdf:PDF;
   pdf.addText(”My Teax”,1,10);
   pdf.setFont( FontFamily.ARIAL , “”, 32);
   pdf.addText(”Some more text”,10,30);
-  pdf.finish();
 
    savePDF();
  }
