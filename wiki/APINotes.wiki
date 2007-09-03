@@ -88,7 +88,7 @@ private var pdf:PDF;
 
   pdf = new PDF();
 
-  pdf.addEventListener(Event.COMPLETE, onComplete);
+  // OLD WAY: pdf.addEventListener(Event.COMPLETE, onComplete);
 
   pdf.setDisplayMode (Display.FULL_PAGE,
   Layout.SINGLE_PAGE);
@@ -99,15 +99,17 @@ private var pdf:PDF;
   pdf.setFont( FontFamily.ARIAL , “”, 32);
   pdf.addText(”Some more text”,10,30);
   pdf.finish();
+
+   savePDF();
  }
 
- protected function onComplete(event:Event)
+ protected function savePDF()
  {
   var f:FileStream = new FileStream();
   var file:File =
   File.applicationStorageDirectory.resolve( filename );
   f.open( file, FileMode.WRITE);
-  var bytes:ByteArray = pdf.getPDF()
+  var bytes:ByteArray = pdf.savePDF(Method.LOCAL);
   f.writeBytes(bytes);
   f.close();
  }
@@ -121,4 +123,29 @@ This isn't strictly an AlivePDF specific thing, but I bet there's a lot of peopl
 {{{
 var request:URLRequest = new URLRequest( file.url );
 navigateToURL(request);	
+}}}
+
+You can also use AIR's HTML control to view PDF's
+
+{{{
+var window:Window = new Window();
+var html:HTML = new HTML();
+			
+if( HTMLControl.pdfCapability != 0 )
+{
+ // We can't display PDF in the app, lets hope their browser can.  If not, 
+ // the browser will hopefully do a sane "Download to..." type thing.
+ navigateToURL( request );
+ return;
+ } 
+
+html.location = file.url;			
+html.percentHeight=100;
+html.percentWidth=100;			
+window.addChild(html);
+window.title = "PDF Export";
+window.width = 800;
+window.height = 650;
+window.open();
+
 }}}
