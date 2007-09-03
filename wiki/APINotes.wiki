@@ -25,17 +25,6 @@ The writeText method will output text at the current location.  You can also spe
 {{{
 pdf.setFont( FontFamily.ARIAL , "", 32);
 pdf.setXY( 20, 20);
-writeText ( 32, "This is my text");
-}}}
-
-
-== writeText() ==
-
-The writeText method will output text at the current location.  You can also specify a link that clicking on the text will take you to.
-
-{{{
-pdf.setFont( FontFamily.ARIAL , "", 32);
-pdf.setXY( 20, 20);
 pdf.writeText ( 32, "This is my text");
 }}}
 
