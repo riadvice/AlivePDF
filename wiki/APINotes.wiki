@@ -4,6 +4,11 @@
 
 I've been using the AlivePDF library for a few days now and have some observations that might help others just starting off.  I invite others to post what you've found here as well.
 
+= Current Position =
+
+There's two ways to set the current position.  You can use pdf.moveTo for drawing API operation and pdf.setXY for text based operations.
+
+There are also pdf.setX and pdf.setY methods, but these have side effects, take a look at the code before using them.
 
 = Adding Text =
 
