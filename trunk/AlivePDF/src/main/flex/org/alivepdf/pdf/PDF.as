@@ -165,11 +165,11 @@ package org.alivepdf.pdf
 	/**
 	* The PDF class represents a PDF document.
 	*/
-	public final class PDF implements IEventDispatcher
+	public class PDF implements IEventDispatcher
 	{
 
 		protected static const PDF_VERSION:String = '1.3';
-		protected static const ALIVEPDF_VERSION:String = '0.1.4.6';
+		protected static const ALIVEPDF_VERSION:String = '0.1.4.7';
 		
 		protected static const JPG_HEADER:int = 0xFFD8;
 		protected static const PNG_HEADER:int = 0x8950;
