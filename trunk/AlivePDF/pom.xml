@@ -14,8 +14,8 @@
 	</distributionManagement>
 
 	<scm>
-		<connection>http://alivepdf.googlecode.com/svn/trunk/</connection>
-		<developerConnection>https://alivepdf.googlecode.com/svn/trunk/</developerConnection>	
+		<connection>scm:svn:http://alivepdf.googlecode.com/svn/trunk/</connection>
+		<developerConnection>scm:svn:https://alivepdf.googlecode.com/svn/trunk/</developerConnection>	
 		<url>http://code.google.com/p/alivepdf/source/browse/</url>
 	</scm>
 
@@ -158,10 +158,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-report-plugin</artifactId>
-				<configuration>
-					<testFailureIgnore>true</testFailureIgnore>
-					<reportsDirectory>surefire-reports</reportsDirectory>
-				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>com.adobe.ac</groupId>
