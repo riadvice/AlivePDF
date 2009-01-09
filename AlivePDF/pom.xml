@@ -18,9 +18,9 @@
 	</distributionManagement>
 
 	<scm>
-		<connection>scm:svn:http://alivepdf.googlecode.com/svn/tags/alivepdf-0.69</connection>
-		<developerConnection>scm:svn:https://alivepdf.googlecode.com/svn/tags/alivepdf-0.69</developerConnection>	
-		<url>http://alivepdf.googlecode.com/svn/tags/alivepdf-0.69</url>
+		<connection>scm:svn:http://alivepdf.googlecode.com/svn/trunk/</connection>
+		<developerConnection>scm:svn:https://alivepdf.googlecode.com/svn/trunk/</developerConnection>	
+		<url>http://alivepdf.googlecode.com/svn/trunk/</url>
 	</scm>
 
 	<inceptionYear>2007</inceptionYear>
@@ -46,7 +46,7 @@
 	<!-- this project ID -->
 	<groupId>org.bytearray</groupId>
 	<artifactId>alivepdf</artifactId>
-	<version>0.69</version>
+	<version>0.70-SNAPSHOT</version>
 	<name>AlivePDF</name>
 
 	<!--
