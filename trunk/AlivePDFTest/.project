@@ -15,4 +15,11 @@
 		<nature>com.adobe.flexbuilder.project.flexnature</nature>
 		<nature>com.adobe.flexbuilder.project.actionscriptnature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>[source path] flex</name>
+			<type>2</type>
+			<locationURI>DOCUMENTS/AlivePdf/src/test/flex</locationURI>
+		</link>
+	</linkedResources>
 </projectDescription>
