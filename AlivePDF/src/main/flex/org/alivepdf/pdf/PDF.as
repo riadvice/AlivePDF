@@ -28,8 +28,8 @@ THE SOFTWARE.
 
 /**
 * This library lets you generate PDF files with the Flash Player
-* AlivePDF is based on the FPDF PHP library (http://www.fpdf.org/)
-* @author Thibault Imbert
+* AlivePDF is based on the FPDF PHP library by Olivier Plathey (http://www.fpdf.org/)
+* Core Team : Thibault Imbert, Mark Lynch, Alexandre Pires, Marc Hugues
 * @version 0.1.4.7 Current Release
 * @url alivepdf.bytearray.org
 */
@@ -174,7 +174,7 @@ package org.alivepdf.pdf
 		protected static const JPG_HEADER:int = 0xFFD8;
 		protected static const PNG_HEADER:int = 0x8950;
 		protected static const GIF_HEADER:String = "GIF";
-
+		
         //current page number
 		protected var nbPages:int;
 		//current object number
