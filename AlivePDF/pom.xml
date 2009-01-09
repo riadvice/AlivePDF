@@ -24,9 +24,9 @@
 	-->
 	<packaging>swc</packaging>
 
-<properties>
-        <flex.sdk.version>3.0.0.477</flex.sdk.version>
-        </properties>
+	<properties>
+		<flex.sdk.version>3.1.0.2710</flex.sdk.version>
+	</properties>
 	<!--
 		this project don't follow the standard directory structure, so, need
 		to specify where are the sources
@@ -101,19 +101,19 @@
 			<type>swc</type>
 			<scope>test</scope>
 		</dependency>
-        <dependency>
-            <groupId>com.adobe.flex.framework</groupId>
-            <artifactId>flex-framework</artifactId>
-            <version>${flex.sdk.version}</version>
-            <type>pom</type>
-        </dependency>
-<dependency>
-  <groupId>info.flex-mojos</groupId>
-  <artifactId>testing-support</artifactId>
-  <version>2.0M9</version>
-  <type>swc</type>
-  <scope>test</scope>
-</dependency>        
+		<dependency>
+			<groupId>com.adobe.flex.framework</groupId>
+			<artifactId>flex-framework</artifactId>
+			<version>${flex.sdk.version}</version>
+			<type>pom</type>
+		</dependency>
+		<dependency>
+			<groupId>info.flex-mojos</groupId>
+			<artifactId>testing-support</artifactId>
+			<version>2.0M9</version>
+			<type>swc</type>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<reporting>
