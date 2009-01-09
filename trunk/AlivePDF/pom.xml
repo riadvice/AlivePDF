@@ -20,7 +20,10 @@
 	</scm>
 
 	<inceptionYear>2007</inceptionYear>
-	<issueManagement>http://code.google.com/p/alivepdf/issues/list</issueManagement>
+	<issueManagement>
+		<url>http://code.google.com/p/alivepdf/issues/list</url>
+		<system>GoogleCode</system>
+	</issueManagement>
 	<url>http://www.alivepdf.org/</url>
 	
 	<developers>
