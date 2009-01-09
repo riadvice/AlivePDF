@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 	<!-- XML header, nothing new -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
 	<description>AlivePDF is a client side AS3 PDF generation library for Adobe Flash, Flex and AIR.</description>
@@ -19,9 +18,9 @@
 	</distributionManagement>
 
 	<scm>
-		<connection>scm:svn:http://alivepdf.googlecode.com/svn/trunk/</connection>
-		<developerConnection>scm:svn:https://alivepdf.googlecode.com/svn/trunk/</developerConnection>	
-		<url>http://alivepdf.googlecode.com/svn/trunk/</url>
+		<connection>scm:svn:http://alivepdf.googlecode.com/svn/tags/alivepdf-0.69</connection>
+		<developerConnection>scm:svn:https://alivepdf.googlecode.com/svn/tags/alivepdf-0.69</developerConnection>	
+		<url>http://alivepdf.googlecode.com/svn/tags/alivepdf-0.69</url>
 	</scm>
 
 	<inceptionYear>2007</inceptionYear>
@@ -47,7 +46,7 @@
 	<!-- this project ID -->
 	<groupId>org.bytearray</groupId>
 	<artifactId>alivepdf</artifactId>
-	<version>0.69-SNAPSHOT</version>
+	<version>0.69</version>
 	<name>AlivePDF</name>
 
 	<!--
