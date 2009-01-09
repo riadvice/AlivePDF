@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+	<!-- XML header, nothing new -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<distributionManagement>
+		<site>
+			<id>website</id>
+			<url>file:/C:/wamp/www/alivepdf</url>
+		</site>
+	</distributionManagement>
+
+	<!-- this project ID -->
+	<groupId>org.bytearray</groupId>
+	<artifactId>alivepdf</artifactId>
+	<version>0.69</version>
+	<name>AlivePDF</name>
+
+	<!--
+		What will be generated. Must be swf, swc, aswf or aswc swf and swc for
+		flex aswf and aswc for air
+	-->
+	<packaging>swc</packaging>
+
+<properties>
+        <flex.sdk.version>3.0.0.477</flex.sdk.version>
+        </properties>
+	<!--
+		this project don't follow the standard directory structure, so, need
+		to specify where are the sources
+	-->
+	<build>
+		<sourceDirectory>src/main/flex</sourceDirectory>
+		<testSourceDirectory>src/test/flex</testSourceDirectory>
+		<plugins>
+			<plugin>
+				<groupId>info.flex-mojos</groupId>
+				<artifactId>flex-compiler-mojo</artifactId>
+				<extensions>true</extensions>
+				<configuration>
+					<includeSources>
+						<param>${project.build.sourceDirectory}</param>
+					</includeSources>
+					<locales>
+						<param>en_US</param>
+					</locales>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>info.flex-mojos</groupId>
+				<artifactId>asdoc</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+
+	<repositories>
+		<repository>
+			<id>flex-mojos-repository</id>
+			<url>http://svn.sonatype.org/flexmojos/repository/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>fna-repository</id>
+			<url>http://fna.googlecode.com/svn/trunk/fna/fna_m2_repository/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
+
+	<pluginRepositories>
+		<pluginRepository>
+			<id>flex-mojos-repository</id>
+			<url>http://svn.sonatype.org/flexmojos/repository/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</pluginRepository>
+
+	</pluginRepositories>
+
+	<dependencies>
+
+		<dependency>
+			<groupId>flexunit.junit</groupId>
+			<artifactId>flexunit-optional</artifactId>
+			<version>0.85</version>
+			<type>swc</type>
+			<scope>test</scope>
+		</dependency>
+        <dependency>
+            <groupId>com.adobe.flex.framework</groupId>
+            <artifactId>flex-framework</artifactId>
+            <version>${flex.sdk.version}</version>
+            <type>pom</type>
+        </dependency>
+<dependency>
+  <groupId>info.flex-mojos</groupId>
+  <artifactId>testing-support</artifactId>
+  <version>2.0M9</version>
+  <type>swc</type>
+  <scope>test</scope>
+</dependency>        
+	</dependencies>
+
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-report-plugin</artifactId>
+				<configuration>
+					<testFailureIgnore>true</testFailureIgnore>
+					<reportsDirectory>surefire-reports</reportsDirectory>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>com.adobe.ac</groupId>
+				<artifactId>as3Ncss-maven-plugin</artifactId>
+				<version>1.1</version>
+			</plugin>
+		</plugins>
+	</reporting>
+
+</project>

@@ -10,8 +10,7 @@ package org.alivepdf
 		}
 		public function testTrue() : void
 		{
-			assertEquals( "Thibault", true, false );
+			assertEquals( "Thibault", true, true );
 		}
-		
 	}
 }
