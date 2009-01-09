@@ -4,13 +4,37 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
-
+	<description>AlivePDF is a client side AS3 PDF generation library for Adobe Flash, Flex and AIR.</description>
+	
 	<distributionManagement>
 		<site>
 			<id>website</id>
-			<url>file:/C:/wamp/www/alivepdf</url>
+			<url>file:///wamp/www/alivepdf</url>
 		</site>
 	</distributionManagement>
+
+	<scm>
+		<connection>http://alivepdf.googlecode.com/svn/trunk/</connection>
+		<developerConnection>https://alivepdf.googlecode.com/svn/trunk/</developerConnection>	
+		<url>http://code.google.com/p/alivepdf/source/browse/</url>
+	</scm>
+
+	<inceptionYear>2007</inceptionYear>
+	<issueManagement>http://code.google.com/p/alivepdf/issues/list</issueManagement>
+	<url>http://www.alivepdf.org/</url>
+	
+	<developers>
+		<developer>
+			<id>timbert</id>
+			<email>thibault [at] bytearray.org</email>
+			<name>Thibault Imbert</name>
+			<organization>Adobe</organization>
+			<organizationUrl>http://www.adobe.com</organizationUrl>
+			<roles>
+				<role>Developper</role>
+			</roles>
+		</developer>
+	</developers>
 
 	<!-- this project ID -->
 	<groupId>org.bytearray</groupId>
@@ -26,7 +50,40 @@
 
 	<properties>
 		<flex.sdk.version>3.1.0.2710</flex.sdk.version>
+		<flex-mojo.version>2.0M8</flex-mojo.version>
+		<flexunit.version>0.85</flexunit.version>
 	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>com.adobe.flex.framework</groupId>
+			<artifactId>flex-framework</artifactId>
+			<version>${flex.sdk.version}</version>
+			<type>pom</type>
+		</dependency>
+		<dependency>
+			<groupId>flexunit.junit</groupId>
+			<artifactId>flexunit-optional</artifactId>
+			<version>${flexunit.version}</version>
+			<type>swc</type>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>flexunit</groupId>
+			<artifactId>flexunit</artifactId>
+			<version>${flexunit.version}</version>
+			<type>swc</type>
+			<scope>test</scope>
+		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>info.flex-mojos</groupId>-->
+<!--			<artifactId>testing-support</artifactId>-->
+<!--			<version>${flex-mojo.version}</version>-->
+<!--			<type>swc</type>-->
+<!--			<scope>test</scope>-->
+<!--		</dependency>-->
+	</dependencies>
+	
 	<!--
 		this project don't follow the standard directory structure, so, need
 		to specify where are the sources
@@ -38,6 +95,7 @@
 			<plugin>
 				<groupId>info.flex-mojos</groupId>
 				<artifactId>flex-compiler-mojo</artifactId>
+				<version>${flex-mojo.version}</version>
 				<extensions>true</extensions>
 				<configuration>
 					<includeSources>
@@ -91,30 +149,6 @@
 		</pluginRepository>
 
 	</pluginRepositories>
-
-	<dependencies>
-
-		<dependency>
-			<groupId>flexunit.junit</groupId>
-			<artifactId>flexunit-optional</artifactId>
-			<version>0.85</version>
-			<type>swc</type>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.adobe.flex.framework</groupId>
-			<artifactId>flex-framework</artifactId>
-			<version>${flex.sdk.version}</version>
-			<type>pom</type>
-		</dependency>
-		<dependency>
-			<groupId>info.flex-mojos</groupId>
-			<artifactId>testing-support</artifactId>
-			<version>2.0M9</version>
-			<type>swc</type>
-			<scope>test</scope>
-		</dependency>
-	</dependencies>
 
 	<reporting>
 		<plugins>
