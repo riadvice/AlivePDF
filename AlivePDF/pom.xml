@@ -11,12 +11,17 @@
 			<id>website</id>
 			<url>file:///wamp/www/alivepdf</url>
 		</site>
+		<repository>
+			<id>repository</id>
+			<url>scp:///wamp/www/repository</url>
+			<name>Repository</name>
+		</repository>
 	</distributionManagement>
 
 	<scm>
 		<connection>scm:svn:http://alivepdf.googlecode.com/svn/trunk/</connection>
 		<developerConnection>scm:svn:https://alivepdf.googlecode.com/svn/trunk/</developerConnection>	
-		<url>http://code.google.com/p/alivepdf/source/browse/</url>
+		<url>http://alivepdf.googlecode.com/svn/trunk/</url>
 	</scm>
 
 	<inceptionYear>2007</inceptionYear>
@@ -42,7 +47,7 @@
 	<!-- this project ID -->
 	<groupId>org.bytearray</groupId>
 	<artifactId>alivepdf</artifactId>
-	<version>0.69</version>
+	<version>0.69-SNAPSHOT</version>
 	<name>AlivePDF</name>
 
 	<!--
