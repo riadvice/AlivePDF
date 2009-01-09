@@ -30,7 +30,7 @@ THE SOFTWARE.
 * This library lets you generate PDF files with the Flash Player
 * AlivePDF is based on the FPDF PHP library (http://www.fpdf.org/)
 * @author Thibault Imbert
-* @version 0.1.4.6 Current Release
+* @version 0.1.4.7 Current Release
 * @url alivepdf.bytearray.org
 */
 
@@ -168,147 +168,147 @@ package org.alivepdf.pdf
 	public final class PDF implements IEventDispatcher
 	{
 
-		private static const PDF_VERSION:String = '1.3';
-		private static const ALIVEPDF_VERSION:String = '0.1.4.6';
+		protected static const PDF_VERSION:String = '1.3';
+		protected static const ALIVEPDF_VERSION:String = '0.1.4.6';
 		
-		private static const JPG_HEADER:int = 0xFFD8;
-		private static const PNG_HEADER:int = 0x8950;
-		private static const GIF_HEADER:String = "GIF";
+		protected static const JPG_HEADER:int = 0xFFD8;
+		protected static const PNG_HEADER:int = 0x8950;
+		protected static const GIF_HEADER:String = "GIF";
 
         //current page number
-		private var nbPages:int;
+		protected var nbPages:int;
 		//current object number
-		private var n:int;      
+		protected var n:int;      
 		//array of object offsets            
-		private var offsets:Array;
+		protected var offsets:Array;
 		//current document state        
-		private var state:int;
+		protected var state:int;
 		//compression flag        
-		private var compress:Boolean;
+		protected var compress:Boolean;
 		//default orientation        
-		private var defaultOrientation:String;
+		protected var defaultOrientation:String;
 		//default format  
-		private var defaultSize:Size;
+		protected var defaultSize:Size;
 		//default rotation  
-		private var defaultRotation:int;
+		protected var defaultRotation:int;
 		//default unit  
-		private var defaultUnit:String;
+		protected var defaultUnit:String;
 		//current orientation
-		private var currentOrientation:String;
+		protected var currentOrientation:String;
 		//array indicating orientation changes 
-		private var orientationChanges:Array;
+		protected var orientationChanges:Array;
 		//scale factor (number of points in user unit)
-		private var k:Number;
+		protected var k:Number;
 		//left margin             
-		private var lMargin:Number;
+		protected var lMargin:Number;
 		//top margin           
-		private var tMargin:Number;
+		protected var tMargin:Number;
 		//right margin       
-		private var rMargin:Number;
+		protected var rMargin:Number;
 		//page break margin          
-		private var bMargin:Number;
+		protected var bMargin:Number;
 		//cell margin      
-		private var cMargin:Number;            
-		private var currentX:Number;
-		private var currentY:Number;
+		protected var cMargin:Number;            
+		protected var currentX:Number;
+		protected var currentY:Number;
 		//last cell printed
-		private var lasth:Number;
+		protected var lasth:Number;
 		//line width in user unit        
-		private var lineWidth:Number;
+		protected var lineWidth:Number;
 		//array of standard font names       
-		private var standardFonts:Object;
+		protected var standardFonts:Object;
 		//array of used fonts        
-		private var fonts:Object;
+		protected var fonts:Object;
 		//array of font files          
-		private var fontFiles:Array;
+		protected var fontFiles:Array;
 		//array of encoding differences         
-		private var diffs:Array;
+		protected var diffs:Array;
 		//array of internal links            
-		private var links:Array;
+		protected var links:Array;
 		//current font family              
-		private var fontFamily:String;
+		protected var fontFamily:String;
 		//current font style         
-		private var fontStyle:String;
+		protected var fontStyle:String;
 		//underlining flag        
-		private var underline:Boolean;
+		protected var underline:Boolean;
 		//current font size in points        
-		private var fontSizePt:Number;
+		protected var fontSizePt:Number;
 		//commands for drawing color        
-		private var strokeStyle:String;
+		protected var strokeStyle:String;
 		//winding number rule
-		private var windingRule:String;
+		protected var windingRule:String;
 		//commands for filling color        
-		private var fillColor:String;   
+		protected var fillColor:String;   
 		//commands for text color       
-		private var addTextColor:String;
+		protected var addTextColor:String;
 		//indicates whether fill and text colors are different        
-		private var colorFlag:Boolean;
+		protected var colorFlag:Boolean;
 		//word spacing       
-		private var ws:Number;
+		protected var ws:Number;
 		//automatic page breaking      
-		private var autoPageBreak:Boolean;
+		protected var autoPageBreak:Boolean;
 		//threshold used to trigger page breaks
-		private var pageBreakTrigger:Number;
+		protected var pageBreakTrigger:Number;
 		//flag set when processing footer
-		private var inFooter:Boolean;
+		protected var inFooter:Boolean;
 		//zoom display mode       
-		private var zoomMode:*;
+		protected var zoomMode:*;
 		//layout display mode         
-		private var layoutMode:String;         
-		private var pageMode:String;
+		protected var layoutMode:String;         
+		protected var pageMode:String;
 		//document infos
-		private var documentTitle:String;            
-		private var documentSubject:String;       
-		private var documentAuthor:String;      
-		private var documentKeywords:String;    
-		private var documentCreator:String;
+		protected var documentTitle:String;            
+		protected var documentSubject:String;       
+		protected var documentAuthor:String;      
+		protected var documentKeywords:String;    
+		protected var documentCreator:String;
 		//alias for total number of pages        
-		private var aliasNbPages:String;
+		protected var aliasNbPages:String;
 		//PDF version number      
-		private var pdfVersion:String;
-		private var buffer:ByteArray;
-		private var streamDictionary:Dictionary;
-		private var compressedPages:ByteArray;
-		private var encryptRef:int;
-		private var image:PDFImage;
-		private var fontSize:Number;
-		private var name:String;
-		private var type:String;
-		private var desc:String;
-		private var up:Number;
-		private var ut:Number;
-		private var cw:Object;
-		private var enc:Number;
-		private var diff:Number;
-		private var d:Number;
-		private var nb:int;
-		private var originalsize:Number;
-		private var size1:Number;
-		private var size2:Number;
-		private var fontkey:String;
-		private var file:String;
-		private var currentFont:Object;
-		private var b2:String;
-		private var pageLinks:Array;
-		private var mtd:*
-		private var filter:String;
-		private var inited:Boolean;
-		private var filled:Boolean
-		private var dispatcher:EventDispatcher;
-		private var arrayPages:Array;
-		private var arrayNotes:Array;
-		private var extgstates:Array;
-		private var currentPage:Page;
-		private var outlines:Array;
-		private var rotationMatrix:Matrix;
-		private var outlineRoot:int;
-		private var angle:Number;
-		private var textRendering:int;
-		private var autoPagination:Boolean;
-		private var viewerPreferences:String;
-		private var drawingRule:String;
-		private var reference:String;
-		private var references:String;
+		protected var pdfVersion:String;
+		protected var buffer:ByteArray;
+		protected var streamDictionary:Dictionary;
+		protected var compressedPages:ByteArray;
+		protected var encryptRef:int;
+		protected var image:PDFImage;
+		protected var fontSize:Number;
+		protected var name:String;
+		protected var type:String;
+		protected var desc:String;
+		protected var up:Number;
+		protected var ut:Number;
+		protected var cw:Object;
+		protected var enc:Number;
+		protected var diff:Number;
+		protected var d:Number;
+		protected var nb:int;
+		protected var originalsize:Number;
+		protected var size1:Number;
+		protected var size2:Number;
+		protected var fontkey:String;
+		protected var file:String;
+		protected var currentFont:Object;
+		protected var b2:String;
+		protected var pageLinks:Array;
+		protected var mtd:*
+		protected var filter:String;
+		protected var inited:Boolean;
+		protected var filled:Boolean
+		protected var dispatcher:EventDispatcher;
+		protected var arrayPages:Array;
+		protected var arrayNotes:Array;
+		protected var extgstates:Array;
+		protected var currentPage:Page;
+		protected var outlines:Array;
+		protected var rotationMatrix:Matrix;
+		protected var outlineRoot:int;
+		protected var angle:Number;
+		protected var textRendering:int;
+		protected var autoPagination:Boolean;
+		protected var viewerPreferences:String;
+		protected var drawingRule:String;
+		protected var reference:String;
+		protected var references:String;
 
 		/**
 		* The PDF class represents a PDF document.
@@ -1311,7 +1311,7 @@ package org.alivepdf.pdf
 		/**
 		* Sets the stroke color for different color spaces CMYK, RGB and DEVICEGRAY
 		*/
-		private function strokeColor ( color:Color ):void
+		protected function strokeColor ( color:Color ):void
 		{
 			var op:String;
 
@@ -1355,7 +1355,7 @@ package org.alivepdf.pdf
 		* Sets the text color for different color spaces CMYK, RGB, and DEVICEGRAY
 		* @param
 		*/
-		private function textColor ( color:Color ):void
+		protected function textColor ( color:Color ):void
 		{
 			var op:String;
 
@@ -1859,7 +1859,7 @@ package org.alivepdf.pdf
 		* </pre>
 		* </div>
 		*/
-		private function addFont ( family:String, style:String='', pFile:String='' ):void
+		protected function addFont ( family:String, style:String='', pFile:String='' ):void
 		{
 
 			family = family.toLowerCase();
@@ -2428,7 +2428,7 @@ package org.alivepdf.pdf
 		* </pre>
 		* </div>
 		*/
-		private function setAutoPagination ( activate:Boolean ):void
+		protected function setAutoPagination ( activate:Boolean ):void
 		{
 			if ( autoPagination != activate ) autoPagination = activate;
 		}
@@ -2647,11 +2647,11 @@ package org.alivepdf.pdf
 
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		/*
-		* Private members
+		* protected members
 		*/
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-		private function finish():void
+		protected function finish():void
 		{
 			if ( state < 3 ) close();
 		}
@@ -2667,19 +2667,19 @@ package org.alivepdf.pdf
 			return unit;	
 		}
 		
-		private function acceptPageBreak():Boolean
+		protected function acceptPageBreak():Boolean
 		{
 			return autoPageBreak;	
 		}
 
-		private function curve ( x1:Number, y1:Number, x2:Number, y2:Number, x3:Number, y3:Number ):void
+		protected function curve ( x1:Number, y1:Number, x2:Number, y2:Number, x3:Number, y3:Number ):void
 		{
 			var h:Number = currentPage.h;
 
 			write(sprintf('%.2f %.2f %.2f %.2f %.2f %.2f c ', x1*k, (h-y1)*k, x2*k, (h-y2)*k, x3*k, (h-y3)*k));
 		}
 
-		private function getStringWidth( content:String ):Number
+		protected function getStringWidth( content:String ):Number
 		{
 			cw = currentFont.cw
 			var w:Number = 0;
@@ -2698,12 +2698,12 @@ package org.alivepdf.pdf
 			return w*fontSize/1000;
 		}
 
-		private function open():void
+		protected function open():void
 		{
 			state = 1;	
 		}
 
-		private function close ():void
+		protected function close ():void
 		{
 			if( state == 3 ) return;
 			if( arrayPages.length == 0 ) addPage();
@@ -2711,18 +2711,18 @@ package org.alivepdf.pdf
 			finishDocument();	
 		}
 
-		private function addExtGState( graphicState:Object ):int
+		protected function addExtGState( graphicState:Object ):int
 		{
 			extgstates.push ( graphicState );
 			return extgstates.length-1;
 		}
 
-		private function setExtGState( graphicState:int ):void
+		protected function setExtGState( graphicState:int ):void
 		{
 			write(sprintf('/GS%d gs', graphicState));	
 		}
 
-		private function insertExtGState():void
+		protected function insertExtGState():void
 		{
 			var lng:int = extgstates.length;
 			
@@ -2737,7 +2737,7 @@ package org.alivepdf.pdf
 			}
 		}
 
-		private function getChannels ( color:Number ):String
+		protected function getChannels ( color:Number ):String
 		{
 			var r:Number = (color & 0xFF0000) >> 16;
 			var g:Number = (color & 0x00FF00) >> 8;
@@ -2746,7 +2746,7 @@ package org.alivepdf.pdf
 			return (r / 255) + " " + (g / 255) + " " + (b / 255);
 		}
 
-		private function getCurrentDate ():String
+		protected function getCurrentDate ():String
 		{
 			var myDate:Date = new Date();
 
@@ -2759,12 +2759,12 @@ package org.alivepdf.pdf
 			return currentDate;
 		}
 
-		private function findAndReplace ( search:String, replace:String, source:String ):String
+		protected function findAndReplace ( search:String, replace:String, source:String ):String
 		{
 			return source.replace( new RegExp ( search ), replace );
 		}
 
-		private function createPageTree():void
+		protected function createPageTree():void
 		{
 			compressedPages = new ByteArray();
 
@@ -2826,12 +2826,12 @@ package org.alivepdf.pdf
 			}
 		}
 
-		private function writeXObjectDictionary():void
+		protected function writeXObjectDictionary():void
 		{
 			for each ( var image:Object in streamDictionary ) write('/I'+image.i+' '+image.n+' 0 R');
 		}
 
-		private function writeResourcesDictionary():void
+		protected function writeResourcesDictionary():void
 		{
 			write('/ProcSet [/PDF /Text /ImageB /ImageC /ImageI]');
 			write('/Font <<');
@@ -2845,7 +2845,7 @@ package org.alivepdf.pdf
 			write('>>');
 		}
 
-		private function insertImages ():void
+		protected function insertImages ():void
 		{
 			var filter:String = (compress) ? '/Filter /FlateDecode ' : '';
 			
@@ -2903,7 +2903,7 @@ package org.alivepdf.pdf
 			}
 		}
 
-		private function insertFonts ():void
+		protected function insertFonts ():void
 		{
 			var nf:int = this.n;
 
@@ -2973,7 +2973,7 @@ package org.alivepdf.pdf
 			}
 		}
 
-		private function writeResources():void
+		protected function writeResources():void
 		{
 			insertExtGState();
 			insertFonts();
@@ -2987,7 +2987,7 @@ package org.alivepdf.pdf
 			insertBookmarks();
 		}
 
-		private function insertBookmarks ():void
+		protected function insertBookmarks ():void
 		{
 			var nb:int = outlines.length;
 			if ( nb == 0 ) return;
@@ -3052,7 +3052,7 @@ package org.alivepdf.pdf
 			write('endobj');
 		}
 
-		private function insertInfos():void
+		protected function insertInfos():void
 		{
 			write ('/Producer '+escapeString('Alive PDF '+PDF.ALIVEPDF_VERSION));
 			if ((documentTitle != null)) write('/Title '+escapeString(documentTitle));
@@ -3063,7 +3063,7 @@ package org.alivepdf.pdf
 			write('/CreationDate '+escapeString('D:'+getCurrentDate()));
 		}
 
-		private function createCatalog ():void
+		protected function createCatalog ():void
 		{
 			write('/Type /Catalog');
 			write('/Pages 1 0 R');
@@ -3084,19 +3084,19 @@ package org.alivepdf.pdf
 			}
 		}
 
-		private function createHeader():void
+		protected function createHeader():void
 		{
 			write('%PDF-'+pdfVersion);
 		}
 
-		private function createTrailer():void
+		protected function createTrailer():void
 		{
 			write('/Size '+(n+1));
 			write('/Root '+n+' 0 R');
 			write('/Info '+(n-1)+' 0 R');
 		}
 
-		private function finishDocument():void
+		protected function finishDocument():void
 		{	
 			if ( pageMode == PageMode.USE_ATTACHMENTS ) pdfVersion = "1.6";
 			else if ( layoutMode == Layout.TWO_PAGE_LEFT || layoutMode == Layout.TWO_PAGE_RIGHT ) pdfVersion = "1.5";
@@ -3140,7 +3140,7 @@ package org.alivepdf.pdf
 			state = 3;
 		}
 
-		private function startPage ( newOrientation:String ):Page
+		protected function startPage ( newOrientation:String ):Page
 		{
 			nbPages = arrayPages.length;
 			state = 2;
@@ -3157,18 +3157,18 @@ package org.alivepdf.pdf
 			return arrayPages[nbPages-1];
 		}
 
-		private function finishPage():void
+		protected function finishPage():void
 		{
 			state = 1;
 		}
 
-		private function newObj():void
+		protected function newObj():void
 		{
 			offsets[++n] = buffer.length;
 			write (n+' 0 obj');
 		}
 
-		private function doUnderline( x:Number, y:Number, content:String ):String
+		protected function doUnderline( x:Number, y:Number, content:String ):String
 		{
 			up = currentFont.up
 			ut = currentFont.ut
@@ -3176,36 +3176,36 @@ package org.alivepdf.pdf
 			return sprintf('%.2f %.2f %.2f %.2f re f',x*k,(currentPage.h-(y-up/1000*fontSize))*k,currentPage.w*k,-ut/1000*fontSizePt);
 		}
 
-	   private function substrCount ( content:String, search:String ):int
+	   protected function substrCount ( content:String, search:String ):int
 	   {
 			return content.split (search).length;	
 	   }
 
-		private function getNumImages ( object:Object ):int
+		protected function getNumImages ( object:Object ):int
 		{
 			var num:int = 0;
 			for (var p:String in object) num++;
 			return num;
 		}
 
-		private function escapeString(content:String):String
+		protected function escapeString(content:String):String
 		{
 			return '('+escape(content)+')';
 		}
 
-		private function escape(content:String):String
+		protected function escape(content:String):String
 		{
 			return findAndReplace(')','\\)',findAndReplace('(','\\(',findAndReplace('\\','\\\\',content)));
 		}
 
-		private function writeStream(stream:String):void
+		protected function writeStream(stream:String):void
 		{
 			write('stream');
 			write(stream);
 			write('endstream');
 		}
 
-		private function write( content:* ):void
+		protected function write( content:* ):void
 		{
 			if ( currentPage == null ) throw new Error ("No pages available, please call the addPage method first !");
 			if ( state == 2 ) currentPage.content += content+"\n";
