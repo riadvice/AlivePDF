@@ -36,6 +36,7 @@ THE SOFTWARE.
 
 package org.alivepdf.pdf
 {
+
 	import flash.display.DisplayObject;
 	import flash.display.BitmapData;
 	import flash.events.Event;
