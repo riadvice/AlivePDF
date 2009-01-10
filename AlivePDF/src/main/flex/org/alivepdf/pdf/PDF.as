@@ -2485,11 +2485,11 @@ package org.alivepdf.pdf
             var lng:int = aTaggedString.length;
 
             //Loop through each item in array
-            for ( k=0; k < lng; k++ ) {            
-
+            for ( k=0; k < lng; k++ )
+            {            
                 //Handle any tags and if unknown then handle as text    
-                switch ( aTaggedString[k].tag ) {
-                    
+                switch ( aTaggedString[k].tag )
+                {    
                     //Process Tags
                     case "<TEXTFORMAT>":
                     case "</TEXTFORMAT>":
@@ -2498,7 +2498,7 @@ package org.alivepdf.pdf
 
                         for each ( attr in aTaggedString[k].attr ) {
 
-                            switch ( String ( attr.name() ) ) {
+                            switch ( String ( attr.name() ).toUpperCase() ) {
 
                                 case "ALIGN": 
                                      textAlign = String ( attr ).charAt(0);
@@ -2615,13 +2615,14 @@ package org.alivepdf.pdf
                         sep = -1;
                         l   =  0;
 
-                        while( i < nb ) {
-                        
+                        while( i < nb )
+                        {
                             //Get next character
                             var c : String = s.charAt(i);
                 
                             //Found a seperator
-                            if ( c == ' ' ) { 
+                            if ( c == ' ' )
+                            { 
                                 sep      = i;    //Save seperator index
                                 lenAtSep = l;    //Save seperator length
                                 ns++;
@@ -2636,14 +2637,15 @@ package org.alivepdf.pdf
                             l += cwAux;
                             
                             //Are we Over the char width limit?
-                            if ( l > wmax ) {
-                                
+                            if ( l > wmax )
+                            {
                                 //Automatic line break
-                                if ( sep == -1 ) {
+                                if ( sep == -1 )
+                                {
                                      // No seperator to force at character
                                      
-                                    if(this.currentX>this.lMargin) {
-                                        
+                                    if(this.currentX>this.lMargin)
+                                    {
                                         //Move to next line
                                         this.currentX  = this.lMargin;
                                         this.currentY += pHeight;
@@ -2676,7 +2678,8 @@ package org.alivepdf.pdf
                                     //Update x and y positions            
                                     this.currentX = this.lMargin;
                                     
-                                } else  {
+                                } else
+                                {
                                     
                                     //Split at last seperator
                                     
@@ -2716,13 +2719,12 @@ package org.alivepdf.pdf
                                 w   = currentPage.w - this.rMargin - this.currentX;
                                 wmax= ( w-2 * this.cMargin ) * 1000 / this.fontSize;
                                 
-                            } else 
-                                i++;
+                            } else i++;
                         }
                         
                         //Last chunk 
-                        if ( i != j ) {
-
+                        if ( i != j )
+                        {
                              //If any remaining chars then print them out                            
                             //Add the cell to the current line
                             
@@ -2733,7 +2735,8 @@ package org.alivepdf.pdf
                             cellVO.text  = s.substr(j);
                             
                             //Last chunk
-                            if ( this.ws>0 ) {
+                            if ( this.ws>0 )
+                            {
                                 this.ws=0;
                                 this.write('0 Tw');
                             }                
@@ -2745,14 +2748,13 @@ package org.alivepdf.pdf
                             
                         } 
                         break;
-
                 }        
 
                 //Is there a finished line     
                 // or last line and there is something to display
                 
-                if ( k == aTaggedString.length && currentLine.length > 0 ) {
-                    
+                if ( k == aTaggedString.length && currentLine.length > 0 )
+                {    
                     renderLine(currentLine,textAlign);
                     
                     this.lineBreak(pHeight);
@@ -2763,8 +2765,8 @@ package org.alivepdf.pdf
             }
             
             //Is there anything left to render before we exit?
-            if ( currentLine.length ) {
-                
+            if ( currentLine.length )
+            {    
                 renderLine ( currentLine, textAlign );
                 this.lineBreak ( pHeight );
                 currentLine = new Array();
@@ -2774,14 +2776,14 @@ package org.alivepdf.pdf
             this.currentY += currentPage.h;    
         }
 
-        protected function lineBreak ( pHeight : Number ) : void{
-            
+        protected function lineBreak ( pHeight : Number ):void
+        {    
             this.currentX  = this.lMargin;
             this.currentY += pHeight;
         }
         
-        protected function getFontStyleString (  bold : Boolean, italic : Boolean, underline : Boolean ) : String {
-            
+        protected function getFontStyleString (  bold : Boolean, italic : Boolean, underline : Boolean ):String
+        {    
             var fontStyle:String  = "";
                         
             if ( bold ) 
@@ -2836,7 +2838,7 @@ package org.alivepdf.pdf
             // Loop through the cells in the line and draw
             for(i = 0; i < lng; i++)
             {
-                cellVO = CellVO ( lineArray[i] );
+                cellVO = lineArray[i] as CellVO;
 
                 this.currentX = cellVO.x + offsetX;
                 this.currentY = cellVO.y + offsetY;
@@ -2847,8 +2849,7 @@ package org.alivepdf.pdf
                 if ( cellVO.color != null ) textColor ( cellVO.color );
                 colorFlag = ( fillColor != addTextColor );
                 addCell ( cellVO.width, cellVO.height, cellVO.text, cellVO.border, 2, "", cellVO.fill, cellVO.link );
-            }
-            
+            }     
         }
         
         protected function parseTags ( myXML : XML ):Array
