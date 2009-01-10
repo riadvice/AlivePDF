@@ -2483,12 +2483,14 @@ package org.alivepdf.pdf
             var fs               : int;      // Font size
             var fc               : RGBColor; // font color;
             var cs               : int;      // character space ( not implemented yet )
+            
+            var lng:int = aTaggedString.length;
 
             //Loop through each item in array
-            for ( k=0; k < aTaggedString.length; k++ ) {            
+            for ( k=0; k < lng; k++ ) {            
 
                 //Handle any tags and if unknown then handle as text    
-                switch ( aTaggedString[k].tag.toUpperCase() ) {
+                switch ( aTaggedString[k].tag ) {
                     
                     //Process Tags
                     case "<TEXTFORMAT>":
@@ -2498,7 +2500,7 @@ package org.alivepdf.pdf
 
                         for each ( attr in aTaggedString[k].attr ) {
 
-                            switch ( String (attr.name() ) ) {
+                            switch ( String ( attr.name() ) ) {
 
                                 case "ALIGN": 
                                      textAlign = String ( attr ).charAt(0);
@@ -2532,7 +2534,6 @@ package org.alivepdf.pdf
                                     break;
                                 case "COLOR":
                                     fc = RGBColor.hexStringToRGBColor( String ( attr ) );
-                                    trace( fc );
                                     break;
                                 case "LETTERSPACING":
                                     cs = parseInt( String ( attr ) );
@@ -2858,7 +2859,7 @@ package org.alivepdf.pdf
 
                 if ( children[i].name() != null ) {
                     
-                    aTags.push({tag:'<'+children[i].name()+'>',attr:children[i].attributes(),value:""});
+                    aTags.push({tag:'<'+String(children[i].name()).toUpperCase()+'>',attr:children[i].attributes(),value:""});
 
                     //Recurse into this tag and return them all as an array
                     var returnedTags    : Array = parseTags ( children[i] );
@@ -2866,7 +2867,7 @@ package org.alivepdf.pdf
                     for ( var j : int = 0; j < returnedTags.length; j++ )
                         aTags.push( returnedTags[j] );
                         
-                    aTags.push({tag:'</'+children[i].name()+'>',attr:children[i].attributes(),value:""});
+                    aTags.push({tag:'</'+String(children[i].name()).toUpperCase()+'>',attr:children[i].attributes(),value:""});
                     
                 } else 
 
