@@ -2,7 +2,6 @@ package org.alivepdf.fonts
 {
 	public final class CoreFonts
 	{
-		
 		public var courier:String;
 		public var courierB:String;
 		public var courierI:String;
@@ -19,9 +18,7 @@ package org.alivepdf.fonts
 		public var zapfdingbats:String;
 		
 		public function CoreFonts ()
-		
 		{
-			
 			courier = "Courier";
 			courierB = "Courier-Bold";
 			courierI = "Courier-Oblique";
@@ -36,8 +33,6 @@ package org.alivepdf.fonts
 			timesBI = "Times-BoldItalic";
 			symbol = "Symbol";
 			zapfdingbats = "ZapfDingbats";
-			
 		}
-		
 	}
 }

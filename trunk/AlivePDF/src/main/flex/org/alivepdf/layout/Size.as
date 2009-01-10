@@ -1,12 +1,9 @@
-package org.alivepdf.layout
-
+package org.alivepdf.layou
 {
-
 	/**
 	 * Represents the size of the printed page.
 	 **/
 	public final class Size
-	
 	{
 		/**
 		 * Constants representing the various paper sizes.
@@ -90,17 +87,11 @@ package org.alivepdf.layout
 		}
 
 		public function Size ( pixelsSize:Array, pLabel:String, pInchesSize:Array, pMmSize:Array )
-		
 		{
-			
 			this.dimensions = pixelsSize;
 			this.label = pLabel;
 			this.inchesSize = pInchesSize;
-			this.mmSize = pMmSize;
-			
+			this.mmSize = pMmSize;	
 		}
-
-
 	}
-
 }
