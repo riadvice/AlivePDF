@@ -1,16 +1,12 @@
 package org.alivepdf.pages
-
 {
-	
 	import org.alivepdf.events.PagingEvent;
 	import org.alivepdf.layout.Orientation;
 	import org.alivepdf.layout.Size;
 	import org.alivepdf.layout.Unit;
 	
 	public final class Page
-	
 	{
-		
 		private var _width:Number;
 		private var _height:Number;
 		private var _fwPt:Number;
@@ -33,7 +29,6 @@ package org.alivepdf.pages
 		private var _unit:String;
 	
 		public function Page ( pOrientation:String, unit:String="Mm", size:Object=null, pRotation:Number=0 )
-	
 		{
 			
 			_orientation = pOrientation;
@@ -101,37 +96,29 @@ package org.alivepdf.pages
 		 * </div>
 		 */		
 		public function clone ( ):Page 
-		
 		{
-			
 			var page:Page = new Page ( orientation, _unit, size, rotation );
 			
 			page.content = content;
 			page.transitions = transitions;
 			
 			return page;	
-			
 		}
 		
 		public function get orientation ( ):String 
-		
 		{
-			
-			return _orientation;
-			
+			return _orientation;	
 		}
 		
 		public function setUnit ( unit:String ):String
-		{
-			
+		{	
 			if ( unit == Unit.POINT ) _k = 1;
 			else if ( unit == Unit.MM ) _k = 72/25.4;
 			else if ( unit == Unit.CM ) _k = 72/2.54;
 			else if ( unit == Unit.INCHES ) _k = 72;
 			else throw new RangeError ('Incorrect unit: ' + unit);
 			
-			return unit;
-			
+			return unit;	
 		}
 	
 		public function rotate ( pRotation:Number ):void
@@ -145,11 +132,8 @@ package org.alivepdf.pages
 		}
 		
 		private function paging ( evt:PagingEvent ):void
-		
 		{
-			
-			_page = evt.page;
-			
+			_page = evt.page;	
 		}
 		
 		/**
