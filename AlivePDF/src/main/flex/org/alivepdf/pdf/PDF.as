@@ -69,6 +69,7 @@ package org.alivepdf.pdf
     import org.alivepdf.events.ProcessingEvent;
     import org.alivepdf.fonts.CoreFonts;
     import org.alivepdf.images.GIFImage;
+    import org.alivepdf.images.ImageHeader;
     import org.alivepdf.images.ImageFormat;
     import org.alivepdf.images.JPEGImage;
     import org.alivepdf.images.PDFImage;
@@ -170,10 +171,6 @@ package org.alivepdf.pdf
 
         protected static const PDF_VERSION:String = '1.3';
         protected static const ALIVEPDF_VERSION:String = '0.1.4.7';
-        
-        protected static const JPG_HEADER:int = 0xFFD8;
-        protected static const PNG_HEADER:int = 0x8950;
-        protected static const GIF_HEADER:String = "GIF";
 
         //current page number
         protected var nbPages:int;
@@ -3063,9 +3060,9 @@ package org.alivepdf.pdf
                 
                 var id:int = getNumImages ( streamDictionary )+1;
                 
-                if ( imageBytes.readUnsignedShort() == PDF.JPG_HEADER ) image = new JPEGImage ( imageBytes, id );
+                if ( imageBytes.readUnsignedShort() == ImageHeader.JPG ) image = new JPEGImage ( imageBytes, id );
                 
-                else if ( !(imageBytes.position = 0) && imageBytes.readUnsignedShort() == PDF.PNG_HEADER ) image = new PNGImage ( imageBytes, id );
+                else if ( !(imageBytes.position = 0) && imageBytes.readUnsignedShort() == ImageHeader.PNG ) image = new PNGImage ( imageBytes, id );
                 
                 else throw new Error ("Image format not supported for now.");
 
