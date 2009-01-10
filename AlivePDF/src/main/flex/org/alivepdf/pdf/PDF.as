@@ -68,9 +68,10 @@ package org.alivepdf.pdf
     import org.alivepdf.events.PageEvent;
     import org.alivepdf.events.ProcessingEvent;
     import org.alivepdf.fonts.CoreFonts;
+    import org.alivepdf.html.HTMLTag;
     import org.alivepdf.images.GIFImage;
-    import org.alivepdf.images.ImageHeader;
     import org.alivepdf.images.ImageFormat;
+    import org.alivepdf.images.ImageHeader;
     import org.alivepdf.images.JPEGImage;
     import org.alivepdf.images.PDFImage;
     import org.alivepdf.images.PNGImage;
@@ -2795,8 +2796,8 @@ package org.alivepdf.pdf
             return fontStyle;
         }
         
-        protected function renderLine ( lineArray : Array, align : String = '' ) : void {
-            
+        protected function renderLine ( lineArray : Array, align : String = '' ):void
+        {    
             var cellVO    : CellVO;
             var availWidth: Number = currentPage.w - this.lMargin - this.rMargin;
             var lineLength: Number = 0;
@@ -2810,27 +2811,31 @@ package org.alivepdf.pdf
                 return;
                 
             //Check if we need a new page for this line
-            if ( firstCell.y + firstCell.height > this.pageBreakTrigger ){
-                
+            if ( firstCell.y + firstCell.height > this.pageBreakTrigger )
+            {    
                 this.addPage ( this.currentPage.clone() );
                 
                 //Use offsetY to push already specified coord for this line back up to top of page
                 offsetY = this.currentY - firstCell.y;                                
             }
+            
+            var lng:int = lineArray.length;
 
             //Calculate offset if we are aligning center or right
-            for(i = 0; i < lineArray.length; i++)
-                lineLength += CellVO(lineArray[i]).width;
+            for(i = 0; i < lng; i++)
+                lineLength += (lineArray[i] as CellVO).width;
                 
             //Adjust offset based on alignment
             if ( align == 'C' ) 
                 offsetX = (availWidth - lineLength)/2;
             else if ( align == 'R' )
                 offsetX = availWidth - lineLength;
+                
+            lng = lineArray.length;
             
             // Loop through the cells in the line and draw
-            for(i = 0; i < lineArray.length; i++){
-
+            for(i = 0; i < lng; i++)
+            {
                 cellVO = CellVO ( lineArray[i] );
 
                 this.currentX = cellVO.x + offsetX;
@@ -2839,7 +2844,6 @@ package org.alivepdf.pdf
                 setFont ( cellVO.fontFamily, cellVO.fontStyle, cellVO.fontSizePt );
                 
                 // TODO: add support for character space
-                
                 if ( cellVO.color != null ) textColor ( cellVO.color );
                 colorFlag = ( fillColor != addTextColor );
                 addCell ( cellVO.width, cellVO.height, cellVO.text, cellVO.border, 2, "", cellVO.fill, cellVO.link );
@@ -2847,30 +2851,31 @@ package org.alivepdf.pdf
             
         }
         
-        protected function parseTags ( myXML : XML ) : Array {
-
+        protected function parseTags ( myXML : XML ):Array
+        {
             var aTags    : Array     = new Array();
             var children : XMLList   = myXML.children();
             
-            for( var i : int=0; i < children.length(); i++ ) {
+            var lng:int = children.length();
+            var returnedLng:int;
+            
+            for( var i : int=0; i < lng; i++ ) {
 
                 if ( children[i].name() != null ) {
                     
-                    aTags.push({tag:'<'+String(children[i].name()).toUpperCase()+'>',attr:children[i].attributes(),value:""});
+                    aTags.push( new HTMLTag ( '<'+String(children[i].name()).toUpperCase()+'>', children[i].attributes(), "") );
 
                     //Recurse into this tag and return them all as an array
                     var returnedTags    : Array = parseTags ( children[i] );
+                    var returnedLng:int = returnedTags.length;
                     
-                    for ( var j : int = 0; j < returnedTags.length; j++ )
+                    for ( var j : int = 0; j < returnedLng; j++ )
                         aTags.push( returnedTags[j] );
                         
-                    aTags.push({tag:'</'+String(children[i].name()).toUpperCase()+'>',attr:children[i].attributes(),value:""});
+                    aTags.push( new HTMLTag ('</'+String(children[i].name()).toUpperCase()+'>', children[i].attributes(), "") );
                     
-                } else 
-
-                    aTags.push({tag:"none", attr:new XMLList(), value:children[i]});
+                } else aTags.push( new HTMLTag ( "none", new XMLList(), children[i] ) );
             }
-            
             return aTags;
         }        
         
