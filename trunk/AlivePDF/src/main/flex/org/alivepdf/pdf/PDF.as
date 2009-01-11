@@ -3675,7 +3675,7 @@ package org.alivepdf.pdf
         {
             if ( currentPage == null ) throw new Error ("No pages available, please call the addPage method first !");
             if ( state == 2 ) currentPage.content += content+"\n";
-            else buffer.writeMultiByte( content+"\n", "windows-1250" );
+            else buffer.writeMultiByte( content+"\n", "windows-1252" );
             
             //trace ( content.toString() );
         }
