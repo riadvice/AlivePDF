@@ -1,4 +1,4 @@
-package org.alivepdf.layou
+package org.alivepdf.layout
 {
 	/**
 	 * Represents the size of the printed page.
