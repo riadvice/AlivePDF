@@ -2868,7 +2868,7 @@ package org.alivepdf.pdf
 
                     //Recurse into this tag and return them all as an array
                     var returnedTags    : Array = parseTags ( children[i] );
-                    var returnedLng:int = returnedTags.length;
+                    returnedLng = returnedTags.length;
                     
                     for ( var j : int = 0; j < returnedLng; j++ )
                         aTags.push( returnedTags[j] );
