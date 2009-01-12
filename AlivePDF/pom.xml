@@ -186,6 +186,22 @@
 				<groupId>info.flex-mojos</groupId>
 				<artifactId>asdoc-mojo</artifactId>
 			</plugin>
+			<plugin>
+				<groupId>com.adobe.ac</groupId>
+				<artifactId>flex-pmd-maven-plugin</artifactId>
+				<version>0.5.4-SNAPSHOT</version>
+				<configuration>
+					<ruleSet>all_flex.xml</ruleSet>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>com.adobe.ac</groupId>
+				<artifactId>flex-pmd-maven-plugin</artifactId>
+				<version>0.5.4-SNAPSHOT</version>
+				<configuration>
+					<ruleSet>all_flex.xml</ruleSet>
+				</configuration>
+			</plugin>
 		</plugins>
 	</reporting>
 
