@@ -68,6 +68,8 @@ package org.alivepdf.pdf
     import org.alivepdf.events.PageEvent;
     import org.alivepdf.events.ProcessingEvent;
     import org.alivepdf.fonts.CoreFonts;
+    import org.alivepdf.fonts.FontFamily;
+    import org.alivepdf.fonts.Style;
     import org.alivepdf.html.HTMLTag;
     import org.alivepdf.images.GIFImage;
     import org.alivepdf.images.ImageFormat;
@@ -247,6 +249,8 @@ package org.alivepdf.pdf
         protected var autoPageBreak:Boolean;
         //threshold used to trigger page breaks
         protected var pageBreakTrigger:Number;
+        //flag set when processing header
+        protected var inHeader:Boolean;
         //flag set when processing footer
         protected var inFooter:Boolean;
         //zoom display mode       
@@ -288,7 +292,6 @@ package org.alivepdf.pdf
         protected var currentFont:Object;
         protected var b2:String;
         protected var pageLinks:Array;
-        protected var mtd:*
         protected var filter:String;
         protected var inited:Boolean;
         protected var filled:Boolean
@@ -359,7 +362,7 @@ package org.alivepdf.pdf
             streamDictionary = new Dictionary();
             rotationMatrix = new Matrix();
             links = new Array();
-            inFooter = false;
+            inHeader = inFooter = false;
             fontFamily = new String();
             fontStyle = new String();
             underline = false;
@@ -817,6 +820,11 @@ package org.alivepdf.pdf
             addTextColor = tc;
             colorFlag = cf;
             
+            //Page header
+			inHeader = true;
+			header();
+			inHeader = false;
+            
             //Restore line width
             if(lineWidth!=lw)
             {
@@ -1100,6 +1108,35 @@ package org.alivepdf.pdf
         public function getDefaultUnit ():String 
         {    
             return defaultUnit;    
+        }
+        
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /*
+        * AlivePDF Header and Footer API
+        *
+        * header()
+        * footer()
+        */
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        
+        public function header():void
+        {
+        	/* to be overriden (uncomment for a demo )
+        	this.setFont( FontFamily.ARIAL, Style.BOLD, 10 );
+        	this.addCell(80);
+    		this.addCell(30,10,'Title',1,0,'C');
+    		this.newLine(20);
+    		*/
+        }
+        
+        public function footer():void
+        {
+        	/* to be overriden (uncomment for a demo )
+        	this.setY (-15);
+        	this.setFont( FontFamily.ARIAL, Style.ITALIC, 8 );
+    		this.addCell(0,10,'Page '+totalPages,0,0,'C');
+    		this.newLine(20);
+    		*/
         }
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2089,7 +2126,7 @@ package org.alivepdf.pdf
             //Output a cell
             var k:Number = this.k;
 
-            if( this.currentY + height > this.pageBreakTrigger && !this.inFooter && this.acceptPageBreak() )
+            if( this.currentY + height > this.pageBreakTrigger && !this.inHeader && !this.inFooter && this.acceptPageBreak() )
             {
                 //Automatic page break
                 var x:Number = this.currentX;
@@ -3173,6 +3210,10 @@ package org.alivepdf.pdf
         {
             if( state == 3 ) return;
             if( arrayPages.length == 0 ) addPage();
+           	//Page footer
+			inFooter = true;
+			footer();
+			inFooter = false;
             finishPage();
             finishDocument();    
         }
