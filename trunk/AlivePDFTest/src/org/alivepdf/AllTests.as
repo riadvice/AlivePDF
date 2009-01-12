@@ -8,6 +8,5 @@ package org.alivepdf
 		{
 			addTestSuite( TestHtml );
 		}
-		
 	}
 }
