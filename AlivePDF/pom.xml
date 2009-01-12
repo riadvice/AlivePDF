@@ -1,10 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 	<!-- XML header, nothing new -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+
+	<!-- this project ID -->
+	<groupId>org.bytearray</groupId>
+	<artifactId>alivepdf</artifactId>
+	<version>0.1.4.6-SNAPSHOT</version>
+	<name>AlivePDF</name>
+	<inceptionYear>2007</inceptionYear>
+	<url>http://www.alivepdf.org/</url>
+
 	<description>AlivePDF is a client side AS3 PDF generation library for Adobe Flash, Flex and AIR.</description>
-	
+
+	<scm>
+		<connection>scm:svn:http://alivepdf.googlecode.com/svn/trunk/</connection>
+		<developerConnection>scm:svn:https://alivepdf.googlecode.com/svn/trunk/</developerConnection>
+		<url>http://alivepdf.googlecode.com/svn/trunk/</url>
+	</scm>
+
+	<issueManagement>
+		<url>http://code.google.com/p/alivepdf/issues/list</url>
+		<system>GoogleCode</system>
+	</issueManagement>
+	<ciManagement>
+		<system>Hudson</system>
+		<url>http://10.130.64.114:8080/job/AlivePDF</url>
+	</ciManagement>
 	<distributionManagement>
 		<site>
 			<id>website</id>
@@ -17,19 +40,6 @@
 		</repository>
 	</distributionManagement>
 
-	<scm>
-		<connection>scm:svn:http://alivepdf.googlecode.com/svn/trunk/</connection>
-		<developerConnection>scm:svn:https://alivepdf.googlecode.com/svn/trunk/</developerConnection>	
-		<url>http://alivepdf.googlecode.com/svn/trunk/</url>
-	</scm>
-
-	<inceptionYear>2007</inceptionYear>
-	<issueManagement>
-		<url>http://code.google.com/p/alivepdf/issues/list</url>
-		<system>GoogleCode</system>
-	</issueManagement>
-	<url>http://www.alivepdf.org/</url>
-	
 	<developers>
 		<developer>
 			<id>timbert</id>
@@ -41,13 +51,17 @@
 				<role>Developper</role>
 			</roles>
 		</developer>
+		<developer>
+			<id>xagnetti</id>
+			<name>Xavier Agnetti</name>
+			<email>xagnetti [at] adobe.com</email>
+			<organization>Adobe</organization>
+			<organizationUrl>http://www.adobe.com</organizationUrl>
+			<roles>
+				<role>Mavenizer</role>
+			</roles>
+		</developer>
 	</developers>
-
-	<!-- this project ID -->
-	<groupId>org.bytearray</groupId>
-	<artifactId>alivepdf</artifactId>
-	<version>0.1.4.6-SNAPSHOT</version>
-	<name>AlivePDF</name>
 
 	<!--
 		What will be generated. Must be swf, swc, aswf or aswc swf and swc for
@@ -82,15 +96,19 @@
 			<type>swc</type>
 			<scope>test</scope>
 		</dependency>
-<!--		<dependency>-->
-<!--			<groupId>info.flex-mojos</groupId>-->
-<!--			<artifactId>testing-support</artifactId>-->
-<!--			<version>${flex-mojo.version}</version>-->
-<!--			<type>swc</type>-->
-<!--			<scope>test</scope>-->
-<!--		</dependency>-->
+		<!--		<dependency>-->
+		<!--			<groupId>info.flex-mojos</groupId>-->
+		<!--			<artifactId>testing-support</artifactId>-->
+		<!--			<version>${flex-mojo.version}</version>-->
+		<!--			<type>swc</type>-->
+		<!--			<scope>test</scope>-->
+		<!--		</dependency>-->
 	</dependencies>
-	
+	<organization>
+		<name>Adobe</name>
+		<url>http://www.adobe.com</url>
+	</organization>
+
 	<!--
 		this project don't follow the standard directory structure, so, need
 		to specify where are the sources
@@ -112,10 +130,6 @@
 						<param>en_US</param>
 					</locales>
 				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>info.flex-mojos</groupId>
-				<artifactId>asdoc</artifactId>
 			</plugin>
 		</plugins>
 	</build>
