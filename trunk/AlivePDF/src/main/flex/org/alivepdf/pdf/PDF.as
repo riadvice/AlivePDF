@@ -797,7 +797,13 @@ package org.alivepdf.pdf
             var tc:String = addTextColor;
             var cf:Boolean = colorFlag;
 
-            if( nbPages > 0 ) finishPage();
+            if( nbPages > 0 )
+            {
+            	inFooter = true;
+				footer();
+				inFooter = false;
+				finishPage();
+            }
 
             //Start new page
             currentPage = startPage ( page != null ? page.orientation : defaultOrientation );
@@ -1121,22 +1127,22 @@ package org.alivepdf.pdf
         
         public function header():void
         {
-        	/* to be overriden (uncomment for a demo )
+        	//to be overriden (uncomment for a demo )
         	this.setFont( FontFamily.ARIAL, Style.BOLD, 10 );
         	this.addCell(80);
     		this.addCell(30,10,'Title',1,0,'C');
     		this.newLine(20);
-    		*/
+    		
         }
         
         public function footer():void
         {
-        	/* to be overriden (uncomment for a demo )
+        	//to be overriden (uncomment for a demo )
         	this.setY (-15);
         	this.setFont( FontFamily.ARIAL, Style.ITALIC, 8 );
     		this.addCell(0,10,'Page '+totalPages,0,0,'C');
     		this.newLine(20);
-    		*/
+    		
         }
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
