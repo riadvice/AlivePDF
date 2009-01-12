@@ -169,7 +169,7 @@ package org.alivepdf.pdf
     /**
     * The PDF class represents a PDF document.
     */
-    public final class PDF implements IEventDispatcher
+    public class PDF implements IEventDispatcher
     {
 
         protected static const PDF_VERSION:String = '1.3';
