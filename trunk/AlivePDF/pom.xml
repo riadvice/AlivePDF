@@ -182,10 +182,10 @@
 				<artifactId>as3Ncss-maven-plugin</artifactId>
 				<version>1.1</version>
 			</plugin>
-			<plugin>
-				<groupId>info.flex-mojos</groupId>
-				<artifactId>asdoc-mojo</artifactId>
-			</plugin>
+<!--			<plugin>-->
+<!--				<groupId>info.flex-mojos</groupId>-->
+<!--				<artifactId>asdoc-mojo</artifactId>-->
+<!--			</plugin>-->
 			<plugin>
 				<groupId>com.adobe.ac</groupId>
 				<artifactId>flex-pmd-maven-plugin</artifactId>
