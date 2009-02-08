@@ -327,8 +327,7 @@ package org.alivepdf.pdf
         */
 
         public function PDF ( orientation:String='Portrait', unit:String='Mm', pageSize:Object=null, rotation:int=0 )
-        {
-            
+        { 
             var format:Array;
             var size:Size;
             
@@ -3272,7 +3271,7 @@ package org.alivepdf.pdf
 
         protected function findAndReplace ( search:String, replace:String, source:String ):String
         {
-            return source.replace( new RegExp ( search ), replace );
+            return source.split(search).join(replace);
         }
 
         protected function createPageTree():void
