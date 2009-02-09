@@ -2993,28 +2993,35 @@ package org.alivepdf.pdf
 		public function save ( method:String, url:String='', downloadMethod:String='inline', fileName:String='generated.pdf', frame:String="_blank" ):*
 		{
 			dispatcher.dispatchEvent( new ProcessingEvent ( ProcessingEvent.STARTED ) );
-
 			var started:Number = getTimer();
-
-			if ( state < 3 ) finish();
-			
+			finish();
 			dispatcher.dispatchEvent ( new ProcessingEvent ( ProcessingEvent.COMPLETE, getTimer() - started ) );
-			
 			buffer.position = 0;
-
-			if ( method == Method.LOCAL ) return buffer;
-			else if ( method == Method.BASE_64 ) return Base64.encode64(buffer);
-
-			var header:URLRequestHeader = new URLRequestHeader ("Content-type", "application/octet-stream");
-			var myRequest:URLRequest = new URLRequest ( url+'?name='+fileName+'&method='+downloadMethod );
-
-			myRequest.requestHeaders.push (header);
-			myRequest.method = URLRequestMethod.POST;
-			myRequest.data = save( Method.LOCAL );
-
-			navigateToURL ( myRequest, frame );
-
-			return null;
+			var output:* = null;
+			
+			switch (method)
+			{
+				case Method.LOCAL : 
+					output = buffer;
+					break;	
+				
+				case Method.BASE_64 : 
+					output = Base64.encode64 ( buffer );
+					break;
+					
+				case Method.REMOTE :
+					var header:URLRequestHeader = new URLRequestHeader ("Content-type","application/octet-stream");
+					var myRequest:URLRequest = new URLRequest (url+'?name='+fileName+'&method='+downloadMethod );
+					myRequest.requestHeaders.push (header);
+					myRequest.method = URLRequestMethod.POST;
+					myRequest.data = buffer;
+					navigateToURL ( myRequest, frame );
+					break;
+					
+				default:
+					throw new Error("Unknown Method \"" + method + "\"");
+			}
+			return output;
 		}
         
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
