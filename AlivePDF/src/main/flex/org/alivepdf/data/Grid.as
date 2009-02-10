@@ -1,7 +1,6 @@
 package org.alivepdf.data
 {
 	import flash.utils.ByteArray;
-	
 	import org.alivepdf.colors.IColor;
 	
 	public class Grid
