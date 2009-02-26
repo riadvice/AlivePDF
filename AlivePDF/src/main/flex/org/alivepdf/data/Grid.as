@@ -1,27 +1,30 @@
 package org.alivepdf.data
 {
 	import flash.utils.ByteArray;
-	import org.alivepdf.colors.IColor;
+	
+	import org.alivepdf.colors.Color;
 	
 	public class Grid
 	{
 		private var _data:Array;
 		private var _width:int;
+		private var _aligns:Array;
 		private var _height:int;
 		private var _cellsWidth:Array;
-		private var _borderColor:IColor;
+		private var _borderColor:Color;
 		private var _joints:String;
-		private var _backgroundColor:IColor;
-		private var _headerColor:IColor;
-		private var _cellColor:IColor;
+		private var _backgroundColor:Color;
+		private var _headerColor:Color;
+		private var _cellColor:Color;
 		private var _alternateRowColor:Boolean;
 		
-		public function Grid( data:Array, width:int, height:int, cellsWidth:Array, headerColor:IColor, backgroundColor:IColor, cellColor:IColor, alternateRowColor:Boolean, borderColor:IColor, joints:String="0 j")
+		public function Grid( data:Array, width:int, height:int, cellsWidth:Array, aligns:Array, headerColor:Color, backgroundColor:Color, cellColor:Color, alternateRowColor:Boolean, borderColor:Color, joints:String="0 j")
 		{
 			_data = data;
 			_width = width;
 			_height = height;
 			_cellsWidth = cellsWidth;
+			_aligns = aligns;
 			_borderColor = borderColor;
 			_joints = joints;
 			_backgroundColor = backgroundColor;
@@ -40,6 +43,11 @@ package org.alivepdf.data
 			return _cellsWidth;
 		}
 		
+		public function get aligns ():Array
+		{
+			return _aligns;
+		}
+		
 		public function get width ():int
 		{
 			return _width;	
@@ -50,7 +58,7 @@ package org.alivepdf.data
 			return _height;	
 		}
 		
-		public function get borderColor ():IColor
+		public function get borderColor ():Color
 		{
 			return _borderColor;	
 		}
@@ -60,17 +68,17 @@ package org.alivepdf.data
 			return _joints;	
 		}
 		
-		public function get backgroundColor ():IColor
+		public function get backgroundColor ():Color
 		{
 			return _backgroundColor;	
 		}
 		
-		public function get headerColor ():IColor
+		public function get headerColor ():Color
 		{
 			return _headerColor;	
 		}
 		
-		public function get cellColor ():IColor
+		public function get cellColor ():Color
 		{
 			return _cellColor;	
 		}
