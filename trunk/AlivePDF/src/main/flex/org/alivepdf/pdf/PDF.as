@@ -28,9 +28,9 @@ THE SOFTWARE.
 
 /**
 * This library lets you generate PDF files with the Flash Player
-* AlivePDF is based on the FPDF PHP library (http://www.fpdf.org/)
+* AlivePDF is based on the FPDF PHP library by Olivier Plathey (http://www.fpdf.org/)
 * Core Team : Thibault Imbert, Mark Lynch, Alexandre Pires, Marc Hugues
-* @version 0.1.4.7 Current Release
+* @version 0.1.4.8 Current Release
 * @url alivepdf.bytearray.org
 */
 
@@ -57,6 +57,7 @@ package org.alivepdf.pdf
     import org.alivepdf.colors.Color;
     import org.alivepdf.colors.GrayColor;
     import org.alivepdf.colors.RGBColor;
+    import org.alivepdf.data.Grid;
     import org.alivepdf.display.Display;
     import org.alivepdf.display.PageMode;
     import org.alivepdf.drawing.Caps;
@@ -68,8 +69,6 @@ package org.alivepdf.pdf
     import org.alivepdf.events.PageEvent;
     import org.alivepdf.events.ProcessingEvent;
     import org.alivepdf.fonts.CoreFonts;
-    import org.alivepdf.fonts.FontFamily;
-    import org.alivepdf.fonts.Style;
     import org.alivepdf.html.HTMLTag;
     import org.alivepdf.images.GIFImage;
     import org.alivepdf.images.ImageFormat;
@@ -78,6 +77,7 @@ package org.alivepdf.pdf
     import org.alivepdf.images.PDFImage;
     import org.alivepdf.images.PNGImage;
     import org.alivepdf.images.ResizeMode;
+    import org.alivepdf.layout.Align;
     import org.alivepdf.layout.Layout;
     import org.alivepdf.layout.Size;
     import org.alivepdf.layout.Unit;
@@ -173,7 +173,7 @@ package org.alivepdf.pdf
     {
 
         protected static const PDF_VERSION:String = '1.3';
-        protected static const ALIVEPDF_VERSION:String = '0.1.4.7';
+        protected static const ALIVEPDF_VERSION:String = '0.1.4.8';
 
         //current page number
         protected var nbPages:int;
@@ -310,6 +310,9 @@ package org.alivepdf.pdf
         protected var drawingRule:String;
         protected var reference:String;
         protected var references:String;
+        
+        protected var aligns:Array;
+        protected var widths:Array;
 
         /**
         * The PDF class represents a PDF document.
@@ -2937,6 +2940,135 @@ package org.alivepdf.pdf
         {
             if ( autoPagination != activate ) autoPagination = activate;
         }
+        
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		/*
+		* AlivePDF data API
+		*
+		* addGrid()
+		*
+		*/
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		
+		public function addGrid ( grid:Grid, x:Number=0, y:Number=0 ):void
+		{	
+			widths = grid.cellsWidth;
+			aligns = grid.aligns;
+			
+			var rows:Array;
+			var i:int;
+			var columnNames:Array = new Array();
+			var buffer:Array = grid.dataProvider;
+			var color:RGBColor = new RGBColor ( 0 );
+			
+			for ( var p:String in buffer[0] ) 
+				columnNames.push ( p.charAt(0).toUpperCase()+p.substr(1).toLowerCase() );
+			
+			textStyle( new RGBColor ( 0 ), 1 );
+			beginFill ( grid.headerColor );
+			addRow( columnNames );
+			endFill();
+						
+			for each ( var item:* in buffer )
+			{ 
+				rows = new Array();
+				for ( p in item )
+					rows.push ( item[p] );
+				textStyle( color, 1 );
+				checkPageBreak(5);
+				if ( grid.alternateRowColor && (i&1) )
+				{
+					beginFill( grid.backgroundColor );
+					addRow( rows );
+					endFill();
+				}else addRow( rows );
+				i++;
+			}
+		}
+		
+		public function addRow(data:Array):void
+		{
+		    var nb:int = 0;
+		    var lng:int = data.length;
+		    
+		    for(var i:int=0;i<lng;i++) nb = Math.max(nb,NbLines(widths[i],data[i]));
+		    
+		    var h:Number = 5*nb;
+		    var x:Number;
+		    var y:Number;
+		    var a:String;
+		    var w:Number;
+		    
+		    var rect:Rectangle = new Rectangle(x,y,w,h);
+
+		    for(i=0;i<lng;i++)
+		    {
+		        a = (aligns == null) ? Align.LEFT : aligns[i] != null ? aligns[i] : Align.LEFT;
+		        rect.x = x = getX();
+		        rect.y = y = getY();
+		        rect.width = w = widths[i];
+		        drawRect( rect );
+		        addMultiCell(w,5,data[i],0,a);
+		        setXY(x+w,y);
+		    }
+		    newLine(h);
+		}
+		
+		private function checkPageBreak(height:Number):void
+		{
+		    if(getY()+height>pageBreakTrigger) addPage();
+		}
+		
+		private function NbLines(width:int,text:String):int
+		{
+		    var cw:Object = currentFont.cw;
+		    if(width==0) width = currentPage.w-rMargin-lMargin;
+		   
+		    var wmax:int = (width-2*cMargin)*1000/fontSize;
+		    var s:String = findAndReplace("\r",'',text);
+		    var nb:int = s.length;
+		   
+		    if(nb>0 && s.charAt(nb-1)=="\n") nb--;
+		    
+		    var sep:Number=-1;
+		    var i:int=0;
+		    var j:int=0;
+		    var l:int=0;
+		    var nl:int=1;
+		    
+		    while(i<nb)
+		    {
+		        var c:String = s.charAt(i);
+		        if(c=="\n")
+		        {
+		            i++;
+		            sep=-1;
+		            j=i;
+		            l=0;
+		            nl++;
+		            continue;
+		        }
+		        if(c==' ') sep=i;
+		        l+=cw[c];
+		        if(l>wmax)
+		        {
+		            if(sep==-1)
+		            {
+		                if(i==j)
+		                    i++;
+		            }
+		            else
+		                i=sep+1;
+		            sep=-1;
+		            j=i;
+		            l=0;
+		            nl++;
+		        }
+		        else
+		            i++;
+		    }
+		    return nl;
+		}
         
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /*
