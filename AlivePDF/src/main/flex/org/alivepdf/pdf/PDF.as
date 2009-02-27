@@ -2957,24 +2957,35 @@ package org.alivepdf.pdf
 			
 			var rows:Array;
 			var i:int;
+			var j:int;
 			var columnNames:Array = new Array();
+			var properties:Array = new Array();
 			var buffer:Array = grid.dataProvider;
+			var lng:int = buffer.length;
 			var color:RGBColor = new RGBColor ( 0 );
 			
-			for ( var p:String in buffer[0] ) 
-				columnNames.push ( p.charAt(0).toUpperCase()+p.substr(1).toLowerCase() );
+			for ( var p:String in buffer[0] )
+			{
+				columnNames.push ( p.charAt(0).toUpperCase()+p.substr(1) );
+				properties.push ( p );
+			}
 			
 			columnNames.sort();
+			properties.sort();
 			textStyle( new RGBColor ( 0 ), 1 );
 			beginFill ( grid.headerColor );
 			addRow( columnNames );
 			endFill();
 			
-			for each ( var item:* in buffer )
-			{ 
+			var lngProp:int = properties.length;
+			var item:*;
+			
+			for (i = 0; i< lng; i++)
+			{
+				item = buffer[i];
 				rows = new Array();
-				for ( p in item )
-					rows.push ( item[p] );
+				for (j = 0; j< lngProp; j++)
+					rows.push (item[properties[j]]);
 				textStyle( color, 1 );
 				checkPageBreak(5);
 				if ( grid.alternateRowColor && (i&1) )
@@ -2983,19 +2994,7 @@ package org.alivepdf.pdf
 					addRow( rows );
 					endFill();
 				}else addRow( rows );
-				i++;
 			}
-		}
-		
-		private function sortByAscendingOrder(num1:Number, num2:Number):Number
-		{
-		    if(num1 > num2){
-		        return 1;
-		    } else if(num1 < num2) {
-		        return -1;
-		    } else  {
-		        return 0;
-		    }
 		}
 		
 		public function addRow(data:Array):void
