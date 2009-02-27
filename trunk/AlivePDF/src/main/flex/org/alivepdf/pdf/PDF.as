@@ -2964,11 +2964,12 @@ package org.alivepdf.pdf
 			for ( var p:String in buffer[0] ) 
 				columnNames.push ( p.charAt(0).toUpperCase()+p.substr(1).toLowerCase() );
 			
+			columnNames.sort();
 			textStyle( new RGBColor ( 0 ), 1 );
 			beginFill ( grid.headerColor );
 			addRow( columnNames );
 			endFill();
-						
+			
 			for each ( var item:* in buffer )
 			{ 
 				rows = new Array();
@@ -2984,6 +2985,17 @@ package org.alivepdf.pdf
 				}else addRow( rows );
 				i++;
 			}
+		}
+		
+		private function sortByAscendingOrder(num1:Number, num2:Number):Number
+		{
+		    if(num1 > num2){
+		        return 1;
+		    } else if(num1 < num2) {
+		        return -1;
+		    } else  {
+		        return 0;
+		    }
 		}
 		
 		public function addRow(data:Array):void
