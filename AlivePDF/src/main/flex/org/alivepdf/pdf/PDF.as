@@ -573,7 +573,7 @@ package org.alivepdf.pdf
         public function setDisplayMode ( zoomStyle:String='FullWidth', layout:String='SinglePage', mode:String='UseNone', zoomValue:Number=1 ):void
         {
             zoomMode = zoomStyle;
-           	zoomFactor = zoomValue;
+            zoomFactor = zoomValue;
             layoutMode = layout;
             pageMode = mode;
         }
