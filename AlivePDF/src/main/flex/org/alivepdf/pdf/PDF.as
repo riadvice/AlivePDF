@@ -310,6 +310,7 @@ package org.alivepdf.pdf
         protected var drawingRule:String;
         protected var reference:String;
         protected var references:String;
+        protected var zoomFactor:Number;
         
         protected var aligns:Array;
         protected var widths:Array;
@@ -569,9 +570,10 @@ package org.alivepdf.pdf
         * </pre>
         * </div>
         */
-        public function setDisplayMode ( zoom:String='FullWidth', layout:String='SinglePage', mode:String='UseNone' ):void
+        public function setDisplayMode ( zoomStyle:String='FullWidth', layout:String='SinglePage', mode:String='UseNone', zoomValue:Number=1 ):void
         {
-            zoomMode = zoom;
+            zoomMode = zoomStyle;
+           	zoomFactor = zoomValue;
             layoutMode = layout;
             pageMode = mode;
         }
@@ -3002,7 +3004,7 @@ package org.alivepdf.pdf
 		    var nb:int = 0;
 		    var lng:int = data.length;
 		    
-		    for(var i:int=0;i<lng;i++) nb = Math.max(nb,NbLines(widths[i],data[i]));
+		    for(var i:int=0;i<lng;i++) nb = Math.max(nb,nbLines(widths[i],data[i]));
 		    
 		    var h:Number = 5*nb;
 		    var x:Number;
@@ -3030,7 +3032,7 @@ package org.alivepdf.pdf
 		    if(getY()+height>pageBreakTrigger) addPage();
 		}
 		
-		private function NbLines(width:int,text:String):int
+		private function nbLines(width:int,text:String):int
 		{
 		    var cw:Object = currentFont.cw;
 		    if(width==0) width = currentPage.w-rMargin-lMargin;
@@ -3730,7 +3732,7 @@ package org.alivepdf.pdf
             
             if ( zoomMode == Display.FULL_PAGE ) write('/OpenAction [3 0 R /Fit]');
             else if ( zoomMode == Display.FULL_WIDTH ) write('/OpenAction [3 0 R /FitH null]');
-            else if ( zoomMode == Display.REAL ) write('/OpenAction [3 0 R /XYZ null null 1]');
+            else if ( zoomMode == Display.REAL ) write('/OpenAction [3 0 R /XYZ null null '+zoomFactor+']');
             else if ( !(zoomMode is String) ) write('/OpenAction [3 0 R /XYZ null null '+(zoomMode/100)+']');
             
             write('/PageLayout /'+layoutMode);

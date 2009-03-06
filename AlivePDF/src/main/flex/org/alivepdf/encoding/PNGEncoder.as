@@ -178,7 +178,7 @@ package org.alivepdf.encoding
 	            crcTableComputed = true;
 	            crcTable = [];
 	            for (var n:uint = 0; n < 256; n++) {
-	                //var c:uint = n;
+	                var c:uint = n;
 	                for (var k:uint = 0; k < 8; k++) {
 	                    if (n & 1) {
 	                        c = uint(uint(0xedb88320) ^ 
@@ -202,7 +202,7 @@ package org.alivepdf.encoding
 	        }
 	        var e:uint = png.position;
 	        png.position = p;
-	        var c:uint = 0xffffffff;
+	        c = 0xffffffff;
 	        for (var i:int = 0; i < (e-p); i++) {
 	            c = uint(crcTable[
 	                (c ^ png.readUnsignedByte()) & 
