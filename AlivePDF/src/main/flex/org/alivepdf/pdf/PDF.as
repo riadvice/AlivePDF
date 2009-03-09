@@ -311,6 +311,7 @@ package org.alivepdf.pdf
         protected var reference:String;
         protected var references:String;
         protected var zoomFactor:Number;
+        protected var zoomRectangle:Rectangle;
         
         protected var aligns:Array;
         protected var widths:Array;
@@ -570,10 +571,11 @@ package org.alivepdf.pdf
         * </pre>
         * </div>
         */
-        public function setDisplayMode ( zoomStyle:String='FullWidth', layout:String='SinglePage', mode:String='UseNone', zoomValue:Number=1 ):void
+        public function setDisplayMode ( zoomStyle:String='FullWidth', layout:String='SinglePage', mode:String='UseNone', zoomValue:Number=1, rectangle:Rectangle=null ):void
         {
             zoomMode = zoomStyle;
             zoomFactor = zoomValue;
+            zoomRectangle = rectangle != null ? rectangle : new Rectangle (0,0,0,0);
             layoutMode = layout;
             pageMode = mode;
         }
@@ -3733,6 +3735,7 @@ package org.alivepdf.pdf
             if ( zoomMode == Display.FULL_PAGE ) write('/OpenAction [3 0 R /Fit]');
             else if ( zoomMode == Display.FULL_WIDTH ) write('/OpenAction [3 0 R /FitH null]');
             else if ( zoomMode == Display.REAL ) write('/OpenAction [3 0 R /XYZ null null '+zoomFactor+']');
+            else if ( zoomRectangle != null && zoomMode == Display.RECTANGLE ) write('/OpenAction [3 0 R /FitR '+zoomRectangle.left+' '+zoomRectangle.bottom+' '+zoomRectangle.right+' '+zoomRectangle.top+']');
             else if ( !(zoomMode is String) ) write('/OpenAction [3 0 R /XYZ null null '+(zoomMode/100)+']');
             
             write('/PageLayout /'+layoutMode);
