@@ -410,7 +410,6 @@ package org.alivepdf.pdf
 
             //Set default PDF version number
             pdfVersion = PDF.PDF_VERSION;
-            
         }
 
         /**
@@ -492,9 +491,7 @@ package org.alivepdf.pdf
         */
         public function setTopMargin (margin:Number):void
         {
-
             tMargin = margin;
-
         }
 
         /**
@@ -512,9 +509,7 @@ package org.alivepdf.pdf
         */
         public function setBottomMargin (margin:Number):void
         {
-
             bMargin = margin;
-
         }
 
         /**
@@ -884,7 +879,6 @@ package org.alivepdf.pdf
         public function getPage ( page:int ):Page
         {
             if ( page > 0 && page <= arrayPages.length ) return arrayPages [page-1];
-
             else throw new RangeError ("Can't retrieve page " + page + ".");
         }
         
@@ -912,7 +906,6 @@ package org.alivepdf.pdf
         public function getPages ():Array
         {
             if ( arrayPages.length ) return arrayPages;
-
             else throw new RangeError ("No pages available !");
         }
         
@@ -935,7 +928,6 @@ package org.alivepdf.pdf
         public function gotoPage ( page:int ):void
         {
             if ( page > 0 && page <= arrayPages.length ) currentPage = arrayPages[page-1];
-            
             else throw new RangeError ("Can't find page " + page + ".");
         }
 
@@ -959,7 +951,6 @@ package org.alivepdf.pdf
         public function removePage ( page:int ):Page
         {
             if ( page > 0 && page <= arrayPages.length ) return arrayPages.splice ( page-1, 1 )[0];
-
             else throw new RangeError ("Cannot remove page " + page + ".");
         }
         
@@ -995,7 +986,6 @@ package org.alivepdf.pdf
         public function getCurrentPage ():Page
         {
             if ( arrayPages.length > 0 ) return currentPage;
-
             else throw new RangeError ("Can't retrieve the current page, " + arrayPages.length + " pages available.");
         }
 
@@ -1340,7 +1330,7 @@ package org.alivepdf.pdf
             strokeColor ( color );
             windingRule = rule;
             lineWidth = thickness;
-             setAlpha ( alpha, blendMode );
+            setAlpha ( alpha, blendMode );
 
             if ( nbPages > 0 ) write ( sprintf ('%.2f w', thickness*k) );
             
@@ -2978,6 +2968,7 @@ package org.alivepdf.pdf
 			properties.sort();
 			textStyle( new RGBColor ( 0 ), 1 );
 			beginFill ( grid.headerColor );
+			setXY ( x + getX(), y+getY() );
 			addRow( columnNames );
 			endFill();
 			
@@ -2992,6 +2983,7 @@ package org.alivepdf.pdf
 					rows.push (item[properties[j]]);
 				textStyle( color, 1 );
 				checkPageBreak(5);
+				setX ( x + getX() );
 				if ( grid.alternateRowColor && (i&1) )
 				{
 					beginFill( grid.backgroundColor );
@@ -3261,9 +3253,7 @@ package org.alivepdf.pdf
                 var id:int = getNumImages ( streamDictionary )+1;
                 
                 if ( imageBytes.readUnsignedShort() == ImageHeader.JPG ) image = new JPEGImage ( imageBytes, id );
-                
                 else if ( !(imageBytes.position = 0) && imageBytes.readUnsignedShort() == ImageHeader.PNG ) image = new PNGImage ( imageBytes, id );
-                
                 else throw new Error ("Image format not supported for now.");
 
                 streamDictionary[imageBytes] = image;
@@ -3367,7 +3357,6 @@ package org.alivepdf.pdf
         {
             if( state == 3 ) return;
             if( arrayPages.length == 0 ) addPage();
-           	//Page footer
 			inFooter = true;
 			footer();
 			inFooter = false;
