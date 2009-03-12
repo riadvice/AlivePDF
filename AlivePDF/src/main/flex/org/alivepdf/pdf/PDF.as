@@ -2955,20 +2955,15 @@ package org.alivepdf.pdf
 			if ( columns == null )
 			{
 				var firstItem:* = buffer[0];
-				var casedProperties:Array = new Array();
 				var fields:Array = new Array();
 				var column:GridColumn;
 				for ( var p:String in firstItem )
-				{
-					casedProperties.push ( p );
-					fields.push ( p );	
-				}
-				casedProperties.sort();
+						fields.push ( p );
 				fields.sort();
 				columns = new Array();
 				var fieldsLng:int = fields.length;
 				for (i = 0; i< fieldsLng; i++)
-					columns.push ( new GridColumn ( casedProperties[i], fields[i], 30 ) );
+					columns.push ( new GridColumn ( fields[i], fields[i], 30 ) );
 			}
 			
 			var rows:Array;
