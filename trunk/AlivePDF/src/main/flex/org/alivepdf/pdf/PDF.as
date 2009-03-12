@@ -2948,39 +2948,33 @@ package org.alivepdf.pdf
 		{	
 			widths = grid.cellsWidth;
 			aligns = grid.aligns;
-			
 			var rows:Array;
-			var i:int;
-			var j:int;
+			var i:int = 0;
+			var j:int = 0;
 			var columnNames:Array = new Array();
 			var properties:Array = new Array();
 			var buffer:Array = grid.dataProvider;
 			var lng:int = buffer.length;
+			var lngColumns:int = grid.columns.length;
 			var color:RGBColor = new RGBColor ( 0 );
 			
-			for ( var p:String in buffer[0] )
-			{
-				columnNames.push ( p.charAt(0).toUpperCase()+p.substr(1) );
-				properties.push ( p );
-			}
+			for (i = 0; i< lngColumns; i++)
+				columnNames.push ( grid.columns[i].headerText );
 			
-			columnNames.sort();
-			properties.sort();
 			textStyle( new RGBColor ( 0 ), 1 );
 			beginFill ( grid.headerColor );
 			setXY ( x + getX(), y+getY() );
 			addRow( columnNames );
 			endFill();
 			
-			var lngProp:int = properties.length;
 			var item:*;
 			
 			for (i = 0; i< lng; i++)
 			{
 				item = buffer[i];
 				rows = new Array();
-				for (j = 0; j< lngProp; j++)
-					rows.push (item[properties[j]]);
+				for (j = 0; j< lngColumns; j++)
+					rows.push (item[grid.columns[j].dataField] != null ? item[grid.columns[j].dataField] : "");
 				textStyle( color, 1 );
 				checkPageBreak(5);
 				setX ( x + getX() );
