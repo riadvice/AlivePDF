@@ -2960,7 +2960,7 @@ package org.alivepdf.pdf
 				var column:GridColumn;
 				for ( var p:String in firstItem )
 				{
-					casedProperties.push ( p.charAt(0)+p.substr(1) );
+					casedProperties.push ( p );
 					fields.push ( p );	
 				}
 				casedProperties.sort();
