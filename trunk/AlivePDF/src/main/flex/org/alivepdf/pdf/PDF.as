@@ -58,6 +58,7 @@ package org.alivepdf.pdf
     import org.alivepdf.colors.GrayColor;
     import org.alivepdf.colors.RGBColor;
     import org.alivepdf.data.Grid;
+    import org.alivepdf.data.GridColumn;
     import org.alivepdf.display.Display;
     import org.alivepdf.display.PageMode;
     import org.alivepdf.drawing.Caps;
@@ -2946,14 +2947,32 @@ package org.alivepdf.pdf
 		
 		public function addGrid ( grid:Grid, x:Number=0, y:Number=0 ):void
 		{	
-			aligns = grid.aligns;
 			columns = grid.columns;
-			var rows:Array;
+			var buffer:Array = grid.dataProvider;
 			var i:int = 0;
 			var j:int = 0;
+			
+			if ( columns == null )
+			{
+				var firstItem:* = buffer[0];
+				var casedProperties:Array = new Array();
+				var fields:Array = new Array();
+				var column:GridColumn;
+				for ( var p:String in firstItem )
+				{
+					casedProperties.push ( p.charAt(0)+p.substr(1) );
+					fields.push ( p );	
+				}
+				casedProperties.sort();
+				fields.sort();
+				columns = new Array();
+				for (i = 0; i< fields.length; i++)
+					columns.push ( new GridColumn ( casedProperties[i], fields[i], 30 ) );
+			}
+			
+			var rows:Array;
 			var columnNames:Array = new Array();
 			var properties:Array = new Array();
-			var buffer:Array = grid.dataProvider;
 			var lng:int = buffer.length;
 			var lngColumns:int = columns.length;
 			var color:RGBColor = new RGBColor ( 0 );

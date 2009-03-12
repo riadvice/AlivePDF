@@ -8,7 +8,6 @@ package org.alivepdf.data
 	{
 		private var _data:Array;
 		private var _width:int;
-		private var _aligns:Array;
 		private var _height:int;
 		private var _columns:Array;
 		private var _borderColor:Color;
@@ -18,13 +17,11 @@ package org.alivepdf.data
 		private var _cellColor:Color;
 		private var _alternateRowColor:Boolean;
 		
-		public function Grid( data:Array, width:int, height:int, gridColumns:Array, aligns:Array, headerColor:Color, backgroundColor:Color, cellColor:Color, alternateRowColor:Boolean, borderColor:Color, joints:String="0 j")
+		public function Grid( data:Array, width:int, height:int, headerColor:Color, backgroundColor:Color, cellColor:Color, alternateRowColor:Boolean, borderColor:Color, joints:String="0 j")
 		{
 			_data = data;
 			_width = width;
 			_height = height;
-			_columns = gridColumns;
-			_aligns = aligns;
 			_borderColor = borderColor;
 			_joints = joints;
 			_backgroundColor = backgroundColor;
@@ -43,9 +40,9 @@ package org.alivepdf.data
 			return _columns;
 		}
 		
-		public function get aligns ():Array
+		public function set columns ( columns:Array ):void
 		{
-			return _aligns;
+			_columns = columns;
 		}
 		
 		public function get width ():int
