@@ -314,7 +314,7 @@ package org.alivepdf.pdf
         protected var zoomRectangle:Rectangle;
         
         protected var aligns:Array;
-        protected var widths:Array;
+        protected var columns:Array;
 
         /**
         * The PDF class represents a PDF document.
@@ -2946,8 +2946,8 @@ package org.alivepdf.pdf
 		
 		public function addGrid ( grid:Grid, x:Number=0, y:Number=0 ):void
 		{	
-			widths = grid.cellsWidth;
 			aligns = grid.aligns;
+			columns = grid.columns;
 			var rows:Array;
 			var i:int = 0;
 			var j:int = 0;
@@ -2955,11 +2955,11 @@ package org.alivepdf.pdf
 			var properties:Array = new Array();
 			var buffer:Array = grid.dataProvider;
 			var lng:int = buffer.length;
-			var lngColumns:int = grid.columns.length;
+			var lngColumns:int = columns.length;
 			var color:RGBColor = new RGBColor ( 0 );
 			
 			for (i = 0; i< lngColumns; i++)
-				columnNames.push ( grid.columns[i].headerText );
+				columnNames.push ( columns[i].headerText );
 			
 			textStyle( new RGBColor ( 0 ), 1 );
 			beginFill ( grid.headerColor );
@@ -2974,7 +2974,7 @@ package org.alivepdf.pdf
 				item = buffer[i];
 				rows = new Array();
 				for (j = 0; j< lngColumns; j++)
-					rows.push (item[grid.columns[j].dataField] != null ? item[grid.columns[j].dataField] : "");
+					rows.push (item[columns[j].dataField] != null ? item[columns[j].dataField] : "");
 				textStyle( color, 1 );
 				checkPageBreak(5);
 				setX ( x + getX() );
@@ -2992,7 +2992,7 @@ package org.alivepdf.pdf
 		    var nb:int = 0;
 		    var lng:int = data.length;
 		    
-		    for(var i:int=0;i<lng;i++) nb = Math.max(nb,nbLines(widths[i],data[i]));
+		    for(var i:int=0;i<lng;i++) nb = Math.max(nb,nbLines(columns[i].width,data[i]));
 		    
 		    var h:Number = 5*nb;
 		    var x:Number;
@@ -3004,10 +3004,10 @@ package org.alivepdf.pdf
 
 		    for(i=0;i<lng;i++)
 		    {
-		        a = (aligns == null) ? Align.LEFT : aligns[i] != null ? aligns[i] : Align.LEFT;
+		        a = (aligns == null) ? Align.LEFT : aligns[i] != null ? columns[i].align : Align.LEFT;
 		        rect.x = x = getX();
 		        rect.y = y = getY();
-		        rect.width = w = widths[i];
+		        rect.width = w = columns[i].width;
 		        drawRect( rect );
 		        addMultiCell(w,5,data[i],0,a);
 		        setXY(x+w,y);
