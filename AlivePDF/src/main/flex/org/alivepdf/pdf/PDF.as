@@ -2966,7 +2966,8 @@ package org.alivepdf.pdf
 				casedProperties.sort();
 				fields.sort();
 				columns = new Array();
-				for (i = 0; i< fields.length; i++)
+				var fieldsLng:int = fields.length;
+				for (i = 0; i< fieldsLng; i++)
 					columns.push ( new GridColumn ( casedProperties[i], fields[i], 30 ) );
 			}
 			
