@@ -5,14 +5,16 @@ package org.alivepdf.data
 		public var _headerText:String;
 		public var _dataField:String;
 		public var _width:int;
-		public var _align:String;
+		public var _cellAlign:String;
+		public var _headerAlign:String;
 		
-		public function GridColumn( headerText:String, dataField:String, width:int, align:String="L" )
+		public function GridColumn( headerText:String, dataField:String, width:int, headerAlign:String="L", cellAlign:String="L" )
 		{
 			_headerText = headerText;
 			_dataField = dataField;
 			_width = width;
-			_align = align;
+			_headerAlign = headerAlign;
+			_cellAlign = cellAlign;
 		}
 		
 		public function get headerText():String
@@ -30,9 +32,14 @@ package org.alivepdf.data
 			return _width;
 		}
 		
-		public function get align():String
+		public function get cellAlign():String
 		{
-			return _align;
+			return _cellAlign;
+		}
+		
+		public function get headerAlign():String
+		{
+			return _headerAlign;
 		}
 	}
 }

@@ -313,8 +313,6 @@ package org.alivepdf.pdf
         protected var references:String;
         protected var zoomFactor:Number;
         protected var zoomRectangle:Rectangle;
-        
-        protected var aligns:Array;
         protected var columns:Array;
 
         /**
@@ -2979,7 +2977,7 @@ package org.alivepdf.pdf
 			textStyle( new RGBColor ( 0 ), 1 );
 			beginFill ( grid.headerColor );
 			setXY ( x + getX(), y+getY() );
-			addRow( columnNames );
+			addRow( columnNames, 0 );
 			endFill();
 			
 			var item:*;
@@ -2996,13 +2994,13 @@ package org.alivepdf.pdf
 				if ( grid.alternateRowColor && (i&1) )
 				{
 					beginFill( grid.backgroundColor );
-					addRow( rows );
+					addRow( rows, 1 );
 					endFill();
-				}else addRow( rows );
+				}else addRow( rows, 1 );
 			}
 		}
 		
-		public function addRow(data:Array):void
+		public function addRow(data:Array, style:int):void
 		{
 		    var nb:int = 0;
 		    var lng:int = data.length;
@@ -3019,7 +3017,7 @@ package org.alivepdf.pdf
 
 		    for(i=0;i<lng;i++)
 		    {
-		        a = (aligns == null) ? Align.LEFT : aligns[i] != null ? columns[i].align : Align.LEFT;
+		        a = style ? columns[i].cellAlign : columns[i].headerAlign;
 		        rect.x = x = getX();
 		        rect.y = y = getY();
 		        rect.width = w = columns[i].width;
