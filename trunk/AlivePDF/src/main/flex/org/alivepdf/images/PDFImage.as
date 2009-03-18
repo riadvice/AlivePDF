@@ -1,11 +1,9 @@
 package org.alivepdf.images
 {
-	
 	import flash.utils.ByteArray;
 	
 	public class PDFImage implements IImage
-	{
-	
+	{	
 		protected var stream:ByteArray;
 		public var width:int;
 		public var height:int;

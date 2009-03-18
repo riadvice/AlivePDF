@@ -5,6 +5,7 @@ package org.alivepdf.fonts
 		public static const BOLD:String = "B";
 		public static const ITALIC:String = "I";
 		public static const BOLD_ITALIC:String = "BI";
+		public static const UNDERLINE:String = "U";
 		public static const NORMAL:String = "";	
 	}
 }

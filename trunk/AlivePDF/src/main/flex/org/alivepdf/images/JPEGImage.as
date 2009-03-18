@@ -1,12 +1,10 @@
 package org.alivepdf.images
 {
-	
 	import flash.utils.ByteArray;
 	
 	// dirty class to be cleaned
 	public final class JPEGImage extends PDFImage
 	{
-		
 		private var format:int;
 		private var physicalWidthDpi:int;
 		private var physicalHeightDpi:int;
