@@ -27,6 +27,7 @@
 <classEntry path="org.alivepdf.events.ProcessingEvent"/>
 <classEntry path="org.alivepdf.fonts.CoreFonts"/>
 <classEntry path="org.alivepdf.fonts.FontFamily"/>
+<classEntry path="org.alivepdf.fonts.FontType"/>
 <classEntry path="org.alivepdf.fonts.Style"/>
 <classEntry path="org.alivepdf.html.HTMLTag"/>
 <classEntry path="org.alivepdf.images.GIFImage"/>

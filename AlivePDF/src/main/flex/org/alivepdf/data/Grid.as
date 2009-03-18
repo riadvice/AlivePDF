@@ -7,8 +7,10 @@ package org.alivepdf.data
 	public class Grid
 	{
 		private var _data:Array;
-		private var _width:int;
-		private var _height:int;
+		private var _width:Number;
+		private var _height:Number;
+		private var _x:int;
+		private var _y:int;
 		private var _columns:Array;
 		private var _borderColor:Color;
 		private var _joints:String;
@@ -17,7 +19,7 @@ package org.alivepdf.data
 		private var _cellColor:Color;
 		private var _alternateRowColor:Boolean;
 		
-		public function Grid( data:Array, width:int, height:int, headerColor:Color, backgroundColor:Color, cellColor:Color, alternateRowColor:Boolean, borderColor:Color, joints:String="0 j")
+		public function Grid( data:Array, width:Number, height:Number, headerColor:Color, backgroundColor:Color, cellColor:Color, alternateRowColor:Boolean, borderColor:Color, joints:String="0 j")
 		{
 			_data = data;
 			_width = width;
@@ -45,14 +47,34 @@ package org.alivepdf.data
 			_columns = columns;
 		}
 		
-		public function get width ():int
+		public function get width ():Number
 		{
 			return _width;	
 		}
 		
-		public function get height ():int
+		public function get height ():Number
 		{
 			return _height;	
+		}
+		
+		public function get x ():int
+		{
+			return _x;	
+		}
+		
+		public function get y ():int
+		{
+			return _y;	
+		}
+		
+		public function set x ( x:int ):void
+		{
+			_x = x;	
+		}
+		
+		public function set y ( y:int ):void
+		{
+			_y = y;
 		}
 		
 		public function get borderColor ():Color
@@ -89,5 +111,10 @@ package org.alivepdf.data
 		{
 			return _data;	
 		}
+		
+		public function toString ():String 
+        {
+            return "[Grid cells="+_data.length+" alternateRowColor="+_alternateRowColor+" x="+x+" y="+y+"]";    
+        } 
 	}
 }

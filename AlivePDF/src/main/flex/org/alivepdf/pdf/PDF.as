@@ -36,7 +36,6 @@ THE SOFTWARE.
 
 package org.alivepdf.pdf
 {
-
     import flash.display.BitmapData;
     import flash.display.DisplayObject;
     import flash.events.Event;
@@ -70,6 +69,9 @@ package org.alivepdf.pdf
     import org.alivepdf.events.PageEvent;
     import org.alivepdf.events.ProcessingEvent;
     import org.alivepdf.fonts.CoreFonts;
+    import org.alivepdf.fonts.FontFamily;
+    import org.alivepdf.fonts.FontType;
+    import org.alivepdf.fonts.Style;
     import org.alivepdf.html.HTMLTag;
     import org.alivepdf.images.GIFImage;
     import org.alivepdf.images.ImageFormat;
@@ -314,6 +316,8 @@ package org.alivepdf.pdf
         protected var zoomFactor:Number;
         protected var zoomRectangle:Rectangle;
         protected var columns:Array;
+        protected var currentGrid:Grid;
+        protected var isEven:int;
 
         /**
         * The PDF class represents a PDF document.
@@ -405,7 +409,7 @@ package org.alivepdf.pdf
             setDisplayMode( Display.FULL_WIDTH );
             
             // enable zlib compression
-            isCompressed = false;
+            isCompressed = true;
 
             //Set default PDF version number
             pdfVersion = PDF.PDF_VERSION;
@@ -1352,7 +1356,6 @@ package org.alivepdf.pdf
             // RGB ColorSpace
             if ( color is RGBColor )
             {
-
                 op = "RG";
 
                 var r:Number = (color as RGBColor).r/255;
@@ -1364,7 +1367,6 @@ package org.alivepdf.pdf
             // CMYK ColorSpace
             } else if ( color is CMYKColor )
             {
-
                 op = "K";
 
                 var c:Number = (color as CMYKColor).cyan / 100;
@@ -1881,68 +1883,6 @@ package org.alivepdf.pdf
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         /**
-        * Lets you add a new font to the current PDF (automatically embedded)
-        *
-        * @param family Page Format, can be Size.A3, Size.A4, Size.A5, Size.LETTER or Size.LEGAL
-        * @example
-        * This example shows how to add a new font :
-        * <div class="listing">
-        * <pre>
-        *
-        * myPDF.addFont ( 1 );
-        * </pre>
-        * </div>
-        */
-        protected function addFont ( family:String, style:String='', pFile:String='' ):void
-        {
-
-            family = family.toLowerCase();
-            
-            if( pFile=='' ) pFile = findAndReplace(' ','',family) + style.toLowerCase()+'.php';
-            
-            if( family=='arial' ) family = 'helvetica';
-            
-            style = style.toUpperCase();
-            
-            if ( style=='IB' ) style='BI';
-            var fontkey:String = family + style;
-            
-            if( fonts[fontkey] != null ) throw new Error ('Font already added: ' + family + ' ' + style);
-            if( name == null ) throw new Error ('Could not include font definition file');
-            
-            var i:int = getNumImages ( fonts.length )+1;
-            
-            fonts[fontkey] = { i : i, type : type, name : name, desc : desc, up : up, ut : ut, cw : cw, enc : enc, file : pFile };
-            
-            if (diff)
-            {
-                //Search existing encodings
-                d = 0;
-                nb = diffs.length;
-                for ( var j:int = 1; j <= nb ;j++ )
-                {
-                    if(diffs[j]==diff)
-                    {
-                        d=j;
-                        break;
-                    }
-                }
-                if( d==0 )
-                {
-                    d = nb+1;
-                    diffs[d]=diff;
-                }
-                fonts[fontkey].diff = d;
-            }
-            
-            if (pFile)
-            {
-                if ( type == 'TrueType' ) fontFiles[pFile] = { length1 : originalsize };
-                else fontFiles[pFile] = { length1 : size1, length2 : size2 };
-            }
-        }
-
-        /**
         * Lets you set a specific font
         *
         * @param amily Font family, can be any of FontFamily.COURIER, FontFamily.HELVETICA, FontFamily.ARIAL, FontFamily.TIMES, FontFamily.SYMBOL, FontFamily.ZAPFDINGBATS.
@@ -1958,22 +1898,20 @@ package org.alivepdf.pdf
         */
         public function setFont ( family:String , style:String='', size:int=0 ):void
         {    
-            family = family.toLowerCase();
-            
             if ( family == '' ) family = fontFamily;
-            if ( family == 'arial' ) family = 'helvetica';
-            else if ( family == 'symbol' || family == 'zapfdingbats' ) style='';
+            if ( family == FontFamily.ARIAL ) family = 'helvetica';
+            else if ( family == FontFamily.SYMBOL || family == FontFamily.ZAPFDINGBATS ) style='';
             style = style.toUpperCase();
+            
+            family = family.toLowerCase();
 
-            if( style.indexOf ('U')!= -1 )
+            if( style.indexOf (Style.UNDERLINE)!= -1 )
             {
-
                 underline = true;
-                style = findAndReplace( 'U','', style );
+                style = findAndReplace(Style.UNDERLINE,'', style);
 
             } else underline = false;
 
-            if( style == 'IB' ) style =' BI';
             if( size == 0 ) size = fontSizePt;
             if( fontFamily == family && fontStyle == style && fontSizePt == size ) return;
             
@@ -1986,12 +1924,11 @@ package org.alivepdf.pdf
                     if((FontMetrics[fontkey] == null ))
                     {
                         file = family;
-                        if( family == 'times' || family == 'helvetica' ) file += style.toLowerCase();
+                        if( family == FontFamily.TIMES || family == FontFamily.HELVETICA ) file += style.toLowerCase();
                         if( FontMetrics[fontkey] == null ) throw new Error('Could not include font metric file');
-
                     }
                     var i:int = getNumImages(fonts)+1;
-                    fonts[fontkey]= { i : i, type : 'core', name : standardFonts[fontkey], up : -100, ut : 50, cw : FontMetrics[fontkey] };
+                    fonts[fontkey]= { i : i, type : FontType.CORE, name : standardFonts[fontkey], up : -100, ut : 50, cw : FontMetrics[fontkey] };
 
                 } else throw new Error ('Undefined font: '+family+' '+style);
             }
@@ -2123,28 +2060,28 @@ package org.alivepdf.pdf
         public function addCell ( width:Number=0, height:Number=0, text:String='', border:*=0, ln:Number=0, align:String='', fill:Number=0, link:String='' ):void
         {
             //Output a cell
-            var k:Number = this.k;
+            var k:Number = k;
 
-            if( this.currentY + height > this.pageBreakTrigger && !this.inHeader && !this.inFooter && this.acceptPageBreak() )
+            if( currentY + height > pageBreakTrigger && !inHeader && !inFooter && acceptPageBreak() )
             {
                 //Automatic page break
-                var x:Number = this.currentX;
-                ws=this.ws;
+                var x:Number = currentX;
+                ws=ws;
                 if(ws>0)
                 {
-                    this.ws=0;
-                    this.write('0 Tw');
+                    ws=0;
+                    write('0 Tw');
                 }
-                this.addPage( new Page ( this.currentOrientation, this.defaultUnit, this.defaultSize ,currentPage.rotation ) );
-                this.currentX = x;
+                addPage( new Page ( currentOrientation, defaultUnit, defaultSize ,currentPage.rotation ) );
+                currentX = x;
                 if(ws>0)
                 {
-                    this.ws=ws;
-                    this.write(sprintf('%.3f Tw',ws*k));
+                    ws=ws;
+                    write(sprintf('%.3f Tw',ws*k));
                 }
             }
 
-            if ( currentPage.w==0 ) currentPage.w = currentPage.w-this.rMargin-this.currentX;
+            if ( currentPage.w==0 ) currentPage.w = currentPage.w-rMargin-currentX;
             
             var s:String = new String();
             var op:String;
@@ -2154,47 +2091,47 @@ package org.alivepdf.pdf
                 if ( fill == 1 ) op = ( border == 1 ) ? 'B' : 'f';
                 else op = 'S';
                 
-                s = sprintf('%.2f %.2f %.2f %.2f re %s ',this.currentX*k,(currentPage.h-this.currentY)*k,width*k,-height*k,op);
+                s = sprintf('%.2f %.2f %.2f %.2f re %s ',currentX*k,(currentPage.h-currentY)*k,width*k,-height*k,op);
             }
 
             if ( border is String )
             {
-                currentX = this.currentX;
-                currentY = this.currentY;
+                currentX = currentX;
+                currentY = currentY;
 
                 var tmpBorder:String = String ( border );
 
                 if( tmpBorder.indexOf('L') != -1 ) s+=sprintf('%.2f %.2f m %.2f %.2f l S ',currentX*k,(currentPage.h-currentY)*k,currentX*k,(currentPage.h-(currentY+height))*k);
-                if( tmpBorder.indexOf ('T') != -1) s+=sprintf('%.2f %.2f m %.2f %.2f l S ',currentX*k,(currentPage.h-currentY)*k,(currentX+width)*k,(currentPage.h-currentY)*k);
-                if( tmpBorder.indexOf ('R') != -1) s+=sprintf('%.2f %.2f m %.2f %.2f l S ',(currentX+width)*k,(currentPage.h-currentY)*k,(currentX+width)*k,(currentPage.h-(currentY+height))*k);
-                if( tmpBorder.indexOf ('B') != -1 ) s+=sprintf('%.2f %.2f m %.2f %.2f l S ',currentX*k,(currentPage.h-(currentY+height))*k,(currentX+width)*k,(currentPage.h-(currentY+height))*k);
+                if( tmpBorder.indexOf('T') != -1) s+=sprintf('%.2f %.2f m %.2f %.2f l S ',currentX*k,(currentPage.h-currentY)*k,(currentX+width)*k,(currentPage.h-currentY)*k);
+                if( tmpBorder.indexOf('R') != -1) s+=sprintf('%.2f %.2f m %.2f %.2f l S ',(currentX+width)*k,(currentPage.h-currentY)*k,(currentX+width)*k,(currentPage.h-(currentY+height))*k);
+                if( tmpBorder.indexOf('B') != -1 ) s+=sprintf('%.2f %.2f m %.2f %.2f l S ',currentX*k,(currentPage.h-(currentY+height))*k,(currentX+width)*k,(currentPage.h-(currentY+height))*k);
             }
 
             if ( text !== '' )
             {
                 var dx:Number;
-                if ( align=='R' ) dx = width-this.cMargin-this.getStringWidth(text);
-                else if( align=='C' ) dx = (width-this.getStringWidth(text))/2;
-                else dx = this.cMargin;
-                if(this.colorFlag) s+='q '+this.addTextColor+' ';
+                if ( align==Align.RIGHT ) dx = width-cMargin-getStringWidth(text);
+                else if( align==Align.CENTER ) dx = (width-getStringWidth(text))/2;
+                else dx = cMargin;
+                if(colorFlag) s+='q '+addTextColor+' ';
                 var txt2:String = findAndReplace(')','\\)',findAndReplace('(','\\(',findAndReplace('\\','\\\\',text)));
-                s+=sprintf('BT %.2f %.2f Td (%s) Tj ET',(this.currentX+dx)*k,(currentPage.h-(this.currentY+.5*height+.3*this.fontSize))*k,txt2);
-                if(this.underline) s+=' '+doUnderline(this.currentX+dx,this.currentY+.5*height+.3*this.fontSize,text);
-                if(this.colorFlag) s+=' Q';
-                if( link ) this.addLink (this.currentX+dx,this.currentY+.5*height-.5*this.fontSize,this.getStringWidth(text),this.fontSize, link);
+                s+=sprintf('BT %.2f %.2f Td (%s) Tj ET',(currentX+dx)*k,(currentPage.h-(currentY+.5*height+.3*fontSize))*k,txt2);
+                if(underline) s+=' '+doUnderline(currentX+dx,currentY+.5*height+.3*fontSize,text);
+                if(colorFlag) s+=' Q';
+                if( link ) addLink (currentX+dx,currentY+.5*height-.5*fontSize,getStringWidth(text),fontSize, link);
             }
 
-            if ( s ) this.write(s);
+            if ( s ) write(s);
 
-            this.lasth = currentPage.h;
+            lasth = currentPage.h;
 
             if( ln >0 )
             {
                 //Go to next line
-                this.currentY += height;
-                if( ln ==1) this.currentX = this.lMargin;
+                currentY += height;
+                if( ln ==1) currentX = lMargin;
 
-            } else this.currentX += width;
+            } else currentX += width;
         }
 
         /**
@@ -2223,9 +2160,9 @@ package org.alivepdf.pdf
         {
             cw = currentFont.cw;
 
-            if ( width==0 ) width = currentPage.w-this.rMargin - this.currentX;
+            if ( width==0 ) width = currentPage.w-rMargin - currentX;
 
-            var wmax:Number = (width-2*this.cMargin)*1000/this.fontSize;
+            var wmax:Number = (width-2*cMargin)*1000/fontSize;
             var s:String = findAndReplace ("\r",'',text);
             var nb:int = s.length;
 
@@ -2262,18 +2199,16 @@ package org.alivepdf.pdf
 
             while (i<nb)
             {
-                
                  c = s.charAt(i);
                  
                 if (c=="\n")
                 {
-                    if (this.ws>0)
+                    if (ws>0)
                     {
-                        this.ws=0;
-                        this.write('0 Tw');
+                        ws=0;
+                        write('0 Tw');
                     }
-                    
-                    this.addCell(width,height,s.substr(j,i-j),b,2,align,filled);
+                    addCell(width,height,s.substr(j,i-j),b,2,align,filled);
                     i++;
                     sep=-1;
                     j=i;
@@ -2283,7 +2218,6 @@ package org.alivepdf.pdf
                     
                     if(border && nl==2) b=b2;
                     continue;
-                    
                 }
                 
                 if(c==' ')
@@ -2303,46 +2237,44 @@ package org.alivepdf.pdf
                     if(sep==-1)
                     {
                         if(i==j) i++;
-                        if(this.ws>0)
+                        if(ws>0)
                         {
-                            this.ws=0;
-                            this.write('0 Tw');
+                            ws=0;
+                            write('0 Tw');
                         }
-                        this.addCell(width,height,s.substr(j,i-j),b,2,align,filled);
+                        addCell(width,height,s.substr(j,i-j),b,2,align,filled);
                     }
                     else
                     {
-                        if(align=='J')
+                        if(align==Align.JUSTIFIED)
                         {
-                            this.ws=(ns>1) ? (wmax-ls)/1000*this.fontSize/(ns-1) : 0;
-                            this.write(sprintf('%.3f Tw',this.ws*this.k));
+                            ws=(ns>1) ? (wmax-ls)/1000*fontSize/(ns-1) : 0;
+                            write(sprintf('%.3f Tw',ws*k));
                         }
                         
-                        this.addCell(width,height,s.substr(j,sep-j),b,2,align,filled);
+                        addCell(width,height,s.substr(j,sep-j),b,2,align,filled);
                         i=sep+1;
                         
                     }
-                    
                     sep=-1;
                     j=i;
                     l=0;
                     ns=0;
                     nl++;
                     if ( border && nl == 2 ) b = b2;
-                    
-                }
+                    }
                 else i++;
             }
             //Last chunk
-            if(this.ws>0)
+            if(ws>0)
             {
-                this.ws=0;
-                this.write('0 Tw');
+                ws=0;
+                write('0 Tw');
             }
 
             if ( border && border.indexOf ('B')!= -1 ) b += 'B';
-            this.addCell ( width,height,s.substr(j,i-j),b,2,align,filled );
-            this.currentX = this.lMargin;
+            addCell ( width,height,s.substr(j,i-j),b,2,align,filled );
+            currentX = lMargin;
         }
 
         /**
@@ -2370,9 +2302,9 @@ package org.alivepdf.pdf
         public function writeText ( lineHeight:Number, text:String, link:String='' ):void
         {
             //Output text in flowing mode
-            var cw:Object = this.currentFont.cw;
-            var w:Number = currentPage.w-this.rMargin-this.currentX;
-            var wmax:Number = (w-2*this.cMargin)*1000/this.fontSize;
+            var cw:Object = currentFont.cw;
+            var w:Number = currentPage.w-rMargin-currentX;
+            var wmax:Number = (w-2*cMargin)*1000/fontSize;
             var s:String = findAndReplace ("\r",'', text);
             //var s:String = ",,,"
             var nb:int = s.length;
@@ -2391,16 +2323,16 @@ package org.alivepdf.pdf
                 if( c == "\n" )
                 {
                     //Explicit line break
-                    this.addCell (w,lineHeight,s.substr(j,i-j),0,2,'',0,link);
+                    addCell (w,lineHeight,s.substr(j,i-j),0,2,'',0,link);
                     i++;
                     sep=-1;
                     j=i;
                     l=0;
                     if(nl==1)
                     {
-                        this.currentX = this.lMargin;
-                        w = currentPage.w-this.rMargin-this.currentX;
-                        wmax= (w-2*this.cMargin)*1000/this.fontSize;
+                        currentX = lMargin;
+                        w = currentPage.w-rMargin-currentX;
+                        wmax= (w-2*cMargin)*1000/fontSize;
                     }
                     nl++;
                     continue;
@@ -2413,23 +2345,23 @@ package org.alivepdf.pdf
                     //Automatic line break
                     if(sep==-1)
                     {
-                        if(this.currentX>this.lMargin)
+                        if(currentX>lMargin)
                         {
                             //Move to next line
-                            this.currentX = this.lMargin;
-                            this.currentY += currentPage.h;
-                            w = currentPage.w-this.rMargin-this.currentX;
-                            wmax = (w-2*this.cMargin)*1000/this.fontSize;
+                            currentX = lMargin;
+                            currentY += currentPage.h;
+                            w = currentPage.w-rMargin-currentX;
+                            wmax = (w-2*cMargin)*1000/fontSize;
                             i++;
                             nl++;
                             continue;
                         }
                         if(i==j) i++;
-                        this.addCell (w,lineHeight,s.substr(j,i-j),0,2,'',0,link);
+                        addCell (w,lineHeight,s.substr(j,i-j),0,2,'',0,link);
                     }
                     else
                     {
-                        this.addCell (w,lineHeight,s.substr(j,sep-j),0,2,'',0,link);
+                        addCell (w,lineHeight,s.substr(j,sep-j),0,2,'',0,link);
                         i=sep+1;
                     }
                     sep=-1;
@@ -2437,9 +2369,9 @@ package org.alivepdf.pdf
                     l=0;
                     if(nl==1)
                     {
-                        this.currentX=this.lMargin;
-                        w=currentPage.w-this.rMargin-this.currentX;
-                        wmax=(w-2*this.cMargin)*1000/this.fontSize;
+                        currentX=lMargin;
+                        w=currentPage.w-rMargin-currentX;
+                        wmax=(w-2*cMargin)*1000/fontSize;
                     }
                     nl++;
                 }
@@ -2447,7 +2379,7 @@ package org.alivepdf.pdf
             }
             //Last chunk
             if (i!=j) 
-                this.addCell (l/1000*this.fontSize,lineHeight,s.substr(j),0,0,'',0,link);
+                addCell (l/1000*fontSize,lineHeight,s.substr(j),0,0,'',0,link);
         }
         
         /**
@@ -2477,9 +2409,9 @@ package org.alivepdf.pdf
         {
             //Output text in flowing mode
             
-            var cw    : Object     = this.currentFont.cw;
-            var w     : Number     = currentPage.w-this.rMargin-this.currentX;
-            var wmax  : Number     = (w-2*this.cMargin)*1000/this.fontSize;
+            var cw    : Object     = currentFont.cw;
+            var w     : Number     = currentPage.w-rMargin-currentX;
+            var wmax  : Number     = (w-2*cMargin)*1000/fontSize;
             var s     : String     = findAndReplace ("\r",'',pText);
 
             // Strip all \n's as we don't use them - use <br /> tag for returns
@@ -2549,11 +2481,11 @@ package org.alivepdf.pdf
 						renderLine(currentLine,textAlign);
 						
 						currentLine     = new Array();
-						this.currentX   = this.lMargin;
+						currentX   = lMargin;
 						textAlign       = '';
                         ns              = 0;
 						
-                        this.lineBreak ( pHeight );
+                        lineBreak ( pHeight );
                         break;
                     case "<FONT>":
                         for each ( attr in aTaggedString[k].attr ) {
@@ -2611,7 +2543,7 @@ package org.alivepdf.pdf
                     case "<BR>":
                         // Both cases will set line break to true.  It is typically entered as <br /> 
                         // but the parser converts this to a start and end tag
-                        this.lineBreak ( pHeight );
+                        lineBreak ( pHeight );
                     case "</BR>":
                     default:
                         //Process text                    
@@ -2619,7 +2551,7 @@ package org.alivepdf.pdf
                         //Create a blank CellVO for this part
                         cellVO            = new CellVO();
                         cellVO.fontStyle  = getFontStyleString(fontBold,fontItalic,fontUnderline);
-                        cellVO.fontFamily = this.fontFamily;
+                        cellVO.fontFamily = fontFamily;
 
                         cellVO.fontSizePt     = fs;
                         cellVO.color          = fc;
@@ -2632,13 +2564,13 @@ package org.alivepdf.pdf
                         setFont ( cellVO.fontFamily, cellVO.fontStyle, cellVO.fontSizePt );
                                     
                         //Font character width lookup table
-                        cw      = this.currentFont.cw; 
+                        cw      = currentFont.cw; 
                         
                         //Current remaining space per line
-                        w       = currentPage.w-this.rMargin-this.currentX;
+                        w       = currentPage.w-rMargin-currentX;
                         
                         //Size of a full line of text
-                        wmax    = (w-2*this.cMargin)*1000/this.fontSize;  
+                        wmax    = (w-2*cMargin)*1000/fontSize;  
                         
                         //get text from string
                         s   = aTaggedString[k].value; 
@@ -2680,14 +2612,14 @@ package org.alivepdf.pdf
                                 {
                                      // No seperator to force at character
                                      
-                                    if(this.currentX>this.lMargin)
+                                    if(currentX>lMargin)
                                     {
                                         //Move to next line
-                                        this.currentX  = this.lMargin;
-                                        this.currentY += pHeight;
+                                        currentX  = lMargin;
+                                        currentY += pHeight;
 
-                                        w    = currentPage.w-this.rMargin-this.currentX;
-                                        wmax = (w-2*this.cMargin)*1000/this.fontSize;
+                                        w    = currentPage.w-rMargin-currentX;
+                                        wmax = (w-2*cMargin)*1000/fontSize;
 
                                         i++;
                                         continue;
@@ -2699,9 +2631,9 @@ package org.alivepdf.pdf
                                     l = 0;
                                     
                                     //Add the cell to the current line
-                                    cellVO.x     = this.currentX;
-                                    cellVO.y     = this.currentY;
-                                    cellVO.width = l/1000*this.fontSize;
+                                    cellVO.x     = currentX;
+                                    cellVO.y     = currentY;
+                                    cellVO.width = l/1000*fontSize;
                                     cellVO.height= pHeight;
                                     cellVO.text  = s.substr(j,i-j);
                                     
@@ -2712,7 +2644,7 @@ package org.alivepdf.pdf
                                     currentLine = new Array();
                         
                                     //Update x and y positions            
-                                    this.currentX = this.lMargin;
+                                    currentX = lMargin;
                                     
                                 } else
                                 {
@@ -2720,18 +2652,18 @@ package org.alivepdf.pdf
                                     //Split at last seperator
                                     
                                     //Add the cell to the current line
-                                    cellVO.x      = this.currentX;
-                                    cellVO.y      = this.currentY;
-                                    cellVO.width  = lenAtSep/1000*this.fontSize;
+                                    cellVO.x      = currentX;
+                                    cellVO.y      = currentY;
+                                    cellVO.width  = lenAtSep/1000*fontSize;
                                     cellVO.height = pHeight;
                                     cellVO.text   = s.substr ( j, sep-j );
 
                                     currentLine.push ( cellVO );
                                     
-                                    if ( textAlign == 'J' )
+                                    if ( textAlign == Align.JUSTIFIED )
                                     {
-                                        this.ws=(ns>1) ? (wmax-lenAtSep)/1000*this.fontSize/(ns-1) : 0;
-                                        this.write(sprintf('%.3f Tw',this.ws*this.k));
+                                        ws=(ns>1) ? (wmax-lenAtSep)/1000*fontSize/(ns-1) : 0;
+                                        write(sprintf('%.3f Tw',ws*k));
                                     }
 
                                     //Just done a line break so render the line
@@ -2739,9 +2671,9 @@ package org.alivepdf.pdf
                                     currentLine = new Array();
                                     
                                     //Update x and y positions            
-                                    this.currentX = this.lMargin;
+                                    currentX = lMargin;
                                 
-                                    w = currentPage.w - 2 * this.cMargin;
+                                    w = currentPage.w - 2 * cMargin;
                                     i = sep + 1;
                                 }
                                 
@@ -2750,10 +2682,10 @@ package org.alivepdf.pdf
                                 l  = 0;
                                 ns = 0;
                                 
-                                this.currentX = this.lMargin;
+                                currentX = lMargin;
                                 
-                                w   = currentPage.w - this.rMargin - this.currentX;
-                                wmax= ( w-2 * this.cMargin ) * 1000 / this.fontSize;
+                                w   = currentPage.w - rMargin - currentX;
+                                wmax= ( w-2 * cMargin ) * 1000 / fontSize;
                                 
                             } else i++;
                         }
@@ -2764,23 +2696,23 @@ package org.alivepdf.pdf
                              //If any remaining chars then print them out                            
                             //Add the cell to the current line
                             
-                            cellVO.x     = this.currentX;
-                            cellVO.y     = this.currentY;
-                            cellVO.width = l/1000*this.fontSize;
+                            cellVO.x     = currentX;
+                            cellVO.y     = currentY;
+                            cellVO.width = l/1000*fontSize;
                             cellVO.height= pHeight;
                             cellVO.text  = s.substr(j);
                             
                             //Last chunk
-                            if ( this.ws>0 )
+                            if ( ws>0 )
                             {
-                                this.ws=0;
-                                this.write('0 Tw');
+                                ws=0;
+                                write('0 Tw');
                             }                
                             
                             currentLine.push ( cellVO );
 
                             //Update X positions
-                            this.currentX += cellVO.width;
+                            currentX += cellVO.width;
                             
                         } 
                         break;
@@ -2793,7 +2725,7 @@ package org.alivepdf.pdf
                 {    
                     renderLine(currentLine,textAlign);
                     
-                    this.lineBreak(pHeight);
+                    lineBreak(pHeight);
                     
                     currentLine = new Array();
                 }
@@ -2804,18 +2736,18 @@ package org.alivepdf.pdf
             if ( currentLine.length )
             {    
                 renderLine ( currentLine, textAlign );
-                this.lineBreak ( pHeight );
+                lineBreak ( pHeight );
                 currentLine = new Array();
             }            
 
             //Set current y off the page to force new page.
-            this.currentY += currentPage.h;    
+            currentY += currentPage.h;    
         }
 
         protected function lineBreak ( pHeight : Number ):void
         {    
-            this.currentX  = this.lMargin;
-            this.currentY += pHeight;
+            currentX  = lMargin;
+            currentY += pHeight;
         }
         
         protected function getFontStyleString (  bold : Boolean, italic : Boolean, underline : Boolean ):String
@@ -2837,7 +2769,7 @@ package org.alivepdf.pdf
         protected function renderLine ( lineArray : Array, align : String = '' ):void
         {    
             var cellVO    : CellVO;
-            var availWidth: Number = currentPage.w - this.lMargin - this.rMargin;
+            var availWidth: Number = currentPage.w - lMargin - rMargin;
             var lineLength: Number = 0;
             var offsetX   : Number = 0; 
             var offsetY   : Number = 0; 
@@ -2849,12 +2781,11 @@ package org.alivepdf.pdf
                 return;
                 
             //Check if we need a new page for this line
-            if ( firstCell.y + firstCell.height > this.pageBreakTrigger )
+            if ( firstCell.y + firstCell.height > pageBreakTrigger )
             {    
-                this.addPage ( this.currentPage.clone() );
-                
+                addPage ( currentPage.clone() );
                 //Use offsetY to push already specified coord for this line back up to top of page
-                offsetY = this.currentY - firstCell.y;                                
+                offsetY = currentY - firstCell.y;                                
             }
             
             var lng:int = lineArray.length;
@@ -2864,9 +2795,9 @@ package org.alivepdf.pdf
                 lineLength += (lineArray[i] as CellVO).width;
                 
             //Adjust offset based on alignment
-            if ( align == 'C' ) 
+            if ( align == Align.CENTER ) 
                 offsetX = (availWidth - lineLength)/2;
-            else if ( align == 'R' )
+            else if ( align == Align.RIGHT )
                 offsetX = availWidth - lineLength;
                 
             lng = lineArray.length;
@@ -2876,8 +2807,8 @@ package org.alivepdf.pdf
             {
                 cellVO = lineArray[i] as CellVO;
 
-                this.currentX = cellVO.x + offsetX;
-                this.currentY = cellVO.y + offsetY;
+                currentX = cellVO.x + offsetX;
+                currentY = cellVO.y + offsetY;
 
                 setFont ( cellVO.fontFamily, cellVO.fontStyle, cellVO.fontSizePt );
                 
@@ -2945,7 +2876,10 @@ package org.alivepdf.pdf
 		
 		public function addGrid ( grid:Grid, x:Number=0, y:Number=0 ):void
 		{	
-			columns = grid.columns;
+			currentGrid = grid;
+			currentGrid.x = x;
+			currentGrid.y = y;
+			columns = currentGrid.columns;
 			var buffer:Array = grid.dataProvider;
 			var i:int = 0;
 			var j:int = 0;
@@ -2989,9 +2923,8 @@ package org.alivepdf.pdf
 				for (j = 0; j< lngColumns; j++)
 					rows.push (item[columns[j].dataField] != null ? item[columns[j].dataField] : "");
 				textStyle( color, 1 );
-				checkPageBreak(5);
 				setX ( x + getX() );
-				if ( grid.alternateRowColor && (i&1) )
+				if ( grid.alternateRowColor && (isEven = i&1) )
 				{
 					beginFill( grid.backgroundColor );
 					addRow( rows, 1 );
@@ -3000,20 +2933,27 @@ package org.alivepdf.pdf
 			}
 		}
 		
-		public function addRow(data:Array, style:int):void
+		private function addRow(data:Array, style:int):void
 		{
 		    var nb:int = 0;
 		    var lng:int = data.length;
 		    
 		    for(var i:int=0;i<lng;i++) nb = Math.max(nb,nbLines(columns[i].width,data[i]));
 		    
-		    var h:Number = 5*nb;
-		    var x:Number;
-		    var y:Number;
+		    var ph:int = 5;
+		    var h:Number = ph*nb;
+		    var x:Number = 0;
+		    var y:Number = 0;
 		    var a:String;
-		    var w:Number;
+		    var w:Number = 0;
 		    
 		    var rect:Rectangle = new Rectangle(x,y,w,h);
+		    
+		    if ( checkPageBreak(rect.height) )
+		    {
+		    	addPage();
+		    	if ( isEven ) beginFill(currentGrid.backgroundColor);
+		    }
 
 		    for(i=0;i<lng;i++)
 		    {
@@ -3022,15 +2962,15 @@ package org.alivepdf.pdf
 		        rect.y = y = getY();
 		        rect.width = w = columns[i].width;
 		        drawRect( rect );
-		        addMultiCell(w,5,data[i],0,a);
+		        addMultiCell(w,ph,data[i],0,a);
 		        setXY(x+w,y);
 		    }
 		    newLine(h);
 		}
 		
-		private function checkPageBreak(height:Number):void
+		private function checkPageBreak(height:Number):Boolean
 		{
-		    if(getY()+height>pageBreakTrigger) addPage();
+		    return getY()+height>pageBreakTrigger;
 		}
 		
 		private function nbLines(width:int,text:String):int
@@ -3136,7 +3076,7 @@ package org.alivepdf.pdf
         * </div>
         * 
         */
-		public function save ( method:String, url:String='', downloadMethod:String='inline', fileName:String='generated.pdf', frame:String="_blank" ):*
+		public function save ( method:String, url:String='', downloadMethod:String='inline', fileName:String='output.pdf', frame:String="_blank" ):*
 		{
 			dispatcher.dispatchEvent( new ProcessingEvent ( ProcessingEvent.STARTED ) );
 			var started:Number = getTimer();
@@ -3426,8 +3366,6 @@ package org.alivepdf.pdf
 
         protected function createPageTree():void
         {
-            compressedPages = new ByteArray();
-
             nb = arrayPages.length;
 
             if( aliasNbPages != null )
@@ -3451,7 +3389,6 @@ package org.alivepdf.pdf
             for( var i:int = 0; i < nb; i++ )
             {
                 page = arrayPages[i];
-
                 newObj();
                 write('<</Type /Page');
                 write('/Parent 1 0 R');
@@ -3463,12 +3400,12 @@ package org.alivepdf.pdf
                 if ( page.transitions.length ) write ( page.transitions );
                 write ('/Contents '+(n+1)+' 0 R>>');
                 write ('endobj');
-                
+          
                 if ( compress ) 
                 {
-                    compressedPages.writeMultiByte( page.content+"\n", "windows-1250" );
+                	compressedPages = new ByteArray();
+                    compressedPages.writeMultiByte( page.content+"\n", "windows-1252" );
                     compressedPages.compress();
-                    compressedPages.position = 0;
                     newObj();
                     write('<<'+filter+'/Length '+compressedPages.length+'>>');
                     write('stream');
@@ -3508,7 +3445,6 @@ package org.alivepdf.pdf
         protected function insertImages ():void
         {
             var filter:String = (compress) ? '/Filter /FlateDecode ' : '';
-            
             var stream:ByteArray;
 
             for each ( var image:PDFImage in streamDictionary )
@@ -3565,69 +3501,71 @@ package org.alivepdf.pdf
 
         protected function insertFonts ():void
         {
-            var nf:int = this.n;
+            var nf:int = n;
 
-            for (var diff:String in this.diffs)
+            for (var diff:String in diffs)
             {
-                this.newObj();
-                this.write('<</Type /Encoding /BaseEncoding /WinAnsiEncoding /Differences ['+diff+']>>');
-                this.write('endobj');
+                newObj();
+                write('<</Type /Encoding /BaseEncoding /WinAnsiEncoding /Differences ['+diff+']>>');
+                write('endobj');
             }
+            
+            var type:String;
+            var name:String;
 
-            for ( var p:String in this.fonts )
+            for ( var p:String in fonts )
             {
-                var font:Object = this.fonts[p];
-
-                font.n = this.n+1;
+                var font:Object = fonts[p];
+                font.n = n+1;
                 
-                var type:String = font.type;
-                var name:String = font.name;
+                type = font.type;
+                name = font.name;
 
-                if( type == 'core' )
+                if( type == FontType.CORE )
                 {
                     //Standard font
-                    this.newObj();
-                    this.write('<</Type /Font');
-                    this.write('/BaseFont /'+name);
-                    this.write('/Subtype /Type1');
-                    if( name != 'Symbol' && name != 'ZapfDingbats' ) this.write ('/Encoding /WinAnsiEncoding');
-                    this.write('>>');
-                    this.write('endobj');
+                    newObj();
+                    write('<</Type /Font');
+                    write('/BaseFont /'+name);
+                    write('/Subtype /Type1');
+                    if( name != 'Symbol' && name != FontFamily.ZAPFDINGBATS ) write ('/Encoding /WinAnsiEncoding');
+                    write('>>');
+                    write('endobj');
                 }
-                else if( type == 'Type1' || type == 'TrueType' )
+                else if( type == FontType.TYPE1 || type == FontType.TRUETYPE )
                 {
                     //Additional Type1 or TrueType font
-                    this.newObj();
-                    this.write('<</Type /Font');
-                    this.write('/BaseFont /'+name);
-                    this.write('/Subtype /'+type);
-                    this.write('/FirstChar 32 /LastChar 255');
-                    this.write('/Widths '+(this.n+1)+' 0 R');
-                    this.write('/FontDescriptor '+(this.n+2)+' 0 R');
+                    newObj();
+                    write('<</Type /Font');
+                    write('/BaseFont /'+name);
+                    write('/Subtype /'+type);
+                    write('/FirstChar 32 /LastChar 255');
+                    write('/Widths '+(n+1)+' 0 R');
+                    write('/FontDescriptor '+(n+2)+' 0 R');
 
                     if( font.enc )
                     {
-                        if( font.diff != null ) this.write ('/Encoding '+(nf+font.diff)+' 0 R');
-                        else this.write ('/Encoding /WinAnsiEncoding');
+                        if( font.diff != null ) write ('/Encoding '+(nf+font.diff)+' 0 R');
+                        else write ('/Encoding /WinAnsiEncoding');
                     }
 
-                    this.write('>>');
-                    this.write('endobj');
+                    write('>>');
+                    write('endobj');
                     //Widths
-                    this.newObj();
+                    newObj();
                     var cw:Object = font.cw;
                     var s:String = '[';
                     for(var i:int=32; i<=255; i++) s += cw[String.fromCharCode(i)]+' ';
-                    this.write(s+']');
-                    this.write('endobj');
+                    write(s+']');
+                    write('endobj');
                     //Descriptor
-                    this.newObj();
+                    newObj();
                     s = '<</Type /FontDescriptor /FontName /'+name;
                     for (var q:String in font.desc ) s += ' /'+q+' '+font.desc[q];
                     var file:Object = font.file;
-                    if (file) s +=' /FontFile'+(type=='Type1' ? '' : '2')+' '+this.fontFiles[file].n+' 0 R';
-                    this.write(s+'>>');
-                    this.write('endobj');
+                    if (file) s +=' /FontFile'+(type=='Type1' ? '' : '2')+' '+fontFiles[file].n+' 0 R';
+                    write(s+'>>');
+                    write('endobj');
                 }
                 else throw new Error("Unsupported font type: " + type );
             }
@@ -3691,7 +3629,6 @@ package org.alivepdf.pdf
             for ( var j:String in outlines )
             {
                 p = outlines[j];
-
                 newObj();
                 write('<</Title '+escapeString(p.t));
                 write('/Parent '+(n+o.parent)+' 0 R');
@@ -3901,7 +3838,5 @@ package org.alivepdf.pdf
         {
             return dispatcher.willTrigger( type );
         }
-
     }
-
 }
