@@ -29,8 +29,7 @@ package org.alivepdf.pages
 		private var _unit:String;
 	
 		public function Page ( pOrientation:String, unit:String="Mm", size:Object=null, pRotation:Number=0 )
-		{
-			
+		{	
 			_orientation = pOrientation;
 			
 			_rotation = pRotation;
@@ -79,7 +78,6 @@ package org.alivepdf.pages
 			_content = new String();
 	
 			transitions = new String();
-	
 		}
 		
 		/**
@@ -128,7 +126,6 @@ package org.alivepdf.pages
 				throw new RangeError ("Rotation must be a multiple of 90");
 	
 			_rotation = pRotation;
-	
 		}
 		
 		private function paging ( evt:PagingEvent ):void
@@ -144,215 +141,134 @@ package org.alivepdf.pages
 		 * 
 		 */		
 		public function resize ( width:Number, height:Number ):void 
-		
 		{
-			
-			this.width = _fwPt = wPt = width;
-			this.height = _fhPt = hPt = height;
-			
+			width = _fwPt = wPt = width;
+			height = _fhPt = hPt = height;	
 		}
 	
 		public function addTransition ( style:String='R', duration:Number=1, dimension:String='H', motionDirection:String='I', transitionDirection:int=0 ):void
-	
 		{
-	
 			transitions = '/Trans << /Type /Trans /D '+duration+' /S /'+style+' /Dm /'+dimension+' /M /'+motionDirection+' /Di /'+transitionDirection+' >>';
-	
 		}
 		
 		public function set width ( pWidth:Number ):void 
-		
 		{
-			
 			_format[0] = _width = pWidth;
-		
 		}
 		
 		public function get width ( ):Number 
-		
 		{
-			
-			return _width;
-			
+			return _width;	
 		}
 		
 		public function set height ( pHeight:Number ):void 
-		
-		{
-			
+		{	
 			_format[1] = _height = pHeight;
-		
-		
 		}
 		
 		public function get height ( ):Number 
-		
 		{
-			
-			return _height;
-			
+			return _height;	
 		}
 		
 		public function set wPt ( pwPt:Number ):void 
-		
 		{
-			
 			_wPt = pwPt;
-		
 		}
 		
 		public function get wPt ( ):Number 
-		
 		{
-			
-			return _wPt;
-			
+			return _wPt;	
 		}
 		
 		public function set hPt ( phPt:Number ):void 
-		
 		{
-			
 			_hPt = phPt;
-		
 		}
 		
 		public function get hPt ( ):Number 
-		
 		{
-			
-			return _hPt;
-			
+			return _hPt;	
 		}
 		
 		public function set w ( pW:Number ):void 
-		
 		{
-			
 			_w = pW;
-		
 		}
 		
 		public function get w ( ):Number 
-		
 		{
-			
-			return _w;
-			
+			return _w;	
 		}
 		
 		public function set h ( pH:Number ):void 
-		
 		{
-			
 			_h = pH;
-		
 		}
 		
 		public function get h ( ):Number 
-		
 		{
-			
-			return _h;
-			
+			return _h;	
 		}
 		
 		public function get size ():Size
-		
 		{
-			
-			return _size;
-			
+			return _size;	
 		}
 		
 		public function set size ( size:Size ):void 
-		
 		{
-			
-			_size = size;
-			
+			_size = size;	
 		}
 		
 		public function set rotation ( pRotation:Number ):void 
-		
 		{
-			
 			_rotation = pRotation;
-		
 		}
 		
 		public function get rotation ( ):Number 
-		
 		{
-			
-			return _rotation;
-			
+			return _rotation;	
 		}
 		
 		public function get page ( ):int 
-		
 		{
-			
-			return _page;
-			
+			return _page;	
 		}
 		
 		public function set content ( pContent:String ):void 
-		
 		{
-			
-			_content = pContent;
-			
+			_content = pContent;	
 		}
 		
 		public function get content ( ):String 
-		
 		{
-			
-			return _content;
-			
+			return _content;	
 		}
 		
 		public function get transitions ( ):String 
-		
 		{
-			
-			return _pageTransition;
-			
+			return _pageTransition;	
 		}
 		
 		public function set transitions ( pTransition:String ):void 
-	
 		{
-			
-			_pageTransition = pTransition;
-			
+			_pageTransition = pTransition;	
 		}
 		
 		public function get annotations ( ):String 
-	
 		{
-			
-			return _annots;
-			
+			return _annots;	
 		}
 		
 		public function set annotations ( pAnnotation:String ):void 
-	
-		{
-			
-			_annots = pAnnotation;
-			
+		{	
+			_annots = pAnnotation;	
 		}
 		
 		public function toString ( ):String 
-		
 		{
-			
-			return "[Page orientation="+_orientation+" page="+page+" pagewidth="+(w>>0)+" height="+(h>>0)+"]";
-			
+			return "[Page orientation="+_orientation+" page="+page+" width="+(w>>0)+" height="+(h>>0)+"]";	
 		}
-		
 	}
-	
 }

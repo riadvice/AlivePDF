@@ -318,6 +318,7 @@ package org.alivepdf.pdf
         protected var columns:Array;
         protected var currentGrid:Grid;
         protected var isEven:int;
+        protected var columnNames:Array;
 
         /**
         * The PDF class represents a PDF document.
@@ -438,6 +439,7 @@ package org.alivepdf.pdf
             if( right == -1 ) right = left;
             bMargin = bottom;
             rMargin = right;
+            setXY( left, top );
         }
 
         /**
@@ -1964,6 +1966,17 @@ package org.alivepdf.pdf
         
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /*
+        * AlivePDF transform API
+        *
+        * transform()
+        *
+        */
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        
+        
+        
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /*
         * AlivePDF text API
         *
         * addText()
@@ -2874,7 +2887,7 @@ package org.alivepdf.pdf
 		*/
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		
-		public function addGrid ( grid:Grid, x:Number=0, y:Number=0 ):void
+		public function addGrid ( grid:Grid, x:Number=0, y:Number=0, repeatColumnHeaders:Boolean=true ):void
 		{	
 			currentGrid = grid;
 			currentGrid.x = x;
@@ -2899,46 +2912,64 @@ package org.alivepdf.pdf
 			}
 			
 			var rows:Array;
-			var columnNames:Array = new Array();
-			var properties:Array = new Array();
+			columnNames = new Array();
 			var lng:int = buffer.length;
-			var lngColumns:int = columns.length;
-			var color:RGBColor = new RGBColor ( 0 );
+			var lngColumns:int = columns.length;	
+			var item:*;
 			
 			for (i = 0; i< lngColumns; i++)
 				columnNames.push ( columns[i].headerText );
 			
-			textStyle( new RGBColor ( 0 ), 1 );
-			beginFill ( grid.headerColor );
-			setXY ( x + getX(), y+getY() );
-			addRow( columnNames, 0 );
-			endFill();
+			var rect:Rectangle = getRect ( columnNames );
+			if ( checkPageBreak(rect.height) )
+				addPage();
 			
-			var item:*;
+			beginFill ( grid.headerColor );
+			setXY ( x+getX(), y+getY() );
+			addRow( columnNames, 0, rect );
+			endFill();
 			
 			for (i = 0; i< lng; i++)
 			{
 				item = buffer[i];
 				rows = new Array();
 				for (j = 0; j< lngColumns; j++)
+				{
 					rows.push (item[columns[j].dataField] != null ? item[columns[j].dataField] : "");
-				textStyle( color, 1 );
+					nb = Math.max(nb,nbLines(columns[j].width,rows[j]));
+				}
+				
+				rect = getRect ( rows );
 				setX ( x + getX() );
+				
+				if ( checkPageBreak(rect.height) )
+				{
+					addPage();
+					setXY ( x+getX(), y+getY() );
+					if ( repeatColumnHeaders ) 
+					{
+						beginFill(grid.headerColor );
+						addRow (columnNames, 0, getRect (columnNames) );
+						endFill();
+						setX ( x + getX() );
+					}
+				}
+		
 				if ( grid.alternateRowColor && (isEven = i&1) )
 				{
 					beginFill( grid.backgroundColor );
-					addRow( rows, 1 );
+					addRow( rows, 1, rect );
 					endFill();
-				}else addRow( rows, 1 );
+				} else addRow( rows, 1, rect );
 			}
 		}
 		
-		private function addRow(data:Array, style:int):void
+		private function getRect ( rows:Array ):Rectangle
 		{
-		    var nb:int = 0;
-		    var lng:int = data.length;
+			var nb:int = 0;
+		    var lng:int = rows.length;
 		    
-		    for(var i:int=0;i<lng;i++) nb = Math.max(nb,nbLines(columns[i].width,data[i]));
+		    for(var i:int=0;i<lng;i++) nb = Math.max(nb,nbLines(columns[i].width,rows[i]));
 		    
 		    var ph:int = 5;
 		    var h:Number = ph*nb;
@@ -2947,15 +2978,20 @@ package org.alivepdf.pdf
 		    var a:String;
 		    var w:Number = 0;
 		    
-		    var rect:Rectangle = new Rectangle(x,y,w,h);
+		   	return new Rectangle(x,y,w,h);
+		}
+		
+		private function addRow(data:Array, style:int, rect:Rectangle):void
+		{		    
+		    var a:String;
+		    var x:Number = 0;
+		    var y:Number = 0;
+		    var w:Number = 0;
+		    var ph:int = 5;
+		    var h:Number = rect.height;
+		    var lng:int = data.length;
 		    
-		    if ( checkPageBreak(rect.height) )
-		    {
-		    	addPage();
-		    	if ( isEven ) beginFill(currentGrid.backgroundColor);
-		    }
-
-		    for(i=0;i<lng;i++)
+		    for(var i:int=0;i<lng;i++)
 		    {
 		        a = style ? columns[i].cellAlign : columns[i].headerAlign;
 		        rect.x = x = getX();
@@ -3512,10 +3548,11 @@ package org.alivepdf.pdf
             
             var type:String;
             var name:String;
+            var font:Object;
 
             for ( var p:String in fonts )
             {
-                var font:Object = fonts[p];
+                font = fonts[p];
                 font.n = n+1;
                 
                 type = font.type;
@@ -3742,8 +3779,7 @@ package org.alivepdf.pdf
         {
             nbPages = arrayPages.length;
             state = 2;
-            currentX = lMargin;
-            currentY = tMargin;
+            setXY(lMargin, tMargin);
             fontFamily = '';
 
             if ( newOrientation == '' ) newOrientation = defaultOrientation;
