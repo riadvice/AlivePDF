@@ -13,18 +13,20 @@ package org.alivepdf.data
 		private var _y:int;
 		private var _columns:Array;
 		private var _borderColor:Color;
+		private var _borderAlpha:Number;
 		private var _joints:String;
 		private var _backgroundColor:Color;
 		private var _headerColor:Color;
 		private var _cellColor:Color;
 		private var _alternateRowColor:Boolean;
 		
-		public function Grid( data:Array, width:Number, height:Number, headerColor:Color, backgroundColor:Color, cellColor:Color, alternateRowColor:Boolean, borderColor:Color, joints:String="0 j")
+		public function Grid( data:Array, width:Number, height:Number, headerColor:Color, backgroundColor:Color, cellColor:Color, alternateRowColor:Boolean, borderColor:Color, borderAlpha:Number=1,joints:String="0 j")
 		{
 			_data = data;
 			_width = width;
 			_height = height;
 			_borderColor = borderColor;
+			_borderAlpha = borderAlpha;
 			_joints = joints;
 			_backgroundColor = backgroundColor;
 			_headerColor = headerColor;
@@ -80,6 +82,21 @@ package org.alivepdf.data
 		public function get borderColor ():Color
 		{
 			return _borderColor;	
+		}
+		
+		public function set borderColor ( color:Color ):void
+		{
+			_borderColor = color;	
+		}
+		
+		public function get borderAlpha ():Number
+		{
+			return _borderAlpha;	
+		}
+		
+		public function set borderAlpha ( alpha:Number ):void
+		{
+			_borderAlpha = alpha;	
 		}
 		
 		public function get joints ():String
