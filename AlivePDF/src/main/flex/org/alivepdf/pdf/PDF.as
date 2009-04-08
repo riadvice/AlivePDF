@@ -2887,7 +2887,7 @@ package org.alivepdf.pdf
 		*/
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		
-		public function addGrid ( grid:Grid, x:Number=0, y:Number=0, repeatColumnHeaders:Boolean=true ):void
+		public function addGrid ( grid:Grid, x:Number=0, y:Number=0, repeatHeader:Boolean=true ):void
 		{	
 			currentGrid = grid;
 			currentGrid.x = x;
@@ -2946,9 +2946,9 @@ package org.alivepdf.pdf
 				{
 					addPage();
 					setXY ( x+getX(), y+getY() );
-					if ( repeatColumnHeaders ) 
+					if ( repeatHeader ) 
 					{
-						beginFill(grid.headerColor );
+						beginFill(grid.headerColor);
 						addRow (columnNames, 0, getRect (columnNames) );
 						endFill();
 						setX ( x + getX() );
