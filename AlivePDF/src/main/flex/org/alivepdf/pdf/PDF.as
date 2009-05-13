@@ -2796,7 +2796,7 @@ package org.alivepdf.pdf
             //Check if we need a new page for this line
             if ( firstCell.y + firstCell.height > pageBreakTrigger )
             {    
-                addPage ( currentPage.clone() );
+                addPage(new Page ( defaultOrientation, defaultUnit, defaultSize, defaultRotation ));
                 //Use offsetY to push already specified coord for this line back up to top of page
                 offsetY = currentY - firstCell.y;                                
             }

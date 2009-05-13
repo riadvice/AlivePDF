@@ -555,7 +555,6 @@
 			writeDHT();
 			writeSOS();
 
-	
 			// Encode 8x8 macroblocks
 			var DCY:Number=0;
 			var DCU:Number=0;
