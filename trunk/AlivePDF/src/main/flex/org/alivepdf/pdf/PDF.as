@@ -2640,7 +2640,8 @@ package org.alivepdf.pdf
                                     if ( i == j ) 
                                         i++;
                                     
-                                    l = 0;
+                                    //Set the lenght to the size before it was greater than wmax
+                                    l -= cwAux;
                                     
                                     //Add the cell to the current line
                                     cellVO.x     = currentX;
