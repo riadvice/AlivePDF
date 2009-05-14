@@ -3806,8 +3806,8 @@ package org.alivepdf.pdf
         {
             up = currentFont.up
             ut = currentFont.ut
-            currentPage.w = getStringWidth(content)+ws*substrCount(content,' ');
-            return sprintf('%.2f %.2f %.2f %.2f re f',x*k,(currentPage.h-(y-up/1000*fontSize))*k,currentPage.w*k,-ut/1000*fontSizePt);
+            var w:Number = getStringWidth(content)+ws*substrCount(content,' ');
+            return sprintf('%.2f %.2f %.2f %.2f re f',x*k,(currentPage.h-(y-up/1000*fontSize))*k,w*k,-ut/1000*fontSizePt);
         }
 
        protected function substrCount ( content:String, search:String ):int
