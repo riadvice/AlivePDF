@@ -1915,7 +1915,6 @@ package org.alivepdf.pdf
             } else underline = false;
 
             if( size == 0 ) size = fontSizePt;
-            if( fontFamily == family && fontStyle == style && fontSizePt == size ) return;
             
             fontkey = family+style;
             
