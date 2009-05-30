@@ -176,24 +176,16 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-report-plugin</artifactId>
-				<version>2.1.1</version>
 			</plugin>
 			<plugin>
 				<groupId>com.adobe.ac</groupId>
 				<artifactId>as3Ncss-maven-plugin</artifactId>
 				<version>1.1</version>
 			</plugin>
-<!--			<plugin>-->
-<!--				<groupId>info.flex-mojos</groupId>-->
-<!--				<artifactId>asdoc-mojo</artifactId>-->
-<!--			</plugin>-->
 			<plugin>
-				<groupId>com.adobe.ac</groupId>
-				<artifactId>flex-pmd-maven-plugin</artifactId>
-				<version>0.5.4-SNAPSHOT</version>
-				<configuration>
-					<ruleSet>all_flex.xml</ruleSet>
-				</configuration>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-project-info-reports-plugin</artifactId>
+				<version>2.1.1</version>
 			</plugin>
 			<plugin>
 				<groupId>com.adobe.ac</groupId>
