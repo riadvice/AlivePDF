@@ -1,17 +1,18 @@
-<?xml version="1.0"?>
-<ruleset name="All Flex Rules"
-    xmlns="http://pmd.sf.net/ruleset/1.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://pmd.sf.net/ruleset/1.0.0 http://pmd.sf.net/ruleset_xml_schema.xsd"
-    xsi:noNamespaceSchemaLocation="http://pmd.sf.net/ruleset_xml_schema.xsd">
-    
-    <description>Every Flex Rule in FlexPMD</description>
-    
-    <rule ref="com/adobe/ac/pmd/rulesets/basic_mxml.xml"/>
-    <rule ref="com/adobe/ac/pmd/rulesets/basic_as3.xml"/>
-    <rule ref="com/adobe/ac/pmd/rulesets/basic_common.xml"/>
-    <rule ref="com/adobe/ac/pmd/rulesets/cairngorm.xml"/>
-    <rule ref="com/adobe/ac/pmd/rulesets/sizing.xml"/>
-    <rule ref="com/adobe/ac/pmd/rulesets/naming.xml"/>
+<ruleset name="All Flex Rules" xmlns="http://pmd.sf.net/ruleset/1.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://pmd.sf.net/ruleset/1.0.0 http://pmd.sf.net/ruleset_xml_schema.xsd"
+	xsi:noNamespaceSchemaLocation="http://pmd.sf.net/ruleset_xml_schema.xsd">
+
+	<description>Every Flex Rule in FlexPMD</description>
+
+	<rule ref="com/adobe/ac/pmd/rulesets/basic_mxml.xml" />
+	<rule ref="com/adobe/ac/pmd/rulesets/basic_as3.xml" />
+	<rule ref="com/adobe/ac/pmd/rulesets/basic_common.xml" />
+	<rule ref="com/adobe/ac/pmd/rulesets/cairngorm.xml" />
+	<rule ref="com/adobe/ac/pmd/rulesets/sizing.xml" />
+	<rule ref="com/adobe/ac/pmd/rulesets/naming.xml" />
+	<rule ref="com/adobe/ac/pmd/rulesets/styling.xml" />
+	<rule ref="com/adobe/ac/pmd/rulesets/performance.xml" />
+	<rule ref="com/adobe/ac/pmd/rulesets/component.xml" />
 
 </ruleset>
