@@ -30,7 +30,7 @@ THE SOFTWARE.
 * This library lets you generate PDF files with the Flash Player
 * AlivePDF is based on the FPDF PHP library by Olivier Plathey (http://www.fpdf.org/)
 * Core Team : Thibault Imbert, Mark Lynch, Alexandre Pires, Marc Hugues
-* @version 0.1.4.8 Current Release
+* @version 0.1.4.9 Current Release
 * @url alivepdf.bytearray.org
 */
 
