@@ -42,6 +42,7 @@ package org.alivepdf.pdf
     import flash.events.EventDispatcher;
     import flash.events.IEventDispatcher;
     import flash.geom.Matrix;
+    import flash.geom.Point;
     import flash.geom.Rectangle;
     import flash.net.URLRequest;
     import flash.net.URLRequestHeader;
@@ -319,6 +320,7 @@ package org.alivepdf.pdf
         protected var currentGrid:Grid;
         protected var isEven:int;
         protected var columnNames:Array;
+        protected var matrix:Matrix;
 
         /**
         * The PDF class represents a PDF document.
@@ -381,6 +383,7 @@ package org.alivepdf.pdf
             inited = true;
             references = new String();
             compressedPages = new ByteArray();
+            matrix = new Matrix();
 
             //Standard fonts
             standardFonts = new CoreFonts();
@@ -1967,12 +1970,75 @@ package org.alivepdf.pdf
         /*
         * AlivePDF transform API
         *
-        * transform()
+        * skew()
+        * rotate()
         *
         */
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         
-        
+        public function skew(ax:Number, ay:Number, x:Number=-1, y:Number=-1):void
+		{
+			if(x == -1)
+				x = getX();
+
+			if(y == -1)
+				y = getY();
+				
+			if(ax == 90 || ay == 90)
+				throw new RangeError("Please use values between -90° and 90° for skewing.");
+
+			x *= k;
+			y = (currentPage.h - y) * k;
+			ax *= Math.PI / 180;
+			ay *= Math.PI / 180;
+			matrix.identity();
+			matrix.a = 1;
+			matrix.b = Math.tan(ay);
+			matrix.c = Math.tan(ax);
+			matrix.d = 1;
+			getMatrixTransformPoint(x, y);
+			transform(matrix);
+		}
+		
+		public function rotate(angle:Number, x:Number=-1, y:Number=-1):void
+		{
+			if(x == -1)
+				x = getX();
+
+			if(y == -1)
+				y = getY();
+				
+			angle *= Math.PI / 180;
+			x *= k;
+			y = (currentPage.h - y) * k;
+			matrix.identity();
+			matrix.rotate(-angle);
+			getMatrixTransformPoint(x, y);
+			transform(matrix);
+		}
+		
+		private function transform(tm:Matrix):void
+		{
+			write(sprintf('%.3f %.3f %.3f %.3f %.3f %.3f cm', tm.a, tm.b, tm.c, tm.d, tm.tx, tm.ty));
+		}
+
+		private function getMatrixTransformPoint(px:Number, py:Number):void
+		{
+			var position:Point = new Point(px, py);
+			var deltaPoint:Point = matrix.deltaTransformPoint(position);
+			matrix.tx = px - deltaPoint.x;
+			matrix.ty = py - deltaPoint.y;
+		}
+
+		public function startTransform():void
+		{
+			write('q');
+		}
+
+		public function stopTransform():void
+		{
+			write('Q');
+		}
         
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /*
@@ -2351,7 +2417,6 @@ package org.alivepdf.pdf
                 }
                 if(c==' ') sep=i;
                 l+=cw[c];
-                //trace( cw[c] );
                 if( l > wmax )
                 {
                     //Automatic line break

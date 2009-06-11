@@ -230,9 +230,9 @@ public function sprintf(format:String, ... args):String
 			case "F":
 				next = args.shift();
 				str = Math.abs(Number(next)).toFixed(
-						precision != "" ?  int(precision) : 6);
+						precision != "" ?  Number(precision) : 6);
 
-				if (int(next) < 0)
+				if (Number(next) < 0)
 					str = "-" + str;
 				else if (flagSign && int(next) >= 0)
 					str = "+" + str;
