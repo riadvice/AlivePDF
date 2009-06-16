@@ -29,7 +29,7 @@ THE SOFTWARE.
 /**
 * This library lets you generate PDF files with the Flash Player
 * AlivePDF is based on the FPDF PHP library by Olivier Plathey (http://www.fpdf.org/)
-* Core Team : Thibault Imbert, Mark Lynch, Alexandre Pires, Marc Hugues
+* Core Team : Thibault Imbert, Mark Lynch, Alexandre Pires, Marc Hugues, christoph.k
 * @version 0.1.4.9 Current Release
 * @url alivepdf.bytearray.org
 */
@@ -2976,7 +2976,7 @@ package org.alivepdf.pdf
 					columns.push ( new GridColumn ( fields[i], fields[i], 30 ) );
 			}
 			
-			var rows:Array;
+			var row:Array;
 			columnNames = new Array();
 			var lng:int = buffer.length;
 			var lngColumns:int = columns.length;	
@@ -2997,14 +2997,14 @@ package org.alivepdf.pdf
 			for (i = 0; i< lng; i++)
 			{
 				item = buffer[i];
-				rows = new Array();
+				row = new Array();
 				for (j = 0; j< lngColumns; j++)
 				{
-					rows.push (item[columns[j].dataField] != null ? item[columns[j].dataField] : "");
-					nb = Math.max(nb,nbLines(columns[j].width,rows[j]));
+					row.push (item[columns[j].dataField] != null ? item[columns[j].dataField] : "");
+					nb = Math.max(nb,nbLines(columns[j].width,row[j]));
 				}
 				
-				rect = getRect ( rows );
+				rect = getRect ( row );
 				setX ( x + getX() );
 				
 				if ( checkPageBreak(rect.height) )
@@ -3023,9 +3023,9 @@ package org.alivepdf.pdf
 				if ( grid.alternateRowColor && (isEven = i&1) )
 				{
 					beginFill( grid.backgroundColor );
-					addRow( rows, 1, rect );
+					addRow( row, 1, rect );
 					endFill();
-				} else addRow( rows, 1, rect );
+				} else addRow( row, 1, rect );
 			}
 		}
 		
