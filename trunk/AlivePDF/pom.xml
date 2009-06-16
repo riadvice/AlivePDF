@@ -131,6 +131,21 @@
 					</locales>
 				</configuration>
 			</plugin>
+
+			<plugin>
+				<groupId>com.adobe.ac</groupId>
+				<artifactId>flex-pmd-maven-plugin</artifactId>
+				<version>LATEST</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>check</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			
 		</plugins>
 	</build>
 
