@@ -182,11 +182,11 @@
 				<artifactId>as3Ncss-maven-plugin</artifactId>
 				<version>1.1</version>
 			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-project-info-reports-plugin</artifactId>
+<!--			<plugin>-->
+<!--				<groupId>org.apache.maven.plugins</groupId>-->
+<!--				<artifactId>maven-project-info-reports-plugin</artifactId>-->
 <!--				<version>2.1.1</version>-->
-			</plugin>
+<!--			</plugin>-->
 			<plugin>
 				<groupId>com.adobe.ac</groupId>
 				<artifactId>flex-pmd-maven-plugin</artifactId>
