@@ -145,7 +145,20 @@
 					</execution>
 				</executions>
 			</plugin>
-			
+			<plugin>
+				<groupId>com.adobe.ac</groupId>
+				<artifactId>as3Ncss-maven-plugin</artifactId>
+				<version>1.1</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>check</goal>
+						</goals>
+					</execution>
+				</executions>
+				
+			</plugin>
 		</plugins>
 	</build>
 
