@@ -3233,7 +3233,7 @@ package org.alivepdf.pdf
 		*/
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		
-		public function addSWF ( swf:ByteArray ):void
+		private function addSWF ( swf:ByteArray ):void
 		{
 			// coming soon
 		}
