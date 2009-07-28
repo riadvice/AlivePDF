@@ -586,6 +586,28 @@ package org.alivepdf.pdf
 			pageMode = mode;
 		}
 		
+		/**
+		 * Lets you set specify the timing (in seconds) a page is shown when the PDF is shown in fullscreen mode
+		 *
+		 * @param title The title
+		 * @example
+		 * This example shows how to set a specific advance timing (5 seconds) for the current page :
+		 * <div class="listing">
+		 * <pre>
+		 *
+		 * myPDF.setAdvanceTiming ( 5 );
+		 * </pre>
+		 * 
+		 * You can also specify this on the Page object :
+		 * <div class="listing">
+		 * <pre>
+		 *
+		 * var page:Page = new Page ( Orientation.PORTRAIT, Unit.MM );
+		 * page.setAdvanceTiming ( 5 );
+		 * myPDF.addPage ( page );
+		 * </pre>
+		 * </div>
+		 */
 		public function setAdvanceTiming ( timing:int ):void
 		{
 			currentPage.advanceTiming = timing;
@@ -2208,10 +2230,9 @@ package org.alivepdf.pdf
 			
 			if ( text !== '' )
 			{
-				
 				var dx:Number;
 				
-				if ( align==Align.CENTER ) dx = width-currentMargin-getStringWidth(text);
+				if ( align==Align.RIGHT ) dx = width-currentMargin-getStringWidth(text);
 				else if( align==Align.CENTER ) dx = (width-getStringWidth(text))/2;
 				else dx = currentMargin;
 				
@@ -2224,7 +2245,6 @@ package org.alivepdf.pdf
 				if(colorFlag) s+=' Q';
 				
 				if( link ) addLink (currentX+dx,currentY+.5*height-.5*fontSize,getStringWidth(text),fontSize, link);
-				
 			}
 			
 			if ( s != '' ) write(s);
