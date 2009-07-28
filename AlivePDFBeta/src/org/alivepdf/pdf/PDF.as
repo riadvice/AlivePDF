@@ -1496,7 +1496,6 @@ package org.alivepdf.pdf
 			
 			if ( color is RGBColor )
 			{
-				
 				op = "rg";
 				
 				var r:Number = (color as RGBColor).r/255;
@@ -1507,7 +1506,6 @@ package org.alivepdf.pdf
 				
 			} else if ( color is CMYKColor )
 			{
-				
 				op = "k";
 				
 				var c:Number = (color as CMYKColor).cyan / 100;
@@ -1782,7 +1780,6 @@ package org.alivepdf.pdf
 		public function addTextNote ( x:Number, y:Number, width:Number, height:Number, text:String="A note !" ):void
 		{
 			var rectangle:String = x*k + ' ' + (((currentPage.h-y)*k) - (height*k)) + ' ' + ((x*k) + (width*k)) + ' ' + (currentPage.h-y)*k;
-			
 			currentPage.annotations += ( '<</Type /Annot /Name /Help /Border [0 0 1] /Subtype /Text /Rect [ '+rectangle+' ] /Contents ('+text+')>>' );
 		}
 		
@@ -1806,7 +1803,6 @@ package org.alivepdf.pdf
 		public function addStampNote ( style:String, x:Number, y:Number, width:Number, height:Number ):void
 		{
 			var rectangle:String = x*k + ' ' + (((currentPage.h-y)*k) - (height*k)) + ' ' + ((x*k) + (width*k)) + ' ' + (currentPage.h-y)*k;
-			
 			currentPage.annotations += ( '<</Type /Annot /Name /'+style+' /Subtype /Stamp /Rect [ '+rectangle+' ]>>' );	
 		}
 		
@@ -1833,7 +1829,6 @@ package org.alivepdf.pdf
 		public function addBookmark ( text:String, level:int, y:Number, color:RGBColor ):void
 		{
 			if( y == -1 ) y = getY();
-			
 			outlines.push ( { 't' : text == null ? 'Page ' + nbPages : text, 'l' : level,'y' : y,'p' : nbPages, redMultiplier : color.r, greenMultiplier : color.g, blueMultiplier : color.b } );
 		}
 		
@@ -3240,8 +3235,7 @@ package org.alivepdf.pdf
 		
 		public function addSWF ( swf:ByteArray ):void
 		{
-			arrayMedia.push ( swf );
-			currentPage.annotations += '<</Annots 18 0 R/CropBox[0.0 53.0 359.0 314.0]/MediaBox[0.0 53.0 359.0 314.0]/Parent 8 0 R/Resources<<>>/Rotate 0/Type/Page>>';
+			// coming soon
 		}
 		
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -3717,21 +3711,6 @@ package org.alivepdf.pdf
 			}
 		}
 		
-		protected function insertMedia ():void
-		{
-			var stream:ByteArray = arrayMedia.pop();
-			newObj();
-			write("<</DL 553/Length 553/Params<</CheckSum<74F8B57FF6087AF20260BBB068FC1063>/CreationDate(D:20090708191036+02'00')/Mac "+(n+1)+" 0 R/ModDate(D:20090708191804+02'00')/Size 553>>/Subtype/application#2Fx-shockwave-flash>>");
-			write('stream');
-			buffer.writeBytes(stream);
-			buffer.writeUTFBytes ("\n");
-			write("endstream");
-			write('endobj');
-			newObj();
-			write('<</ResFork 2 0 R/Subtype 1398228556>>');
-			write('endobj');
-		}
-		
 		protected function insertFonts ():void
 		{
 			var nf:int = n;
@@ -3833,7 +3812,6 @@ package org.alivepdf.pdf
 			insertExtGState();
 			insertFonts();
 			insertImages();
-		//	insertMedia();
 			offsets[2] = buffer.length;
 			write('2 0 obj');
 			write('<<');
