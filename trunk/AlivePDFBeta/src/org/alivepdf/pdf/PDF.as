@@ -1445,10 +1445,9 @@ package org.alivepdf.pdf
 			
 			if ( color is RGBColor )
 			{
-				
 				op = !textRendering ? "rg" : "RG"
 					
-					var r:Number = (color as RGBColor).r/255;
+				var r:Number = (color as RGBColor).r/255;
 				var g:Number = (color as RGBColor).g/255;
 				var b:Number = (color as RGBColor).b/255;
 				
@@ -1456,10 +1455,9 @@ package org.alivepdf.pdf
 				
 			} else if ( color is CMYKColor )
 			{
-				
 				op = !textRendering ? "k" : "K"
 					
-					var c:Number = (color as CMYKColor).cyan / 100;
+				var c:Number = (color as CMYKColor).cyan / 100;
 				var m:Number = (color as CMYKColor).magenta / 100;
 				var y:Number = (color as CMYKColor).yellow / 100;
 				var k:Number = (color as CMYKColor).black / 100;
@@ -1470,7 +1468,7 @@ package org.alivepdf.pdf
 			{
 				op = !textRendering ? "g" : "G"
 					
-					var gray:Number = (color as GrayColor).gray / 100;
+				var gray:Number = (color as GrayColor).gray / 100;
 				
 				addTextColor = gray + " " + op;
 			}
@@ -2748,8 +2746,8 @@ package org.alivepdf.pdf
 									l = 0;
 									
 									//Add the cell to the current line
-									cellVO.x     = this.currentX;
-									cellVO.y     = this.currentY;
+									cellVO.x     = currentX;
+									cellVO.y     = currentY;
 									cellVO.width = l/1000*this.fontSize;
 									cellVO.height= pHeight;
 									cellVO.text  = s.substr(j,i-j);
@@ -2761,7 +2759,7 @@ package org.alivepdf.pdf
 									currentLine = new Array();
 									
 									//Update x and y positions            
-									this.currentX = this.leftMargin;
+									currentX = leftMargin;
 									
 								} else 
 								{
@@ -2769,9 +2767,9 @@ package org.alivepdf.pdf
 									//Split at last seperator
 									
 									//Add the cell to the current line								
-									cellVO.x      = this.currentX;
-									cellVO.y      = this.currentY;
-									cellVO.width  = lenAtSep/1000*this.fontSize;
+									cellVO.x      = currentX;
+									cellVO.y      = currentY;
+									cellVO.width  = lenAtSep/1000*fontSize;
 									cellVO.height = pHeight;
 									cellVO.text   = s.substr ( j, sep-j );
 									
@@ -2779,8 +2777,8 @@ package org.alivepdf.pdf
 									
 									if ( textAlign == Align.JUSTIFIED )
 									{
-										this.ws=(ns>1) ? (wmax-lenAtSep)/1000*this.fontSize/(ns-1) : 0;
-										this.write(sprintf('%.3f Tw',this.ws*this.k));
+										ws=(ns>1) ? (wmax-lenAtSep)/1000*fontSize/(ns-1) : 0;
+										write(sprintf('%.3f Tw',ws*k));
 									}
 									
 									//Just done a line break so render the line
@@ -2788,9 +2786,9 @@ package org.alivepdf.pdf
 									currentLine = new Array();
 									
 									//Update x and y positions            
-									this.currentX = this.leftMargin;
+									currentX = leftMargin;
 									
-									w = currentPage.w - 2 * this.currentMargin;
+									w = currentPage.w - 2 * currentMargin;
 									i = sep + 1;
 								}
 								
@@ -2799,10 +2797,10 @@ package org.alivepdf.pdf
 								l  = 0;
 								ns = 0;
 								
-								this.currentX = this.leftMargin;
+								currentX = leftMargin;
 								
-								w   = currentPage.w - this.rightMargin - this.currentX;
-								wmax= ( w-2 * this.currentMargin ) * 1000 / this.fontSize;
+								w   = currentPage.w - rightMargin - currentX;
+								wmax= ( w-2 * currentMargin ) * 1000 / fontSize;
 								
 							} else 
 								i++;
@@ -2814,28 +2812,23 @@ package org.alivepdf.pdf
 							//If any remaining chars then print them out                            
 							//Add the cell to the current line
 							
-							with ( cellVO )
-							{	
-								x = this.currentX;
-								y = this.currentY;
-								width = l/1000*this.fontSize;
-								height = pHeight;
-								text = s.substr(j);
-								//border = true;   // useful for debugging rendering problems
-							}
+							cellVO.x = currentX;
+							cellVO.y = currentY;
+							cellVO.width = l/1000*this.fontSize;
+							cellVO.height = pHeight;
+							cellVO.text = s.substr(j);
 							
 							//Last chunk
-							if ( this.ws>0 )
+							if ( ws>0 )
 							{
-								this.ws=0;
-								this.write('0 Tw');
+								ws=0;
+								write('0 Tw');
 							}                
 							
 							currentLine.push ( cellVO );
 							
 							//Update X positions
-							this.currentX += cellVO.width;
-							
+							currentX += cellVO.width;
 						} 
 						break;        
 				}        
@@ -2846,7 +2839,7 @@ package org.alivepdf.pdf
 				if ( k == aTaggedString.length && currentLine.length > 0 )
 				{
 					renderLine(currentLine,textAlign);	
-					this.lineBreak(pHeight);
+					lineBreak(pHeight);
 					currentLine = new Array();
 				}	
 			}
@@ -4056,7 +4049,7 @@ package org.alivepdf.pdf
 		
 		protected function newObj():void
 		{
-			offsets[++n] = buffer.length;
+			offsets[int(++n)] = buffer.length;
 			write (n+' 0 obj');
 		}
 		
