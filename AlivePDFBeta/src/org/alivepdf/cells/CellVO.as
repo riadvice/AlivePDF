@@ -1,5 +1,6 @@
 package org.alivepdf.cells
 {
+	import org.alivepdf.colors.IColor;
 	import org.alivepdf.fonts.IFont;
 
 	/**
@@ -10,6 +11,7 @@ package org.alivepdf.cells
 	{
 		public var x:Number;
 		public var y:Number;
+		public var color:IColor;
 		public var width:Number;
 		public var height:Number;
 		public var font:IFont;
@@ -19,6 +21,5 @@ package org.alivepdf.cells
 		public var border:Boolean = false;
 		public var fill:Number = 0;
 		public var link:String = '';
-		
 	}
 }

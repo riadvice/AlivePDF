@@ -97,7 +97,7 @@ package org.alivepdf.pdf
 	import org.alivepdf.pages.Page;
 	import org.alivepdf.saving.Method;
 	import org.alivepdf.tools.sprintf;
-	
+
 	/**
 	 * Dispatched when a page has been added to the PDF. The addPage() method generate this event
 	 *
@@ -2544,9 +2544,9 @@ package org.alivepdf.pdf
 		public function writeFlashHtmlText ( pHeight:Number, pText:String, pLink:String='' ):void
 		{
 			//Output text in flowing mode
-			var cw    : Object     = this.currentFont.charactersWidth;
-			var w     : Number     = currentPage.w-this.rightMargin-this.currentX;
-			var wmax  : Number     = (w-2*this.currentMargin)*1000/this.fontSize;
+			var cw    : Object     = currentFont.charactersWidth;
+			var w     : Number     = currentPage.w-this.rightMargin-currentX;
+			var wmax  : Number     = (w-2*currentMargin)*1000/fontSize;
 			var s     : String     = findAndReplace ("\r",'',pText);
 			
 			// Strip all \n's as we don't use them - use <br /> tag for returns
@@ -2578,6 +2578,11 @@ package org.alivepdf.pdf
 			var textAlign        : String = '';  // '' 'C' or 'R'  ??Does 'J' work??
 			var attr             : XML;
 			
+			var cwAux            : int;
+			var fs               : int;      // Font size
+			var fc               : RGBColor; // font color;
+			var cs               : int;      // character space ( not implemented yet )
+			
 			// total number of HTML tags
 			var lng:int = aTaggedString.length;
 			
@@ -2595,8 +2600,8 @@ package org.alivepdf.pdf
 						
 					for each ( attr in aTaggedString[k].attr )
 					{	
-						switch ( String (attr.name() ) ) {
-							
+						switch ( String ( attr.name() ).toUpperCase() )
+						{	
 							case "ALIGN": 
 								textAlign = String ( attr ).charAt(0);
 								break;
@@ -2606,36 +2611,42 @@ package org.alivepdf.pdf
 					}
 						break;
 					case "</P>":
-						renderLine(currentLine,textAlign);
 						
+						renderLine(currentLine,textAlign);
 						currentLine     = new Array();
-						this.currentX   = this.leftMargin;
+						currentX   		= leftMargin;
 						textAlign       = '';
 						ns              = 0;
+						lineBreak ( pHeight );
 						
-						this.lineBreak ( pHeight );
 						break;
 					case "<FONT>":
 						for each ( attr in aTaggedString[k].attr )
 						{
-							switch ( String (attr.name() ) )
+							switch ( String ( attr.name() ).toUpperCase() )
 							{	
 								case "FACE":
+									// TODO: Add Font Face Support
 									break;
 								case "SIZE":
-									this.fontSizePt = parseInt(String ( attr ));
+									fs = parseInt( String ( attr ) );
 									break;
 								case "COLOR":
+									fc = RGBColor.hexStringToRGBColor( String ( attr ) );
 									break;
 								case "LETTERSPACING":
+									cs = parseInt( String ( attr ) );
 									break;
 								case "KERNING":
+									// TODO
 									break;
 								default:
 									break;
 							}
-					}
+						}
+						break;
 					case "</FONT>":
+						fc = textColor as RGBColor;
 						break;
 					case "<B>":
 						fontBold = true;
@@ -2658,7 +2669,7 @@ package org.alivepdf.pdf
 					case "<BR>":
 						// Both cases will set line break to true.  It is typically entered as <br /> 
 						// but the parser converts this to a start and end tag
-						this.lineBreak ( pHeight );
+						lineBreak ( pHeight );
 					case "</BR>":
 					default:
 						//Process text                    
@@ -2666,6 +2677,7 @@ package org.alivepdf.pdf
 						//Create a blank CellVO for this part
 						cellVO            = new CellVO();	
 						cellVO.fontSizePt = this.fontSizePt;
+						cellVO.color      = fc;
 						cellVO.underlined = fontUnderline;
 						
 						//Set the font for calculation of character widths
@@ -2758,16 +2770,12 @@ package org.alivepdf.pdf
 									
 									//Split at last seperator
 									
-									//Add the cell to the current line
-									with ( cellVO ) {
-										
-										x      = this.currentX;
-										y      = this.currentY;
-										width  = lenAtSep/1000*this.fontSize;
-										height = pHeight;
-										text   = s.substr ( j, sep-j );
-										//border = true;   // useful for debugging rendering problems
-									}
+									//Add the cell to the current line								
+									cellVO.x      = this.currentX;
+									cellVO.y      = this.currentY;
+									cellVO.width  = lenAtSep/1000*this.fontSize;
+									cellVO.height = pHeight;
+									cellVO.text   = s.substr ( j, sep-j );
 									
 									currentLine.push ( cellVO );
 									
@@ -2884,7 +2892,7 @@ package org.alivepdf.pdf
 		protected function renderLine ( lineArray : Array, align : String = '' ) : void
 		{	
 			var cellVO    : CellVO;
-			var availWidth: Number = currentPage.w - this.leftMargin - this.rightMargin;
+			var availWidth: Number = currentPage.w - leftMargin - rightMargin;
 			var lineLength: Number = 0;
 			var offsetX   : Number = 0; 
 			var offsetY   : Number = 0; 
@@ -2899,7 +2907,6 @@ package org.alivepdf.pdf
 			if ( firstCell.y + firstCell.height > this.pageBreakTrigger )
 			{	
 				this.addPage ( this.currentPage.clone() );
-				
 				//Use offsetY to push already specified coord for this line back up to top of page
 				offsetY = this.currentY - firstCell.y;                                
 			}
@@ -2907,7 +2914,7 @@ package org.alivepdf.pdf
 			
 			//Calculate offset if we are aligning center or right
 			for(i = 0; i < lng; i++)
-				lineLength += CellVO(lineArray[i]).width;
+				lineLength += (lineArray[i] as CellVO).width;
 			
 			//Adjust offset based on alignment
 			if ( align == Align.CENTER ) 
@@ -2924,7 +2931,9 @@ package org.alivepdf.pdf
 				currentY = cellVO.y + offsetY;
 				
 				setFont ( cellVO.font, cellVO.fontSizePt, cellVO.underlined );
-				addCell ( cellVO.width, cellVO.height, cellVO.text, cellVO.border, 2, align, cellVO.fill, cellVO.link );
+				if ( cellVO.color != null ) setTextColor ( cellVO.color );
+				colorFlag = ( fillColor != addTextColor );
+				addCell ( cellVO.width, cellVO.height, cellVO.text, cellVO.border, 2, "", cellVO.fill, cellVO.link );
 			}
 			
 		}
@@ -3350,6 +3359,11 @@ package org.alivepdf.pdf
 			} else image = streamDictionary[displayObject];
 			
 			placeImage( x, y, width, height, rotation, resizeMode, link );
+		}
+		
+		private function addTransparentImage ( displayObject:DisplayObject ):void
+		{
+			// TBD
 		}
 		
 		/**
