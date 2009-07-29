@@ -2545,7 +2545,7 @@ package org.alivepdf.pdf
 		{
 			//Output text in flowing mode
 			var cw    : Object     = currentFont.charactersWidth;
-			var w     : Number     = currentPage.w-this.rightMargin-currentX;
+			var w     : Number     = currentPage.w-rightMargin-currentX;
 			var wmax  : Number     = (w-2*currentMargin)*1000/fontSize;
 			var s     : String     = findAndReplace ("\r",'',pText);
 			
@@ -2580,7 +2580,7 @@ package org.alivepdf.pdf
 			
 			var cwAux            : int;
 			var fs               : int;      // Font size
-			var fc               : RGBColor; // font color;
+			var fontColor               : RGBColor; // font color;
 			var cs               : int;      // character space ( not implemented yet )
 			
 			// total number of HTML tags
@@ -2632,7 +2632,7 @@ package org.alivepdf.pdf
 									fs = parseInt( String ( attr ) );
 									break;
 								case "COLOR":
-									fc = RGBColor.hexStringToRGBColor( String ( attr ) );
+									fontColor = RGBColor.hexStringToRGBColor( String ( attr ) );
 									break;
 								case "LETTERSPACING":
 									cs = parseInt( String ( attr ) );
@@ -2646,7 +2646,7 @@ package org.alivepdf.pdf
 						}
 						break;
 					case "</FONT>":
-						fc = textColor as RGBColor;
+						fontColor = textColor as RGBColor;
 						break;
 					case "<B>":
 						fontBold = true;
@@ -2676,8 +2676,8 @@ package org.alivepdf.pdf
 						
 						//Create a blank CellVO for this part
 						cellVO            = new CellVO();	
-						cellVO.fontSizePt = this.fontSizePt;
-						cellVO.color      = fc;
+						cellVO.fontSizePt = fontSizePt;
+						cellVO.color      = fontColor;
 						cellVO.underlined = fontUnderline;
 						
 						//Set the font for calculation of character widths
@@ -2689,10 +2689,10 @@ package org.alivepdf.pdf
 						cw      = this.currentFont.charactersWidth; 
 						
 						//Current remaining space per line
-						w       = currentPage.w-this.rightMargin-this.currentX;
+						w       = currentPage.w-rightMargin-currentX;
 						
 						//Size of a full line of text
-						wmax    = (w-2*this.currentMargin)*1000/this.fontSize;  
+						wmax    = (w-2*currentMargin)*1000/this.fontSize;  
 						
 						//get text from string
 						s   = aTaggedString[k].value; 
@@ -2711,7 +2711,8 @@ package org.alivepdf.pdf
 							var c : String = s.charAt(i);
 							
 							//Found a seperator
-							if ( c == ' ' ) { 
+							if ( c == ' ' )
+							{ 
 								sep      = i;    //Save seperator index
 								lenAtSep = l;    //Save seperator length
 								ns++;
@@ -2728,8 +2729,8 @@ package org.alivepdf.pdf
 								{
 									// No seperator to force at character
 									
-									if(this.currentX>this.leftMargin) {
-										
+									if(this.currentX>this.leftMargin)
+									{	
 										//Move to next line
 										this.currentX  = this.leftMargin;
 										this.currentY += pHeight;
@@ -2747,14 +2748,11 @@ package org.alivepdf.pdf
 									l = 0;
 									
 									//Add the cell to the current line
-									with ( cellVO )
-									{	
-										x     = this.currentX;
-										y     = this.currentY;
-										width = l/1000*this.fontSize;
-										height= pHeight;
-										text  = s.substr(j,i-j);
-									}
+									cellVO.x     = this.currentX;
+									cellVO.y     = this.currentY;
+									cellVO.width = l/1000*this.fontSize;
+									cellVO.height= pHeight;
+									cellVO.text  = s.substr(j,i-j);
 									
 									currentLine.push ( cellVO );
 									
@@ -4041,8 +4039,8 @@ package org.alivepdf.pdf
 			nbPages = arrayPages.length;
 			state = 2;
 			
-			currentX = leftMargin;
-			currentY = topMargin;
+			// TBO
+			setXY(leftMargin, topMargin);
 			
 			if ( newOrientation == '' ) newOrientation = defaultOrientation;
 			else if ( newOrientation != defaultOrientation ) orientationChanges[nbPages] = true;
@@ -4066,8 +4064,8 @@ package org.alivepdf.pdf
 		{
 			underlinePosition = currentFont.underlinePosition;
 			underlineThickness = currentFont.underlineThickness;
-			currentPage.w = getStringWidth(content)+ws*substrCount(content,' ');
-			return sprintf('%.2f %.2f %.2f %.2f re f',x*k,(currentPage.h-(y-underlinePosition/1000*fontSize))*k,currentPage.w*k,-underlineThickness/1000*fontSizePt);
+			var w:Number = getStringWidth(content)+ws*substrCount(content,' ');
+			return sprintf('%.2f %.2f %.2f %.2f re f',x*k,(currentPage.h-(y-underlinePosition/1000*fontSize))*k,w*k,-underlineThickness/1000*fontSizePt);
 		}
 		
 		protected function substrCount ( content:String, search:String ):int
