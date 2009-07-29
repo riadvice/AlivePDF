@@ -38,7 +38,7 @@ package org.alivepdf.images
 			if(ct==0) colorSpace = ColorSpace.DEVICE_GRAY;
 			else if(ct==2) colorSpace = ColorSpace.DEVICE_RGB;
 			else if(ct==3) colorSpace = ColorSpace.INDEXED;
-			//else throw new Error("Alpha channel not supported for now");
+			else throw new Error("Alpha channel not supported for now");
 			
 			if ( stream.readByte() != 0 ) throw new Error ("Unknown compression method");
 			if ( stream.readByte() != 0 ) throw new Error ("Unknown filter method");
@@ -64,7 +64,6 @@ package org.alivepdf.images
 					
 				} else if ( type == PNGImage.TRNS )
 				{
-					trace("found");
 					
 				} else if ( type == PNGImage.IDAT )
 				{	
