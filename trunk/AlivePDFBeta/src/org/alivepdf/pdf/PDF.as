@@ -1828,8 +1828,9 @@ package org.alivepdf.pdf
 		 * </pre>
 		 * </div>
 		 */
-		public function addBookmark ( text:String, level:int, y:Number, color:RGBColor ):void
+		public function addBookmark ( text:String, level:int=0, y:Number=0, color:RGBColor=null ):void
 		{
+			if ( color == null ) color = new RGBColor ( 0x000000 );
 			if( y == -1 ) y = getY();
 			outlines.push ( { 't' : text == null ? 'Page ' + nbPages : text, 'l' : level,'y' : y,'p' : nbPages, redMultiplier : color.r, greenMultiplier : color.g, blueMultiplier : color.b } );
 		}
@@ -3847,7 +3848,6 @@ package org.alivepdf.pdf
 			write('<<');
 			write('/S /JavaScript');
 			write('/JS '+escapeString(javascript));
-			trace( escapeString(javascript) );
 			write('>>');
 			write('endobj');	
 		}
@@ -3868,8 +3868,7 @@ package org.alivepdf.pdf
 		}
 		
 		protected function insertBookmarks ():void
-		{
-			
+		{	
 			var nb:int = outlines.length;
 			if ( nb == 0 ) return;
 			
@@ -3931,7 +3930,6 @@ package org.alivepdf.pdf
 			write('<</Type /Outlines /First '+n+' 0 R');
 			write('/Last '+(n+lru[0])+' 0 R>>');
 			write('endobj');
-			
 		}
 		
 		protected function insertInfos():void
