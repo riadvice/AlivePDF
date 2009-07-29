@@ -334,6 +334,8 @@ package org.alivepdf.pdf
 		protected var matrix:Matrix;
 		protected var pushedFontName:String;
 		protected var fontUnderline:Boolean;
+		protected var jsResource:int;
+		protected var javascript:String;
 		
 		protected var widths:*;
 		protected var aligns:Array = new Array();
@@ -2112,7 +2114,7 @@ package org.alivepdf.pdf
 		 */
 		public function addText ( text:String, x:Number=0, y:Number=0 ):void	
 		{
-			var s:String = sprintf('BT %.2f %.2f Td (%s) Tj ET',x*k, (currentPage.h-y)*k, escape(text));
+			var s:String = sprintf('BT %.2f %.2f Td (%s) Tj ET',x*k, (currentPage.h-y)*k, escapeIt(text));
 			if (underline && text !='') s += ' '+doUnderline(x,y,text);
 			if (colorFlag) s = 'q ' + addTextColor + ' ' + s +' Q';
 			write(s);
@@ -2371,7 +2373,7 @@ package org.alivepdf.pdf
 					}
 					else
 					{
-						if(align=='J')
+						if(align==Align.JUSTIFIED)
 						{
 							ws=(ns>1) ? (wmax-ls)/1000*fontSize/(ns-1) : 0;
 							write(sprintf('%.3f Tw',ws*k));
@@ -2379,7 +2381,6 @@ package org.alivepdf.pdf
 						
 						addCell(width,height,s.substr(j,sep-j),b,2,align,filled);
 						i=sep+1;
-						
 					}
 					
 					sep=-1;
@@ -3240,6 +3241,33 @@ package org.alivepdf.pdf
 		
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		/*
+		* AlivePDF JavaScript API
+		*
+		* addJavaScript()
+		*
+		*/
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		
+		/**
+		 * The addJavaScript allows you to inject JavaScript code to be executed when the PDF document is opened
+		 * 
+		 * @param script
+		 * @example
+		 * This example shows how to open the print dialog when the PDF document is opened :
+		 * <div class="listing">
+		 * <pre>
+		 *
+		 * myPDF.addJavaScript ("print(true);");
+		 * </pre>
+		 * </div>
+		 */	 
+		public function addJavaScript ( script:String ):void
+		{
+			javascript = script;
+		}
+		
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		/*
 		* AlivePDF image API
 		*
 		* addImage()
@@ -3807,11 +3835,29 @@ package org.alivepdf.pdf
 			}
 		}
 		
+		protected function insertJS():void
+		{
+			newObj();
+			jsResource = n;
+			write('<<');
+			write('/Names [(EmbeddedJS) '+(n+1)+' 0 R]');
+			write('>>');
+			write('endobj');
+			newObj();
+			write('<<');
+			write('/S /JavaScript');
+			write('/JS '+escapeString(javascript));
+			trace( escapeString(javascript) );
+			write('>>');
+			write('endobj');	
+		}
+		
 		protected function writeResources():void
 		{
 			insertExtGState();
 			insertFonts();
 			insertImages();
+			if ( javascript != null ) insertJS();
 			offsets[2] = buffer.length;
 			write('2 0 obj');
 			write('<<');
@@ -3918,6 +3964,8 @@ package org.alivepdf.pdf
 				write('/Outlines '+outlineRoot+' 0 R');
 				write('/PageMode /UseOutlines');
 			} else write('/PageMode /'+pageMode);
+			
+			if ( javascript != null )  write('/Names <</JavaScript '+(jsResource)+' 0 R>>');
 		}
 		
 		protected function createHeader():void
@@ -4024,12 +4072,12 @@ package org.alivepdf.pdf
 		
 		protected function escapeString(content:String):String
 		{
-			return '('+escape(content)+')';
+			return '('+escapeIt(content)+')';
 		}
 		
-		protected function escape(content:String):String
+		protected function escapeIt(content:String):String
 		{
-			return findAndReplace(')','\\)',findAndReplace('(','\\(',findAndReplace('\\','\\\\',content)));
+			return findAndReplace(')','\\)',findAndReplace('(','\\(',findAndReplace('\\','\\\\',findAndReplace('\r','\\r',content))));
 		} 
 		
 		protected function writeStream(stream:String):void
@@ -4041,7 +4089,7 @@ package org.alivepdf.pdf
 		
 		protected function write( content:* ):void
 		{
-			if ( currentPage == null ) throw new Error ("No pages available, please call the addPage method first !");
+			if ( currentPage == null ) throw new Error ("No pages available, please call the addPage method first.");
 			if ( state == 2 ) currentPage.content += content+"\n";
 			else buffer.writeMultiByte( content+"\n", "windows-1252" );
 		}

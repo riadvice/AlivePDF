@@ -167,7 +167,7 @@ package org.alivepdf.pdf
 			}	
 		}
 		
-		protected override function escape(content:String):String
+		protected override function escapeIt(content:String):String
 		{
 			var bytes:ByteArray = new ByteArray;
 			bytes.writeUTFBytes(content);
