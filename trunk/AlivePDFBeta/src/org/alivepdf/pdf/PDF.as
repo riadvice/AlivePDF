@@ -2040,9 +2040,7 @@ package org.alivepdf.pdf
 		public function removeFont ( font:IFont ):void
 		{
 			if ( font.type == FontType.CORE ) throw new Error('The font you have passed is a Core font. Core fonts cannot be removed as they are not embedded in the PDF.');
-			
 			var position:int = fonts.indexOf(font);
-			
 			if ( position != -1 ) fonts.splice(position, 1);
 			else throw new Error ("Font cannot be found.");	
 		}
@@ -2249,7 +2247,6 @@ package org.alivepdf.pdf
 			
 			if( ln > 0 )
 			{
-				
 				currentY += height;
 				if( ln ==1) currentX = leftMargin;
 				
@@ -2727,14 +2724,14 @@ package org.alivepdf.pdf
 								{
 									// No seperator to force at character
 									
-									if(this.currentX>this.leftMargin)
+									if(currentX>leftMargin)
 									{	
 										//Move to next line
-										this.currentX  = this.leftMargin;
-										this.currentY += pHeight;
+										currentX  = leftMargin;
+										currentY += pHeight;
 										
-										w    = currentPage.w-this.rightMargin-this.currentX;
-										wmax = (w-2*this.currentMargin)*1000/this.fontSize;
+										w    = currentPage.w-rightMargin-currentX;
+										wmax = (w-2*currentMargin)*1000/fontSize;
 										
 										i++;
 										continue;
@@ -2748,7 +2745,7 @@ package org.alivepdf.pdf
 									//Add the cell to the current line
 									cellVO.x     = currentX;
 									cellVO.y     = currentY;
-									cellVO.width = l/1000*this.fontSize;
+									cellVO.width = l/1000*fontSize;
 									cellVO.height= pHeight;
 									cellVO.text  = s.substr(j,i-j);
 									
@@ -2814,7 +2811,7 @@ package org.alivepdf.pdf
 							
 							cellVO.x = currentX;
 							cellVO.y = currentY;
-							cellVO.width = l/1000*this.fontSize;
+							cellVO.width = l/1000*fontSize;
 							cellVO.height = pHeight;
 							cellVO.text = s.substr(j);
 							
@@ -2845,21 +2842,21 @@ package org.alivepdf.pdf
 			}
 			
 			//Is there anything left to render before we exit?
-			if ( currentLine.length ) {
-				
+			if ( currentLine.length ) 
+			{	
 				renderLine ( currentLine, textAlign );
-				this.lineBreak ( pHeight );
+				lineBreak ( pHeight );
 				currentLine = new Array();
 			}            
 			
 			//Set current y off the page to force new page.
-			this.currentY += currentPage.h;    
+			currentY += currentPage.h;    
 		}
 		
-		protected function lineBreak ( pHeight : Number ) : void
+		protected function lineBreak ( pHeight : Number ):void
 		{	
-			this.currentX  = this.leftMargin;
-			this.currentY += pHeight;
+			currentX  = leftMargin;
+			currentY += pHeight;
 		}
 		
 		protected function getFontStyleString (  bold : Boolean, italic : Boolean, family: String ) : String
@@ -2895,11 +2892,11 @@ package org.alivepdf.pdf
 				return;
 			
 			//Check if we need a new page for this line
-			if ( firstCell.y + firstCell.height > this.pageBreakTrigger )
+			if ( firstCell.y + firstCell.height > pageBreakTrigger )
 			{	
-				this.addPage ( this.currentPage.clone() );
+				addPage ( currentPage.clone() );
 				//Use offsetY to push already specified coord for this line back up to top of page
-				offsetY = this.currentY - firstCell.y;                                
+				offsetY = currentY - firstCell.y;                                
 			}
 			var lng:int = lineArray.length;
 			
@@ -3487,7 +3484,7 @@ package org.alivepdf.pdf
 		
 		public function toString ():String
 		{	
-			return "[PDF totalPages="+totalPages+" embeddedFonts="+totalFonts+" PDFVersion="+version+" AlivePDFVersion="+PDF.ALIVEPDF_VERSION+"]";	
+			return "[PDF totalPages="+totalPages+" nbImages="+getTotalProperties(streamDictionary)+" embeddedFonts="+totalFonts+" PDFVersion="+version+" AlivePDFVersion="+PDF.ALIVEPDF_VERSION+"]";	
 		} 
 		
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -3887,7 +3884,7 @@ package org.alivepdf.pdf
 				
 				if(o.l > 0)
 				{
-					var parent:* = lru[o.l-1];
+					var parent:* = lru[int(o.l-1)];
 					//Set parent and last pointers
 					outlines[i].parent=parent;
 					outlines[parent].last=i;
