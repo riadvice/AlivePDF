@@ -6,7 +6,6 @@ package org.alivepdf.fonts.parsing
 	
 	public final class NameRecord
 	{
-		
 		public var platformId:int;
 		public var encodingId:int;
 		public var languageId:int;
@@ -23,7 +22,6 @@ package org.alivepdf.fonts.parsing
 			nameId = stream.readShort();
 			stringLength = stream.readShort();
 			stringOffset = stream.readShort();
-			
 		}
 		
 		public function decode( stream:ByteArray ):void
