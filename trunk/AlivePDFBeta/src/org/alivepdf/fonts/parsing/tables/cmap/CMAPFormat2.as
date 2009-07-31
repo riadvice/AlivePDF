@@ -12,9 +12,7 @@ package org.alivepdf.fonts.parsing.tables.cmap
 		
 		public function CMAPFormat2(format:uint, length:uint, language:uint, data:ByteArray)
 		{
-			
 			super(format, length, language, data);
 		}
-
 	}
 }

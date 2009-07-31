@@ -1934,7 +1934,6 @@ package org.alivepdf.pdf
 			pushedFontName = font.name;
 			
 			if ( !fonts.some(filterCallback) ) fonts.push ( font );
-			
 			if ( font is EmbeddedFont ) totalEmbeddedFonts++;
 			
 			fontFamily = font.name;
