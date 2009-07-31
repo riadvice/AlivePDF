@@ -336,6 +336,7 @@ package org.alivepdf.pdf
 		protected var fontUnderline:Boolean;
 		protected var jsResource:int;
 		protected var javascript:String;
+		protected var totalEmbeddedFonts:int;
 		
 		protected var widths:*;
 		protected var aligns:Array = new Array();
@@ -1934,6 +1935,8 @@ package org.alivepdf.pdf
 			
 			if ( !fonts.some(filterCallback) ) fonts.push ( font );
 			
+			if ( font is EmbeddedFont ) totalEmbeddedFonts++;
+			
 			fontFamily = font.name;
 			
 			var addedFont:EmbeddedFont;
@@ -3484,7 +3487,7 @@ package org.alivepdf.pdf
 		
 		public function toString ():String
 		{	
-			return "[PDF totalPages="+totalPages+" nbImages="+getTotalProperties(streamDictionary)+" embeddedFonts="+totalFonts+" PDFVersion="+version+" AlivePDFVersion="+PDF.ALIVEPDF_VERSION+"]";	
+			return "[PDF totalPages="+totalPages+" nbImages="+getTotalProperties(streamDictionary)+" totalFonts="+totalFonts+" embeddedFonts="+totalEmbeddedFonts+" PDFVersion="+version+" AlivePDFVersion="+PDF.ALIVEPDF_VERSION+"]";	
 		} 
 		
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
