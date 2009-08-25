@@ -20,11 +20,10 @@ package org.alivepdf.export
 		}
 		
 		public function serialize():ByteArray
-		{
-			var line:String;
-			
+		{	
 			if ( _columns == null ) throw new Error("Set the Grid.columns property to use the export feature.");
-			
+		
+			var line:String;
 			var lng:int = _columns.length;
 			var column:GridColumn;
 			var field:String;
