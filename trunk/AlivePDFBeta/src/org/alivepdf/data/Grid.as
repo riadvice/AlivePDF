@@ -1,7 +1,11 @@
 package org.alivepdf.data
 {
 	import flash.utils.ByteArray;
+	
 	import org.alivepdf.colors.IColor;
+	import org.alivepdf.export.CSVExport;
+	import org.alivepdf.export.Export;
+	import org.alivepdf.serializer.ISerializer;
 	
 	public class Grid
 	{
@@ -18,6 +22,7 @@ package org.alivepdf.data
 		private var _headerColor:IColor;
 		private var _cellColor:IColor;
 		private var _alternateRowColor:Boolean;
+		private var _serializer:ISerializer;
 		
 		public function Grid( data:Array, width:Number, height:Number, headerColor:IColor, backgroundColor:IColor, cellColor:IColor, alternateRowColor:Boolean, borderColor:IColor, borderAlpha:Number=1,joints:String="0 j")
 		{
@@ -33,9 +38,10 @@ package org.alivepdf.data
 			_alternateRowColor = alternateRowColor;	
 		}
 		
-		public function export ():ByteArray
+		public function export ( type:String="csv" ):ByteArray
 		{
-			return new ByteArray();	
+			if ( type == Export.CSV ) _serializer = new CSVExport(_data, _columns);
+			return _serializer.serialize();
 		}
 		
 		public function get columns ():Array
