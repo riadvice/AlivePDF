@@ -1,7 +1,6 @@
 package org.alivepdf.export
 {
 	import flash.utils.ByteArray;
-	
 	import org.alivepdf.data.GridColumn;
 	import org.alivepdf.serializer.ISerializer;
 
