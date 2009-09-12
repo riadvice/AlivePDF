@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flexLibProperties includeAllClasses="false" version="1">
+  <includeClasses>
+    <classEntry path="org.alivepdf.annotations.AttachFileStyle"/>
+    <classEntry path="org.alivepdf.annotations.StampStyle"/>
+    <classEntry path="org.alivepdf.cells.CellVO"/>
+    <classEntry path="org.alivepdf.colors.CMYKColor"/>
+    <classEntry path="org.alivepdf.colors.GrayColor"/>
+    <classEntry path="org.alivepdf.colors.IColor"/>
+    <classEntry path="org.alivepdf.colors.RGBColor"/>
+    <classEntry path="org.alivepdf.data.Grid"/>
+    <classEntry path="org.alivepdf.data.GridColumn"/>
+    <classEntry path="org.alivepdf.decoding.Filter"/>
+    <classEntry path="org.alivepdf.display.Display"/>
+    <classEntry path="org.alivepdf.display.PageMode"/>
+    <classEntry path="org.alivepdf.drawing.Blend"/>
+    <classEntry path="org.alivepdf.drawing.Caps"/>
+    <classEntry path="org.alivepdf.drawing.DashedLine"/>
+    <classEntry path="org.alivepdf.drawing.Joint"/>
+    <classEntry path="org.alivepdf.drawing.WindingRule"/>
+    <classEntry path="org.alivepdf.encoding.Base64"/>
+    <classEntry path="org.alivepdf.encoding.BitString"/>
+    <classEntry path="org.alivepdf.encoding.IntBlock"/>
+    <classEntry path="org.alivepdf.encoding.IntList"/>
+    <classEntry path="org.alivepdf.encoding.JPEGEncoder"/>
+    <classEntry path="org.alivepdf.encoding.PNGEncoder"/>
+    <classEntry path="org.alivepdf.events.PageEvent"/>
+    <classEntry path="org.alivepdf.events.PagingEvent"/>
+    <classEntry path="org.alivepdf.events.ProcessingEvent"/>
+    <classEntry path="org.alivepdf.export.CSVExport"/>
+    <classEntry path="org.alivepdf.export.Export"/>
+    <classEntry path="org.alivepdf.fonts.CodePage"/>
+    <classEntry path="org.alivepdf.fonts.CoreFont"/>
+    <classEntry path="org.alivepdf.fonts.EmbeddedFont"/>
+    <classEntry path="org.alivepdf.fonts.FontDescription"/>
+    <classEntry path="org.alivepdf.fonts.FontFamily"/>
+    <classEntry path="org.alivepdf.fonts.FontFilter"/>
+    <classEntry path="org.alivepdf.fonts.FontMetrics"/>
+    <classEntry path="org.alivepdf.fonts.FontType"/>
+    <classEntry path="org.alivepdf.fonts.ICidFont"/>
+    <classEntry path="org.alivepdf.fonts.IFont"/>
+    <classEntry path="org.alivepdf.fonts.Style"/>
+    <classEntry path="org.alivepdf.fonts.parsing.MetricInfo"/>
+    <classEntry path="org.alivepdf.fonts.parsing.NameID"/>
+    <classEntry path="org.alivepdf.fonts.parsing.NameRecord"/>
+    <classEntry path="org.alivepdf.fonts.parsing.TabEntry"/>
+    <classEntry path="org.alivepdf.fonts.parsing.TrueTypeParser"/>
+    <classEntry path="org.alivepdf.fonts.parsing.tables.CMAPTable"/>
+    <classEntry path="org.alivepdf.fonts.parsing.tables.HEADTable"/>
+    <classEntry path="org.alivepdf.fonts.parsing.tables.HMTXTable"/>
+    <classEntry path="org.alivepdf.fonts.parsing.tables.cmap.CMAPEncodingRecord"/>
+    <classEntry path="org.alivepdf.fonts.parsing.tables.cmap.CMAPFormat"/>
+    <classEntry path="org.alivepdf.fonts.parsing.tables.cmap.CMAPFormat0"/>
+    <classEntry path="org.alivepdf.fonts.parsing.tables.cmap.CMAPFormat10"/>
+    <classEntry path="org.alivepdf.fonts.parsing.tables.cmap.CMAPFormat12"/>
+    <classEntry path="org.alivepdf.fonts.parsing.tables.cmap.CMAPFormat14"/>
+    <classEntry path="org.alivepdf.fonts.parsing.tables.cmap.CMAPFormat2"/>
+    <classEntry path="org.alivepdf.fonts.parsing.tables.cmap.CMAPFormat4"/>
+    <classEntry path="org.alivepdf.fonts.parsing.tables.cmap.CMAPFormat6"/>
+    <classEntry path="org.alivepdf.fonts.parsing.tables.cmap.CMAPFormat8"/>
+    <classEntry path="org.alivepdf.fonts.unicodefonts.ArialUnicodeMS"/>
+    <classEntry path="org.alivepdf.fonts.unicodefonts.CidInfo"/>
+    <classEntry path="org.alivepdf.images.ColorSpace"/>
+    <classEntry path="org.alivepdf.images.DoJPEGImage"/>
+    <classEntry path="org.alivepdf.images.DoPNGImage"/>
+    <classEntry path="org.alivepdf.images.GIFImage"/>
+    <classEntry path="org.alivepdf.images.IImage"/>
+    <classEntry path="org.alivepdf.images.ImageFormat"/>
+    <classEntry path="org.alivepdf.images.JPEGImage"/>
+    <classEntry path="org.alivepdf.images.PDFImage"/>
+    <classEntry path="org.alivepdf.images.PNGImage"/>
+    <classEntry path="org.alivepdf.images.gif.decoder.GIFDecoder"/>
+    <classEntry path="org.alivepdf.images.gif.encoder.GIFEncoder"/>
+    <classEntry path="org.alivepdf.images.gif.encoder.LZWEncoder"/>
+    <classEntry path="org.alivepdf.images.gif.encoder.NeuQuant"/>
+    <classEntry path="org.alivepdf.images.gif.errors.FileTypeError"/>
+    <classEntry path="org.alivepdf.images.gif.events.FileTypeEvent"/>
+    <classEntry path="org.alivepdf.images.gif.events.FrameEvent"/>
+    <classEntry path="org.alivepdf.images.gif.events.GIFPlayerEvent"/>
+    <classEntry path="org.alivepdf.images.gif.events.TimeoutEvent"/>
+    <classEntry path="org.alivepdf.images.gif.frames.GIFFrame"/>
+    <classEntry path="org.alivepdf.images.gif.player.GIFPlayer"/>
+    <classEntry path="org.alivepdf.layout.Align"/>
+    <classEntry path="org.alivepdf.layout.Format"/>
+    <classEntry path="org.alivepdf.layout.Layout"/>
+    <classEntry path="org.alivepdf.layout.Mode"/>
+    <classEntry path="org.alivepdf.layout.Orientation"/>
+    <classEntry path="org.alivepdf.layout.Position"/>
+    <classEntry path="org.alivepdf.layout.Resize"/>
+    <classEntry path="org.alivepdf.layout.Size"/>
+    <classEntry path="org.alivepdf.layout.Unit"/>
+    <classEntry path="org.alivepdf.links.HTTPLink"/>
+    <classEntry path="org.alivepdf.links.ILink"/>
+    <classEntry path="org.alivepdf.links.InternalLink"/>
+    <classEntry path="org.alivepdf.operators.Drawing"/>
+    <classEntry path="org.alivepdf.pages.Page"/>
+    <classEntry path="org.alivepdf.pdf.PDF"/>
+    <classEntry path="org.alivepdf.pdf.UnicodePDF"/>
+    <classEntry path="org.alivepdf.saving.Download"/>
+    <classEntry path="org.alivepdf.saving.Method"/>
+    <classEntry path="org.alivepdf.serializer.ISerializer"/>
+    <classEntry path="org.alivepdf.text.Cell"/>
+    <classEntry path="org.alivepdf.tools.sprintf"/>
+    <classEntry path="org.alivepdf.transitions.Dimension"/>
+    <classEntry path="org.alivepdf.transitions.MotionDirection"/>
+    <classEntry path="org.alivepdf.transitions.Transition"/>
+    <classEntry path="org.alivepdf.transitions.TransitionDirection"/>
+    <classEntry path="org.alivepdf.viewing.CenterWindow"/>
+    <classEntry path="org.alivepdf.viewing.Direction"/>
+    <classEntry path="org.alivepdf.viewing.FitWindow"/>
+    <classEntry path="org.alivepdf.viewing.MenuBar"/>
+    <classEntry path="org.alivepdf.viewing.Title"/>
+    <classEntry path="org.alivepdf.viewing.ToolBar"/>
+    <classEntry path="org.alivepdf.viewing.WindowUI"/>
+    <classEntry path="org.alivepdf.links.Highlight"/>
+    <classEntry path="org.alivepdf.links.Outline"/>
+  </includeClasses>
+  <includeResources>
+    <resourceEntry destPath="org/alivepdf/fonts/map/iso-8859-9.map" sourcePath="org/alivepdf/fonts/map/iso-8859-9.map"/>
+    <resourceEntry destPath="org/alivepdf/fonts/map/cp1251.map" sourcePath="org/alivepdf/fonts/map/cp1251.map"/>
+    <resourceEntry destPath="org/alivepdf/fonts/unicodefonts/uni2cid/.DS_Store" sourcePath="org/alivepdf/fonts/unicodefonts/uni2cid/.DS_Store"/>
+    <resourceEntry destPath="org/alivepdf/fonts/map/cp1255.map" sourcePath="org/alivepdf/fonts/map/cp1255.map"/>
+    <resourceEntry destPath="org/alivepdf/fonts/map/cp1258.map" sourcePath="org/alivepdf/fonts/map/cp1258.map"/>
+    <resourceEntry destPath="org/alivepdf/fonts/map/cp1253.map" sourcePath="org/alivepdf/fonts/map/cp1253.map"/>
+    <resourceEntry destPath="org/alivepdf/fonts/map/koi8-r.map" sourcePath="org/alivepdf/fonts/map/koi8-r.map"/>
+    <resourceEntry destPath="org/alivepdf/fonts/map/iso-8859-2.map" sourcePath="org/alivepdf/fonts/map/iso-8859-2.map"/>
+    <resourceEntry destPath=".DS_Store" sourcePath=".DS_Store"/>
+    <resourceEntry destPath="org/alivepdf/fonts/unicodefonts/uni2cid/uni2cid_aj16" sourcePath="org/alivepdf/fonts/unicodefonts/uni2cid/uni2cid_aj16"/>
+    <resourceEntry destPath="org/alivepdf/fonts/map/koi8-u.map" sourcePath="org/alivepdf/fonts/map/koi8-u.map"/>
+    <resourceEntry destPath="org/alivepdf/fonts/map/cp1250.map" sourcePath="org/alivepdf/fonts/map/cp1250.map"/>
+    <resourceEntry destPath="org/alivepdf/images/.DS_Store" sourcePath="org/alivepdf/images/.DS_Store"/>
+    <resourceEntry destPath="org/alivepdf/fonts/.DS_Store" sourcePath="org/alivepdf/fonts/.DS_Store"/>
+    <resourceEntry destPath="org/alivepdf/fonts/map/cp1252.map" sourcePath="org/alivepdf/fonts/map/cp1252.map"/>
+    <resourceEntry destPath="org/alivepdf/fonts/map/iso-8859-1.map" sourcePath="org/alivepdf/fonts/map/iso-8859-1.map"/>
+    <resourceEntry destPath="org/alivepdf/fonts/unicodefonts/arialunicid0_metrics" sourcePath="org/alivepdf/fonts/unicodefonts/arialunicid0_metrics"/>
+    <resourceEntry destPath="org/alivepdf/fonts/map/cp1254.map" sourcePath="org/alivepdf/fonts/map/cp1254.map"/>
+    <resourceEntry destPath="org/alivepdf/fonts/map/cp1257.map" sourcePath="org/alivepdf/fonts/map/cp1257.map"/>
+    <resourceEntry destPath="org/alivepdf/fonts/map/iso-8859-4.map" sourcePath="org/alivepdf/fonts/map/iso-8859-4.map"/>
+    <resourceEntry destPath="org/alivepdf/fonts/unicodefonts/uni2cid/uni2cid_ac15" sourcePath="org/alivepdf/fonts/unicodefonts/uni2cid/uni2cid_ac15"/>
+    <resourceEntry destPath="org/alivepdf/fonts/map/iso-8859-11.map" sourcePath="org/alivepdf/fonts/map/iso-8859-11.map"/>
+    <resourceEntry destPath="org/alivepdf/.DS_Store" sourcePath="org/alivepdf/.DS_Store"/>
+    <resourceEntry destPath="org/alivepdf/fonts/unicodefonts/.DS_Store" sourcePath="org/alivepdf/fonts/unicodefonts/.DS_Store"/>
+    <resourceEntry destPath="org/alivepdf/fonts/unicodefonts/uni2cid/uni2cid_ak12" sourcePath="org/alivepdf/fonts/unicodefonts/uni2cid/uni2cid_ak12"/>
+    <resourceEntry destPath="org/alivepdf/fonts/map/iso-8859-7.map" sourcePath="org/alivepdf/fonts/map/iso-8859-7.map"/>
+    <resourceEntry destPath="org/alivepdf/fonts/map/iso-8859-15.map" sourcePath="org/alivepdf/fonts/map/iso-8859-15.map"/>
+    <resourceEntry destPath="org/alivepdf/fonts/map/iso-8859-5.map" sourcePath="org/alivepdf/fonts/map/iso-8859-5.map"/>
+    <resourceEntry destPath="org/alivepdf/fonts/map/iso-8859-16.map" sourcePath="org/alivepdf/fonts/map/iso-8859-16.map"/>
+    <resourceEntry destPath="org/alivepdf/fonts/map/cp874.map" sourcePath="org/alivepdf/fonts/map/cp874.map"/>
+    <resourceEntry destPath="org/alivepdf/fonts/unicodefonts/uni2cid/uni2cid_ag15" sourcePath="org/alivepdf/fonts/unicodefonts/uni2cid/uni2cid_ag15"/>
+  </includeResources>
+  <namespaceManifests/>
+</flexLibProperties>
