@@ -114,6 +114,8 @@
     <classEntry path="org.alivepdf.viewing.WindowUI"/>
     <classEntry path="org.alivepdf.links.Highlight"/>
     <classEntry path="org.alivepdf.links.Outline"/>
+    <classEntry path="org.alivepdf.images.TIFFImage"/>
+    <classEntry path="org.alivepdf.images.DoTIFFImage"/>
   </includeClasses>
   <includeResources>
     <resourceEntry destPath="org/alivepdf/fonts/map/iso-8859-9.map" sourcePath="org/alivepdf/fonts/map/iso-8859-9.map"/>
@@ -122,12 +124,12 @@
     <resourceEntry destPath="org/alivepdf/fonts/map/cp1255.map" sourcePath="org/alivepdf/fonts/map/cp1255.map"/>
     <resourceEntry destPath="org/alivepdf/fonts/map/cp1258.map" sourcePath="org/alivepdf/fonts/map/cp1258.map"/>
     <resourceEntry destPath="org/alivepdf/fonts/map/cp1253.map" sourcePath="org/alivepdf/fonts/map/cp1253.map"/>
-    <resourceEntry destPath="org/alivepdf/fonts/map/koi8-r.map" sourcePath="org/alivepdf/fonts/map/koi8-r.map"/>
     <resourceEntry destPath="org/alivepdf/fonts/map/iso-8859-2.map" sourcePath="org/alivepdf/fonts/map/iso-8859-2.map"/>
+    <resourceEntry destPath="org/alivepdf/fonts/map/koi8-r.map" sourcePath="org/alivepdf/fonts/map/koi8-r.map"/>
     <resourceEntry destPath=".DS_Store" sourcePath=".DS_Store"/>
     <resourceEntry destPath="org/alivepdf/fonts/unicodefonts/uni2cid/uni2cid_aj16" sourcePath="org/alivepdf/fonts/unicodefonts/uni2cid/uni2cid_aj16"/>
-    <resourceEntry destPath="org/alivepdf/fonts/map/koi8-u.map" sourcePath="org/alivepdf/fonts/map/koi8-u.map"/>
     <resourceEntry destPath="org/alivepdf/fonts/map/cp1250.map" sourcePath="org/alivepdf/fonts/map/cp1250.map"/>
+    <resourceEntry destPath="org/alivepdf/fonts/map/koi8-u.map" sourcePath="org/alivepdf/fonts/map/koi8-u.map"/>
     <resourceEntry destPath="org/alivepdf/images/.DS_Store" sourcePath="org/alivepdf/images/.DS_Store"/>
     <resourceEntry destPath="org/alivepdf/fonts/.DS_Store" sourcePath="org/alivepdf/fonts/.DS_Store"/>
     <resourceEntry destPath="org/alivepdf/fonts/map/cp1252.map" sourcePath="org/alivepdf/fonts/map/cp1252.map"/>
@@ -141,10 +143,10 @@
     <resourceEntry destPath="org/alivepdf/.DS_Store" sourcePath="org/alivepdf/.DS_Store"/>
     <resourceEntry destPath="org/alivepdf/fonts/unicodefonts/.DS_Store" sourcePath="org/alivepdf/fonts/unicodefonts/.DS_Store"/>
     <resourceEntry destPath="org/alivepdf/fonts/unicodefonts/uni2cid/uni2cid_ak12" sourcePath="org/alivepdf/fonts/unicodefonts/uni2cid/uni2cid_ak12"/>
-    <resourceEntry destPath="org/alivepdf/fonts/map/iso-8859-7.map" sourcePath="org/alivepdf/fonts/map/iso-8859-7.map"/>
     <resourceEntry destPath="org/alivepdf/fonts/map/iso-8859-15.map" sourcePath="org/alivepdf/fonts/map/iso-8859-15.map"/>
-    <resourceEntry destPath="org/alivepdf/fonts/map/iso-8859-5.map" sourcePath="org/alivepdf/fonts/map/iso-8859-5.map"/>
+    <resourceEntry destPath="org/alivepdf/fonts/map/iso-8859-7.map" sourcePath="org/alivepdf/fonts/map/iso-8859-7.map"/>
     <resourceEntry destPath="org/alivepdf/fonts/map/iso-8859-16.map" sourcePath="org/alivepdf/fonts/map/iso-8859-16.map"/>
+    <resourceEntry destPath="org/alivepdf/fonts/map/iso-8859-5.map" sourcePath="org/alivepdf/fonts/map/iso-8859-5.map"/>
     <resourceEntry destPath="org/alivepdf/fonts/map/cp874.map" sourcePath="org/alivepdf/fonts/map/cp874.map"/>
     <resourceEntry destPath="org/alivepdf/fonts/unicodefonts/uni2cid/uni2cid_ag15" sourcePath="org/alivepdf/fonts/unicodefonts/uni2cid/uni2cid_ag15"/>
   </includeResources>
