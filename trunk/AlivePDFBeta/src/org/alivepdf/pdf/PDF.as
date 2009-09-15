@@ -35,10 +35,12 @@ package org.alivepdf.pdf
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	import flash.net.URLRequest;
+	import flash.net.FileReference;
 	import flash.net.URLRequestHeader;
 	import flash.net.URLRequestMethod;
 	import flash.net.navigateToURL;
 	import flash.utils.ByteArray;
+	import flash.utils.Endian;
 	import flash.utils.Dictionary;
 	import flash.utils.getTimer;
 	
@@ -57,6 +59,7 @@ package org.alivepdf.pdf
 	import org.alivepdf.encoding.Base64;
 	import org.alivepdf.encoding.JPEGEncoder;
 	import org.alivepdf.encoding.PNGEncoder;
+	import org.alivepdf.encoding.TIFFEncoder;
 	import org.alivepdf.events.PageEvent;
 	import org.alivepdf.events.ProcessingEvent;
 	import org.alivepdf.fonts.CoreFont;
@@ -70,11 +73,13 @@ package org.alivepdf.pdf
 	import org.alivepdf.images.ColorSpace;
 	import org.alivepdf.images.DoJPEGImage;
 	import org.alivepdf.images.DoPNGImage;
+	import org.alivepdf.images.DoTIFFImage;
 	import org.alivepdf.images.GIFImage;
 	import org.alivepdf.images.ImageFormat;
 	import org.alivepdf.images.JPEGImage;
 	import org.alivepdf.images.PDFImage;
 	import org.alivepdf.images.PNGImage;
+	import org.alivepdf.images.TIFFImage;
 	import org.alivepdf.images.gif.player.GIFPlayer;
 	import org.alivepdf.layout.Align;
 	import org.alivepdf.layout.Layout;
@@ -685,6 +690,11 @@ package org.alivepdf.pdf
 		public function setCreator ( creator:String ):void
 		{
 			documentCreator = creator;
+		}
+		
+		public function setPermissions ( ):void
+		{
+			
 		}
 		
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -3390,10 +3400,15 @@ package org.alivepdf.pdf
 					bytes = encoder.encode ( bitmapDataBuffer );
 					image = new DoJPEGImage ( bitmapDataBuffer, bytes, id );
 					
-				} else 
+				} else if ( imageFormat == ImageFormat.PNG )
 				{
 					bytes = PNGEncoder.encode ( bitmapDataBuffer, 1 );
 					image = new DoPNGImage ( bitmapDataBuffer, bytes, id );
+					
+				} else
+				{
+					bytes = TIFFEncoder.encode ( bitmapDataBuffer );
+					image = new DoTIFFImage ( bitmapDataBuffer, bytes, id );
 				}
 				
 				streamDictionary[displayObject] = image;
@@ -3463,8 +3478,11 @@ package org.alivepdf.pdf
 					var capture:BitmapData = decoder.loadBytes( imageBytes );
 					var bytes:ByteArray = PNGEncoder.encode ( capture, 1 );
 					image = new DoPNGImage ( capture, bytes, id );
-				}
-				else throw new Error ("Image format not supported for now.");
+				} else if ( !(imageBytes.position = 0) && (imageBytes.endian = Endian.LITTLE_ENDIAN) && imageBytes.readByte() == 73 )
+				{
+					image = new TIFFImage ( imageBytes, colorSpace, id );
+					
+				} else throw new Error ("Image format not supported for now.");
 				
 				streamDictionary[imageBytes] = image;
 				
@@ -3772,7 +3790,7 @@ package org.alivepdf.pdf
 					{
 						var trns:String = '';
 						var lng:int = image.transparency.length;
-						for(var i:int=0;i<lng;i++) trns += image.transparency[i]+' '+image.transparency[i]+' ';
+						for (var i:int=0;i<lng;i++) trns += image.transparency[i]+' '+image.transparency[i]+' ';
 						write('/Mask ['+trns+']');	
 					}
 				}
@@ -3967,7 +3985,7 @@ package org.alivepdf.pdf
 			{
 				newObj();
 				write('<</Title '+escapeString(p.text));
-				write('/Parent '+(n+int(o.parent))+' 0 R');
+				write('/Parent '+(n+int(p.parent))+' 0 R');
 				if(p.prev != null ) write('/Prev '+(n+int(p.prev))+' 0 R');
 				if(p.next != null ) write('/Next '+(n+int(p.next))+' 0 R');
 				if(p.first != null ) write('/First '+(n+int(p.first))+' 0 R');

@@ -129,6 +129,7 @@ package org.alivepdf.fonts.parsing
 			fontRevision = headTable.fontRevision;
 			flags = headTable.flags;
 			unitsPerEm = headTable.unitsPerEm/1000;
+
 			xMin = headTable.xMin;
 			yMin = headTable.yMin;
 			xMax = headTable.xMax;
