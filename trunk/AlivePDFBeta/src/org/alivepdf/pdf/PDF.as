@@ -811,7 +811,6 @@ package org.alivepdf.pdf
 			
 			if ( textColor != null ) 
 				textStyle ( textColor, textAlpha, textRendering, textSpace, textSpace, textScale, textLeading );
-			else textStyle( new RGBColor(0x000000), 1 );
 			
 			if ( currentFont != null ) 
 				setFont ( currentFont, fontSizePt );
