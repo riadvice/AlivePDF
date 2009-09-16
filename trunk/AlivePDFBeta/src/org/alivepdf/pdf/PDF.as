@@ -805,11 +805,9 @@ package org.alivepdf.pdf
 			
 			if ( strokeColor != null ) 
 				lineStyle ( strokeColor, strokeThickness, strokeFlatness, strokeAlpha, windingRule, strokeBlendMode, strokeDash, strokeCaps, strokeJoints, strokeMiter );
-			else lineStyle ( new RGBColor(0x000000), 0 );
 			
 			if ( fillColor != null ) 
 				beginFill( fillColor );
-			else beginFill ( new RGBColor(0x000000) ); 
 			
 			if ( textColor != null ) 
 				textStyle ( textColor, textAlpha, textRendering, textSpace, textSpace, textScale, textLeading );
