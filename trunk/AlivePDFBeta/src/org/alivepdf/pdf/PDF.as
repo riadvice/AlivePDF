@@ -35,14 +35,13 @@ package org.alivepdf.pdf
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	import flash.net.URLRequest;
-	import flash.net.FileReference;
 	import flash.net.URLRequestHeader;
 	import flash.net.URLRequestMethod;
 	import flash.net.navigateToURL;
 	import flash.utils.ByteArray;
-	import flash.utils.Endian;
 	import flash.utils.Dictionary;
 	import flash.utils.getTimer;
+	import flash.utils.Endian;
 	import flash.system.Capabilities;
 	
 	import org.alivepdf.cells.CellVO;
@@ -50,6 +49,7 @@ package org.alivepdf.pdf
 	import org.alivepdf.colors.GrayColor;
 	import org.alivepdf.colors.IColor;
 	import org.alivepdf.colors.RGBColor;
+	import org.alivepdf.colors.SpotColor;
 	import org.alivepdf.data.Grid;
 	import org.alivepdf.data.GridColumn;
 	import org.alivepdf.decoding.Filter;
@@ -74,8 +74,8 @@ package org.alivepdf.pdf
 	import org.alivepdf.images.ColorSpace;
 	import org.alivepdf.images.DoJPEGImage;
 	import org.alivepdf.images.DoPNGImage;
-	import org.alivepdf.images.DoTIFFImage;
 	import org.alivepdf.images.GIFImage;
+	import org.alivepdf.images.DoTIFFImage;
 	import org.alivepdf.images.ImageFormat;
 	import org.alivepdf.images.JPEGImage;
 	import org.alivepdf.images.PDFImage;
@@ -237,6 +237,7 @@ package org.alivepdf.pdf
 		protected var currentOrientation:String;
 		protected var orientationChanges:Array;
 		protected var strokeColor:IColor;
+		protected var fillColor:IColor;
 		protected var strokeStyle:String;
 		protected var strokeAlpha:Number;
 		protected var strokeFlatness:Number;
@@ -269,8 +270,7 @@ package org.alivepdf.pdf
 		protected var fontStyle:String;       
 		protected var underline:Boolean;       
 		protected var fontSizePt:Number;      
-		protected var windingRule:String;       
-		protected var fillColor:String;       
+		protected var windingRule:String;            
 		protected var addTextColor:String;       
 		protected var colorFlag:Boolean;     
 		protected var ws:Number;
@@ -337,6 +337,8 @@ package org.alivepdf.pdf
 		protected var totalEmbeddedFonts:int;
 		protected var widths:*;
 		protected var aligns:Array = new Array();
+		protected var spotColors:Array = new Array();
+		protected var drawColor:String;
 		
 		/**
 		 * The PDF class represents a PDF document.
@@ -787,18 +789,9 @@ package org.alivepdf.pdf
 			if ( page == null ) page = new Page ( defaultOrientation, defaultUnit, defaultSize, defaultRotation );
 			
 			pagesReferences.push ( (3+(arrayPages.length<<1))+' 0 R' );
-			
 			arrayPages.push ( currentPage = page );
 			
 			if ( state == 0 ) open();
-			
-			var family:String = fontFamily;
-			var size:Number = fontSizePt;
-			var lw:Number = strokeThickness;
-			var dc:String = strokeStyle;
-			var fc:String = fillColor;
-			var tc:String = addTextColor;
-			var cf:Boolean = colorFlag;
 			
 			if( nbPages > 0 )
 			{
@@ -812,7 +805,11 @@ package org.alivepdf.pdf
 			
 			if ( strokeColor != null ) 
 				lineStyle ( strokeColor, strokeThickness, strokeFlatness, strokeAlpha, windingRule, strokeBlendMode, strokeDash, strokeCaps, strokeJoints, strokeMiter );
-			else lineStyle ( new RGBColor(0x000000), 0 ); 
+			else lineStyle ( new RGBColor(0x000000), 0 );
+			
+			if ( fillColor != null ) 
+				beginFill( fillColor );
+			else beginFill ( new RGBColor(0x000000) ); 
 			
 			if ( textColor != null ) 
 				textStyle ( textColor, textAlpha, textRendering, textSpace, textSpace, textScale, textLeading );
@@ -1406,7 +1403,7 @@ package org.alivepdf.pdf
 		/**
 		 * Sets the stroke color for different color spaces CMYK, RGB and DEVICEGRAY
 		 */
-		protected function setStrokeColor ( color:IColor ):void
+		protected function setStrokeColor ( color:IColor, tint:Number=100 ):void
 		{
 			var op:String;
 			
@@ -1427,7 +1424,12 @@ package org.alivepdf.pdf
 				var k:Number = (color as CMYKColor).black*.01;
 				write ( c + " " + m + " " + y + " " + k + " " + op );
 				
-			} else
+			} else if ( color is SpotColor )
+			{
+				if ( spotColors.indexOf (color) == -1 ) spotColors.push ( color );
+				write (sprintf('/CS%d CS %.3F SCN', (color as SpotColor).i, tint*.01));
+				
+			} else 
 			{
 				op = "G";
 				var gray:Number = (color as GrayColor).gray*.01;
@@ -1439,7 +1441,7 @@ package org.alivepdf.pdf
 		 * Sets the text color for different color spaces CMYK, RGB, and DEVICEGRAY
 		 * @param
 		 */
-		protected function setTextColor ( color:IColor ):void
+		protected function setTextColor ( color:IColor, tint:Number=100 ):void
 		{
 			var op:String;
 			
@@ -1459,6 +1461,12 @@ package org.alivepdf.pdf
 				var y:Number = (color as CMYKColor).yellow*.01;
 				var k:Number = (color as CMYKColor).black*.01;
 				addTextColor = c + " " + m + " " + y + " " + k + " " + op;
+				
+			} else if ( color is SpotColor )
+			{
+				if ( spotColors.indexOf (color) == -1 ) spotColors.push ( color );
+				addTextColor = sprintf('/CS%d cs %.3F scn', (color as SpotColor).i, tint*.01);
+				colorFlag = (fillColor != textColor);
 				
 			} else
 			{
@@ -1482,9 +1490,10 @@ package org.alivepdf.pdf
 		 * </pre>
 		 * </div>
 		 */
-		public function beginFill ( color:IColor ):void
+		public function beginFill ( color:IColor, tint:Number=100 ):void
 		{
 			filled = true;
+			fillColor = color;
 			
 			var op:String;
 			
@@ -1504,6 +1513,12 @@ package org.alivepdf.pdf
 				var y:Number = (color as CMYKColor).yellow*.01;
 				var k:Number = (color as CMYKColor).black*.01;
 				write ( c + " " + m + " " + y + " " + k + " " + op );
+				
+			} else if ( color is SpotColor )
+			{
+				if ( spotColors.indexOf (color) == -1 ) spotColors.push ( color );
+				write (sprintf('/CS%d cs %.3F scn', (color as SpotColor).i, tint*.01));
+				colorFlag = (fillColor != textColor);
 				
 			} else
 			{
@@ -1964,6 +1979,28 @@ package org.alivepdf.pdf
 		public function setViewerPreferences ( toolbar:String='false', menubar:String='false', windowUI:String='false', fitWindow:String='false', centeredWindow:String='false', displayTitle:String='false' ):void
 		{
 			viewerPreferences = '<< /HideToolbar '+toolbar+' /HideMenubar '+menubar+' /HideWindowUI '+windowUI+' /FitWindow '+fitWindow+' /CenterWindow '+centeredWindow+' /DisplayDocTitle '+displayTitle+' >>';
+		}
+		
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		/*
+		* AlivePDF printing API
+		*
+		*/
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		
+		private function insertSpotColors():void
+		{
+			for each( var color:SpotColor in spotColors )
+			{
+				newObj();
+				write('[/Separation /'+findAndReplace(' ', '#20', color.name));
+				write('/DeviceCMYK <<');
+				write('/Range [0 1 0 1 0 1 0 1] /C0 [0 0 0 0] ');
+				write(sprintf('/C1 [%.3F %.3F %.3F %.3F] ',color.color.cyan*.01, color.color.magenta*.01, color.color.yellow*.01, color.color.black*.01));
+				write('/FunctionType 2 /Domain [0 1] /N 1>>]');
+				write('endobj');
+				color.n = n;
+			}
 		}
 		
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -3518,15 +3555,6 @@ package org.alivepdf.pdf
 			{
 				currentPage.resize( image.width+(leftMargin+rightMargin)*k, image.height+(bottomMargin+topMargin)*k, k );
 				
-			} else if ( resizeMode.mode == Mode.FULL_PAGE )
-			{
-				resizeMode.position = Position.LEFT;
-				var leftMargin:Number = 0;
-				var rightMargin:Number = 0;
-				var bottomMargin:Number = 0;
-				var topMargin:Number = 0;
-				currentPage.resize( image.width+(leftMargin+rightMargin)*k, image.height+(bottomMargin+topMargin)*k, k );
-				
 			} else if ( resizeMode.mode == Mode.FIT_TO_PAGE )
 			{			
 				var ratio:Number = Math.min ( realWidth/image.width, realHeight/image.height );
@@ -3542,8 +3570,8 @@ package org.alivepdf.pdf
 			{		
 				if ( resizeMode.position == Position.CENTERED )
 				{	
-					x = (realWidth - (width*k))>>1;
-					y = (realHeight - (height*k))>>1;
+					x = (realWidth - (width*k))/2;
+					y = (realHeight - (height*k))/2;
 					
 				} else if ( resizeMode.position == Position.RIGHT )
 					x = (realWidth - (width*k));
@@ -3758,6 +3786,11 @@ package org.alivepdf.pdf
 			for (var k:String in graphicStates) 
 				write('/GS'+k+' '+graphicStates[k].n +' 0 R');
 			write('>>');
+			// ColorSpot test
+			write('/ColorSpace <<');
+			for each( var color:SpotColor in spotColors)
+				write('/CS'+color.i+' '+color.n+' 0 R');
+			write('>>');
 		}
 		
 		protected function insertImages ():void
@@ -3931,6 +3964,7 @@ package org.alivepdf.pdf
 		
 		protected function writeResources():void
 		{
+			insertSpotColors();
 			insertExtGState();
 			insertFonts();
 			insertImages();
