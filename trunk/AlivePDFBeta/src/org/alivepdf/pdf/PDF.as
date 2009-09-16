@@ -43,6 +43,7 @@ package org.alivepdf.pdf
 	import flash.utils.Endian;
 	import flash.utils.Dictionary;
 	import flash.utils.getTimer;
+	import flash.system.Capabilities;
 	
 	import org.alivepdf.cells.CellVO;
 	import org.alivepdf.colors.CMYKColor;
@@ -282,6 +283,7 @@ package org.alivepdf.pdf
 		protected var zoomFactor:Number;     
 		protected var layoutMode:String;         
 		protected var pageMode:String;
+		protected var isLinux:Boolean;
 		protected var documentTitle:String;            
 		protected var documentSubject:String;       
 		protected var documentAuthor:String;      
@@ -402,6 +404,7 @@ package org.alivepdf.pdf
 			setAutoPageBreak ( true, margin * 2 );			
 			setDisplayMode( Display.FULL_WIDTH );
 			
+			isLinux = Capabilities.version.indexOf ("Linux") != -1;
 			version = PDF.PDF_VERSION;
 		}
 		
@@ -4161,7 +4164,16 @@ package org.alivepdf.pdf
 		{
 			if ( currentPage == null ) throw new Error ("No pages available, please call the addPage method first.");
 			if ( state == 2 ) currentPage.content += content+"\n";
-			else buffer.writeMultiByte( content+"\n", "windows-1252" );
+			else 
+			{
+				if ( !isLinux ) buffer.writeMultiByte( content+"\n", "windows-1252" );
+				else 
+				{
+					var lng:int = content.length;
+					for(var i:int=0;i<lng;++i)
+						buffer.writeByte(content.charCodeAt(i));
+				}
+			}
 		}
 		
 		//--
