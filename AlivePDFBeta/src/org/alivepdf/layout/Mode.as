@@ -15,11 +15,6 @@ package org.alivepdf.layout
 		 * Resizes the page to the image dimensions. White margins will be preserved.
 		 * Use PDF.setMargins() to modify them.
 		 */		
-		public static const RESIZE_PAGE:String = "ResizePage";	
-		/**
-		 * Places the image in a no margins page.
-		 * Use this mode if you don't want any white borders around your image.
-		 */		
-		public static const FULL_PAGE:String = "FullPage";	
+		public static const RESIZE_PAGE:String = "ResizePage";		
 	}
 }
