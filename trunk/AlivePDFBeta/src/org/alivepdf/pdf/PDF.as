@@ -28,6 +28,7 @@ package org.alivepdf.pdf
 {
 	import flash.display.BitmapData;
 	import flash.display.DisplayObject;
+	import flash.display.Shape;
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
 	import flash.events.IEventDispatcher;
@@ -339,6 +340,8 @@ package org.alivepdf.pdf
 		protected var aligns:Array = new Array();
 		protected var spotColors:Array = new Array();
 		protected var drawColor:String;
+		protected var bitmapFilled:Boolean;
+		protected var bitmapFillBuffer:Shape = new Shape();
 		
 		/**
 		 * The PDF class represents a PDF document.
@@ -397,7 +400,6 @@ package org.alivepdf.pdf
 			lasth = 0;
 			fontSizePt = 12;
 			ws = 0;
-			
 			margin = 28.35/k;
 			
 			setMargins ( margin, margin );
@@ -1199,6 +1201,7 @@ package org.alivepdf.pdf
 		* curveTo()
 		* lineStyle()
 		* beginFill()
+		* beginBitmapFill()
 		* endFill()
 		* drawRect()
 		* drawRoundRect()
@@ -1526,6 +1529,31 @@ package org.alivepdf.pdf
 		}
 		
 		/**
+		 * The beginBitmapFill method fills a surface with a bitmap as a texture
+		 * @param bitmap A flash.display.BitmapData object
+		 * @param matrix A flash.geom.Matrix object
+		 * 
+		 * @example
+		 * This example shows how to create a 100*100 rectangle filled with a bitmap texture :
+		 * <div class="listing">
+		 * <pre>
+		 *
+		 * var texture:BitmapData = new CustomBitmapData (0,0);
+		 * 
+		 * myPDF.beginBitmapFill( texture );
+		 * myPDF.drawRect ( new Rectangle ( 0, 0, 100, 100 ) );
+		 * </pre>
+		 * </div>
+		 * 
+		 */
+		public function beginBitmapFill ( bitmap:BitmapData, matrix:Matrix=null ):void
+		{
+			bitmapFilled = true;
+			bitmapFillBuffer = new Shape();
+			bitmapFillBuffer.graphics.beginBitmapFill( bitmap, matrix );
+		}
+		
+		/**
 		 * Ends all previous filling
 		 *
 		 * @example
@@ -1544,7 +1572,7 @@ package org.alivepdf.pdf
 		 */
 		public function endFill ():void
 		{
-			filled = false;
+			filled = bitmapFilled = false;	
 		}
 		
 		/**
@@ -1563,8 +1591,15 @@ package org.alivepdf.pdf
 		 */
 		public function drawRect ( rect:Rectangle ):void
 		{
-			var style:String = filled ? Drawing.CLOSE_AND_FILL_AND_STROKE : Drawing.STROKE;
-			write (sprintf('%.2f %.2f %.2f %.2f re %s', (rect.x)*k, (currentPage.h-(rect.y))*k, rect.width*k, -rect.height*k, style));
+			if ( !bitmapFilled ) 
+			{
+				var style:String = filled ? Drawing.CLOSE_AND_FILL_AND_STROKE : Drawing.STROKE;
+				write (sprintf('%.2f %.2f %.2f %.2f re %s', (rect.x)*k, (currentPage.h-(rect.y))*k, rect.width*k, -rect.height*k, style));
+			} else 
+			{
+				bitmapFillBuffer.graphics.drawRect ( rect.x, rect.y, rect.width, rect.height );
+				addImage(bitmapFillBuffer, null, rect.x, rect.y, rect.width, rect.height);
+			}
 		}
 		
 		/**
@@ -1584,28 +1619,35 @@ package org.alivepdf.pdf
 		 */
 		public function drawRoundRect ( rect:Rectangle, ellipseWidth:Number ):void
 		{
-			var k:Number = k;
-			var hp:Number = currentPage.h;
-			var MyArc:Number = 4/3 * (Math.sqrt(2) - 1);
-			write(sprintf('%.2f %.2f m',(rect.x+ellipseWidth)*k,(hp-rect.y)*k ));
-			var xc:Number = rect.x+rect.width-ellipseWidth;
-			var yc:Number = rect.y+ellipseWidth;
-			write(sprintf('%.2f %.2f l', xc*k,(hp-rect.y)*k ));
-			curve(xc + ellipseWidth*MyArc, yc - ellipseWidth, xc + ellipseWidth, yc - ellipseWidth*MyArc, xc + ellipseWidth, yc);
-			xc = rect.x+rect.width-ellipseWidth ;
-			yc = rect.y+rect.height-ellipseWidth;
-			write(sprintf('%.2f %.2f l',(rect.x+rect.width)*k,(hp-yc)*k));
-			curve(xc + ellipseWidth, yc + ellipseWidth*MyArc, xc + ellipseWidth*MyArc, yc + ellipseWidth, xc, yc + ellipseWidth);
-			xc = rect.x+ellipseWidth;
-			yc = rect.y+rect.height-ellipseWidth;
-			write(sprintf('%.2f %.2f l',xc*k,(hp-(rect.y+rect.height))*k));
-			curve(xc - ellipseWidth*MyArc, yc + ellipseWidth, xc - ellipseWidth, yc + ellipseWidth*MyArc, xc - ellipseWidth, yc);
-			xc = rect.x+ellipseWidth;
-			yc = rect.y+ellipseWidth;
-			write(sprintf('%.2f %.2f l',(rect.x)*k,(hp-yc)*k ));
-			curve(xc - ellipseWidth, yc - ellipseWidth*MyArc, xc - ellipseWidth*MyArc, yc - ellipseWidth, xc, yc - ellipseWidth);
-			var style:String = filled ? Drawing.CLOSE_AND_FILL_AND_STROKE : Drawing.STROKE;
-			write(style);
+			if ( !bitmapFilled )
+			{
+				var k:Number = k;
+				var hp:Number = currentPage.h;
+				var MyArc:Number = 4/3 * (Math.sqrt(2) - 1);
+				write(sprintf('%.2f %.2f m',(rect.x+ellipseWidth)*k,(hp-rect.y)*k ));
+				var xc:Number = rect.x+rect.width-ellipseWidth;
+				var yc:Number = rect.y+ellipseWidth;
+				write(sprintf('%.2f %.2f l', xc*k,(hp-rect.y)*k ));
+				curve(xc + ellipseWidth*MyArc, yc - ellipseWidth, xc + ellipseWidth, yc - ellipseWidth*MyArc, xc + ellipseWidth, yc);
+				xc = rect.x+rect.width-ellipseWidth ;
+				yc = rect.y+rect.height-ellipseWidth;
+				write(sprintf('%.2f %.2f l',(rect.x+rect.width)*k,(hp-yc)*k));
+				curve(xc + ellipseWidth, yc + ellipseWidth*MyArc, xc + ellipseWidth*MyArc, yc + ellipseWidth, xc, yc + ellipseWidth);
+				xc = rect.x+ellipseWidth;
+				yc = rect.y+rect.height-ellipseWidth;
+				write(sprintf('%.2f %.2f l',xc*k,(hp-(rect.y+rect.height))*k));
+				curve(xc - ellipseWidth*MyArc, yc + ellipseWidth, xc - ellipseWidth, yc + ellipseWidth*MyArc, xc - ellipseWidth, yc);
+				xc = rect.x+ellipseWidth;
+				yc = rect.y+ellipseWidth;
+				write(sprintf('%.2f %.2f l',(rect.x)*k,(hp-yc)*k ));
+				curve(xc - ellipseWidth, yc - ellipseWidth*MyArc, xc - ellipseWidth*MyArc, yc - ellipseWidth, xc, yc - ellipseWidth);
+				var style:String = filled ? Drawing.CLOSE_AND_FILL_AND_STROKE : Drawing.STROKE;
+				write(style);
+			} else
+			{
+				bitmapFillBuffer.graphics.drawRoundRect( rect.x, rect.y, rect.width, rect.height, ellipseWidth, ellipseWidth );
+				addImage(bitmapFillBuffer, null, rect.x, rect.y);	
+			}
 		}
 		
 		/**
@@ -1629,30 +1671,37 @@ package org.alivepdf.pdf
 		 * </div>
 		 * 
 		 */		
-		public function drawComplexRoundRect ( rect:Rectangle, topLeftEllipseWidth:Number, bottomLeftEllipseWidth:Number, topRightEllipseWidth:Number, bottomRightEllipseWidth:Number ):void
+		public function drawRoundRectComplex ( rect:Rectangle, topLeftEllipseWidth:Number, topRightEllipseWidth:Number, bottomLeftEllipseWidth:Number, bottomRightEllipseWidth:Number ):void
 		{	
-			var k:Number = k;
-			var hp:Number = currentPage.h;
-			var MyArc:Number = 4/3 * (Math.sqrt(2) - 1);
-			write(sprintf('%.2f %.2f m',(rect.x+topLeftEllipseWidth)*k,(hp-rect.y)*k ));
-			var xc:Number = rect.x+rect.width-topRightEllipseWidth;
-			var yc:Number = rect.y+topRightEllipseWidth;
-			write(sprintf('%.2f %.2f l', xc*k,(hp-rect.y)*k ));
-			curve(xc + topRightEllipseWidth*MyArc, yc - topRightEllipseWidth, xc + topRightEllipseWidth, yc - topRightEllipseWidth*MyArc, xc + topRightEllipseWidth, yc);
-			xc = rect.x+rect.width-bottomRightEllipseWidth ;
-			yc = rect.y+rect.height-bottomRightEllipseWidth;
-			write(sprintf('%.2f %.2f l',(rect.x+rect.width)*k,(hp-yc)*k));
-			curve(xc + bottomRightEllipseWidth, yc + bottomRightEllipseWidth*MyArc, xc + bottomRightEllipseWidth*MyArc, yc + bottomRightEllipseWidth, xc, yc + bottomRightEllipseWidth);
-			xc = rect.x+bottomLeftEllipseWidth;
-			yc = rect.y+rect.height-bottomLeftEllipseWidth;
-			write(sprintf('%.2f %.2f l',xc*k,(hp-(rect.y+rect.height))*k));
-			curve(xc - bottomLeftEllipseWidth*MyArc, yc + bottomLeftEllipseWidth, xc - bottomLeftEllipseWidth, yc + bottomLeftEllipseWidth*MyArc, xc - bottomLeftEllipseWidth, yc);
-			xc = rect.x+topLeftEllipseWidth;
-			yc = rect.y+topLeftEllipseWidth;
-			write(sprintf('%.2f %.2f l',(rect.x)*k,(hp-yc)*k ));
-			curve(xc - topLeftEllipseWidth, yc - topLeftEllipseWidth*MyArc, xc - topLeftEllipseWidth*MyArc, yc - topLeftEllipseWidth, xc, yc - topLeftEllipseWidth);
-			var style:String = filled ? Drawing.CLOSE_AND_FILL_AND_STROKE : Drawing.STROKE;
-			write(style);
+			if ( !bitmapFilled )
+			{
+				var k:Number = k;
+				var hp:Number = currentPage.h;
+				var MyArc:Number = 4/3 * (Math.sqrt(2) - 1);
+				write(sprintf('%.2f %.2f m',(rect.x+topLeftEllipseWidth)*k,(hp-rect.y)*k ));
+				var xc:Number = rect.x+rect.width-topRightEllipseWidth;
+				var yc:Number = rect.y+topRightEllipseWidth;
+				write(sprintf('%.2f %.2f l', xc*k,(hp-rect.y)*k ));
+				curve(xc + topRightEllipseWidth*MyArc, yc - topRightEllipseWidth, xc + topRightEllipseWidth, yc - topRightEllipseWidth*MyArc, xc + topRightEllipseWidth, yc);
+				xc = rect.x+rect.width-bottomRightEllipseWidth ;
+				yc = rect.y+rect.height-bottomRightEllipseWidth;
+				write(sprintf('%.2f %.2f l',(rect.x+rect.width)*k,(hp-yc)*k));
+				curve(xc + bottomRightEllipseWidth, yc + bottomRightEllipseWidth*MyArc, xc + bottomRightEllipseWidth*MyArc, yc + bottomRightEllipseWidth, xc, yc + bottomRightEllipseWidth);
+				xc = rect.x+bottomLeftEllipseWidth;
+				yc = rect.y+rect.height-bottomLeftEllipseWidth;
+				write(sprintf('%.2f %.2f l',xc*k,(hp-(rect.y+rect.height))*k));
+				curve(xc - bottomLeftEllipseWidth*MyArc, yc + bottomLeftEllipseWidth, xc - bottomLeftEllipseWidth, yc + bottomLeftEllipseWidth*MyArc, xc - bottomLeftEllipseWidth, yc);
+				xc = rect.x+topLeftEllipseWidth;
+				yc = rect.y+topLeftEllipseWidth;
+				write(sprintf('%.2f %.2f l',(rect.x)*k,(hp-yc)*k ));
+				curve(xc - topLeftEllipseWidth, yc - topLeftEllipseWidth*MyArc, xc - topLeftEllipseWidth*MyArc, yc - topLeftEllipseWidth, xc, yc - topLeftEllipseWidth);
+				var style:String = filled ? Drawing.CLOSE_AND_FILL_AND_STROKE : Drawing.STROKE;
+				write(style);
+			} else 
+			{
+				bitmapFillBuffer.graphics.drawRoundRectComplex( rect.x, rect.y, rect.width, rect.height, topLeftEllipseWidth, topRightEllipseWidth, bottomLeftEllipseWidth, bottomRightEllipseWidth );
+				addImage(bitmapFillBuffer, null, rect.x, rect.y);	
+			}
 		}
 		
 		/**
@@ -1674,31 +1723,38 @@ package org.alivepdf.pdf
 		 */
 		public function drawEllipse ( x:Number, y:Number, radiusX:Number, radiusY:Number ):void
 		{
-			var style:String = filled ? Drawing.CLOSE_AND_FILL_AND_STROKE : Drawing.STROKE;
-			
-			var lx:Number = 4/3*(1.41421356237309504880-1)*radiusX;
-			var ly:Number = 4/3*(1.41421356237309504880-1)*radiusY;
-			var k:Number = k;
-			var h:Number = currentPage.h;
-			
-			write(sprintf('%.2f %.2f m %.2f %.2f %.2f %.2f %.2f %.2f c',
-				(x+radiusX)*k,(h-y)*k,
-				(x+radiusX)*k,(h-(y-ly))*k,
-				(x+lx)*k,(h-(y-radiusY))*k,
-				x*k,(h-(y-radiusY))*k));
-			write(sprintf('%.2f %.2f %.2f %.2f %.2f %.2f c',
-				(x-lx)*k,(h-(y-radiusY))*k,
-				(x-radiusX)*k,(h-(y-ly))*k,
-				(x-radiusX)*k,(h-y)*k));
-			write(sprintf('%.2f %.2f %.2f %.2f %.2f %.2f c',
-				(x-radiusX)*k,(h-(y+ly))*k,
-				(x-lx)*k,(h-(y+radiusY))*k,
-				x*k,(h-(y+radiusY))*k));
-			write(sprintf('%.2f %.2f %.2f %.2f %.2f %.2f c %s',
-				(x+lx)*k,(h-(y+radiusY))*k,
-				(x+radiusX)*k,(h-(y+ly))*k,
-				(x+radiusX)*k,(h-y)*k,
-				style));
+			if ( !bitmapFilled)
+			{
+				var style:String = filled ? Drawing.CLOSE_AND_FILL_AND_STROKE : Drawing.STROKE;
+				
+				var lx:Number = 4/3*(1.41421356237309504880-1)*radiusX;
+				var ly:Number = 4/3*(1.41421356237309504880-1)*radiusY;
+				var k:Number = k;
+				var h:Number = currentPage.h;
+				
+				write(sprintf('%.2f %.2f m %.2f %.2f %.2f %.2f %.2f %.2f c',
+					(x+radiusX)*k,(h-y)*k,
+					(x+radiusX)*k,(h-(y-ly))*k,
+					(x+lx)*k,(h-(y-radiusY))*k,
+					x*k,(h-(y-radiusY))*k));
+				write(sprintf('%.2f %.2f %.2f %.2f %.2f %.2f c',
+					(x-lx)*k,(h-(y-radiusY))*k,
+					(x-radiusX)*k,(h-(y-ly))*k,
+					(x-radiusX)*k,(h-y)*k));
+				write(sprintf('%.2f %.2f %.2f %.2f %.2f %.2f c',
+					(x-radiusX)*k,(h-(y+ly))*k,
+					(x-lx)*k,(h-(y+radiusY))*k,
+					x*k,(h-(y+radiusY))*k));
+				write(sprintf('%.2f %.2f %.2f %.2f %.2f %.2f c %s',
+					(x+lx)*k,(h-(y+radiusY))*k,
+					(x+radiusX)*k,(h-(y+ly))*k,
+					(x+radiusX)*k,(h-y)*k,
+					style));
+			} else
+			{
+				bitmapFillBuffer.graphics.drawEllipse( x, y, radiusX, radiusY );
+				addImage(bitmapFillBuffer, null, x, y);	
+			}
 		}
 		
 		/**
@@ -1738,10 +1794,12 @@ package org.alivepdf.pdf
 		{
 			var lng:int = points.length;
 			var i:int = 0;
+			var pos:int;
 			
 			while ( i < lng )
 			{
-				i == 0 ? moveTo ( points[i], points[i+1] ) : lineTo ( points[i], points[i+1] );
+				pos = int(i+1);
+				i == 0 ? moveTo ( points[i], points[pos] ) : lineTo ( points[i], points[pos] );
 				i+=2;
 			}
 			
@@ -3045,6 +3103,20 @@ package org.alivepdf.pdf
 		
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		/*
+		* AlivePDF templates API
+		*
+		* importTemplate()
+		*
+		*/
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		
+		public function importTemplate ( template:XML ):void
+		{
+				
+		}
+		
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		/*
 		* AlivePDF data API
 		*
 		* addGrid()
@@ -3405,6 +3477,7 @@ package org.alivepdf.pdf
 		 */	 
 		public function addImage ( displayObject:DisplayObject, resizeMode:Resize=null, x:Number=0, y:Number=0, width:Number=0, height:Number=0, rotation:Number=0, alpha:Number=1, keepTransformation:Boolean=true, imageFormat:String="PNG", quality:Number=100, blendMode:String="Normal", link:ILink=null ):void
 		{	
+			
 			if ( streamDictionary[displayObject] == null )
 			{	
 				var bytes:ByteArray;				
@@ -3415,16 +3488,16 @@ package org.alivepdf.pdf
 				
 				if ( keepTransformation )
 				{
-					bitmapDataBuffer = new BitmapData ( displayObject.width+2, displayObject.height+2, false );
+					bitmapDataBuffer = new BitmapData ( displayObject.width, displayObject.height, false );
 					transformMatrix = displayObject.transform.matrix;
 					transformMatrix.tx = transformMatrix.ty = 0;
-					transformMatrix.translate( -(displayObjectbounds.x*displayObject.scaleX)+2, -(displayObjectbounds.y*displayObject.scaleY)+2 );
+					transformMatrix.translate( -(displayObjectbounds.x*displayObject.scaleX), -(displayObjectbounds.y*displayObject.scaleY) );
 					
 				} else 
 				{	
-					bitmapDataBuffer = new BitmapData ( displayObject.width+2, displayObject.height+2, false );
+					bitmapDataBuffer = new BitmapData ( displayObject.width, displayObject.height, false );
 					transformMatrix = new Matrix();
-					transformMatrix.translate( -displayObjectbounds.x+1, -displayObjectbounds.y+1 );
+					transformMatrix.translate( -displayObjectbounds.x, -displayObjectbounds.y );
 				}
 				
 				bitmapDataBuffer.draw ( displayObject, transformMatrix );
@@ -3567,8 +3640,8 @@ package org.alivepdf.pdf
 			{		
 				if ( resizeMode.position == Position.CENTERED )
 				{	
-					x = (realWidth - (width*k))/2;
-					y = (realHeight - (height*k))/2;
+					x = (realWidth - (width*k))*.5;
+					y = (realHeight - (height*k))*.5;
 					
 				} else if ( resizeMode.position == Position.RIGHT )
 					x = (realWidth - (width*k));
