@@ -1572,7 +1572,8 @@ package org.alivepdf.pdf
 		 */
 		public function endFill ():void
 		{
-			filled = bitmapFilled = false;	
+			if ( !bitmapFilled ) filled = false;
+			else bitmapFilled = false;
 		}
 		
 		/**
@@ -3106,13 +3107,20 @@ package org.alivepdf.pdf
 		* AlivePDF templates API
 		*
 		* importTemplate()
+		* getTemplate()
 		*
 		*/
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		
 		public function importTemplate ( template:XML ):void
 		{
-				
+			// TBD
+		}
+		
+		public function getTemplate ( template:XML ):XML
+		{
+			// TBD
+			return null;
 		}
 		
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
