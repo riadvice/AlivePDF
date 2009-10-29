@@ -48,7 +48,7 @@ package org.alivepdf.images
 			
 			parameters = '/DecodeParms <</Predictor 15 /Colors '+(ct == 2 ? 3 : 1)+' /BitsPerComponent '+bitsPerComponent+' /Columns '+width+'>>';
 			
-			var trns:String ='';
+			var trns:String = '';
 			
 			do 
 			{	
@@ -68,7 +68,7 @@ package org.alivepdf.images
 				} else if ( type == PNGImage.IDAT )
 				{	
 					stream.readBytes(idataBytes, idataBytes.length, n);
-					stream.readUnsignedInt();
+					stream.position += 4;
 					
 				} else if ( type == PNGImage.IEND )
 				{	

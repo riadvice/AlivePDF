@@ -31,14 +31,15 @@ package org.alivepdf.pages
 		
 		private static var _NumPage:int = 0;
 	
-		public function Page ( pOrientation:String, unit:String="Mm", size:Object=null, pRotation:Number=0 )
+		public function Page ( pOrientation:String, unit:String="Mm", size:Size=null, pRotation:Number=0 )
 		{
 			_orientation = pOrientation;
-			
 			_rotation = pRotation;
-						
 			_unit = setUnit( unit );
 
+			if ( size == null )
+				size = Size.A4;
+				
 			_size = Size.getSize( size ).clone();
 			
 			if ( _size != null )

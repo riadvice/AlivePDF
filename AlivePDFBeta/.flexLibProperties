@@ -117,6 +117,7 @@
     <classEntry path="org.alivepdf.images.TIFFImage"/>
     <classEntry path="org.alivepdf.images.DoTIFFImage"/>
     <classEntry path="org.alivepdf.colors.SpotColor"/>
+    <classEntry path="org.alivepdf.visibility.Visibility"/>
   </includeClasses>
   <includeResources>
     <resourceEntry destPath="org/alivepdf/fonts/map/iso-8859-9.map" sourcePath="org/alivepdf/fonts/map/iso-8859-9.map"/>
