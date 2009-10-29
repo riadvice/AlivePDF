@@ -39,11 +39,11 @@ package org.alivepdf.pdf
 	import flash.net.URLRequestHeader;
 	import flash.net.URLRequestMethod;
 	import flash.net.navigateToURL;
+	import flash.system.Capabilities;
 	import flash.utils.ByteArray;
 	import flash.utils.Dictionary;
-	import flash.utils.getTimer;
 	import flash.utils.Endian;
-	import flash.system.Capabilities;
+	import flash.utils.getTimer;
 	
 	import org.alivepdf.cells.CellVO;
 	import org.alivepdf.colors.CMYKColor;
@@ -70,13 +70,12 @@ package org.alivepdf.pdf
 	import org.alivepdf.fonts.FontFamily;
 	import org.alivepdf.fonts.FontMetrics;
 	import org.alivepdf.fonts.FontType;
-	import org.alivepdf.fonts.ICidFont;
 	import org.alivepdf.fonts.IFont;
 	import org.alivepdf.images.ColorSpace;
 	import org.alivepdf.images.DoJPEGImage;
 	import org.alivepdf.images.DoPNGImage;
-	import org.alivepdf.images.GIFImage;
 	import org.alivepdf.images.DoTIFFImage;
+	import org.alivepdf.images.GIFImage;
 	import org.alivepdf.images.ImageFormat;
 	import org.alivepdf.images.JPEGImage;
 	import org.alivepdf.images.PDFImage;
@@ -90,14 +89,15 @@ package org.alivepdf.pdf
 	import org.alivepdf.layout.Resize;
 	import org.alivepdf.layout.Size;
 	import org.alivepdf.layout.Unit;
-	import org.alivepdf.links.ILink;
 	import org.alivepdf.links.HTTPLink;
+	import org.alivepdf.links.ILink;
 	import org.alivepdf.links.InternalLink;
 	import org.alivepdf.links.Outline;
 	import org.alivepdf.operators.Drawing;
 	import org.alivepdf.pages.Page;
 	import org.alivepdf.saving.Method;
 	import org.alivepdf.tools.sprintf;
+	import org.alivepdf.visibility.Visibility;
 
 	/**
 	 * Dispatched when a page has been added to the PDF. The addPage() method generate this event
@@ -342,7 +342,10 @@ package org.alivepdf.pdf
 		protected var drawColor:String;
 		protected var bitmapFilled:Boolean;
 		protected var bitmapFillBuffer:Shape = new Shape();
-		
+		protected var visibility:String = Visibility.ALL;
+		protected var nOCGPrint:int;
+		protected var nOCGView:int;
+
 		/**
 		 * The PDF class represents a PDF document.
 		 *
@@ -408,7 +411,7 @@ package org.alivepdf.pdf
 			setAutoPageBreak ( true, margin * 2 );			
 			setDisplayMode( Display.FULL_WIDTH );
 			
-			isLinux = Capabilities.version.indexOf ("Linux") != -1;
+			isLinux = Capabilities.version.indexOf ("LNX") != -1;
 			version = PDF.PDF_VERSION;
 		}
 		
@@ -1622,28 +1625,7 @@ package org.alivepdf.pdf
 		{
 			if ( !bitmapFilled )
 			{
-				var k:Number = k;
-				var hp:Number = currentPage.h;
-				var MyArc:Number = 4/3 * (Math.sqrt(2) - 1);
-				write(sprintf('%.2f %.2f m',(rect.x+ellipseWidth)*k,(hp-rect.y)*k ));
-				var xc:Number = rect.x+rect.width-ellipseWidth;
-				var yc:Number = rect.y+ellipseWidth;
-				write(sprintf('%.2f %.2f l', xc*k,(hp-rect.y)*k ));
-				curve(xc + ellipseWidth*MyArc, yc - ellipseWidth, xc + ellipseWidth, yc - ellipseWidth*MyArc, xc + ellipseWidth, yc);
-				xc = rect.x+rect.width-ellipseWidth ;
-				yc = rect.y+rect.height-ellipseWidth;
-				write(sprintf('%.2f %.2f l',(rect.x+rect.width)*k,(hp-yc)*k));
-				curve(xc + ellipseWidth, yc + ellipseWidth*MyArc, xc + ellipseWidth*MyArc, yc + ellipseWidth, xc, yc + ellipseWidth);
-				xc = rect.x+ellipseWidth;
-				yc = rect.y+rect.height-ellipseWidth;
-				write(sprintf('%.2f %.2f l',xc*k,(hp-(rect.y+rect.height))*k));
-				curve(xc - ellipseWidth*MyArc, yc + ellipseWidth, xc - ellipseWidth, yc + ellipseWidth*MyArc, xc - ellipseWidth, yc);
-				xc = rect.x+ellipseWidth;
-				yc = rect.y+ellipseWidth;
-				write(sprintf('%.2f %.2f l',(rect.x)*k,(hp-yc)*k ));
-				curve(xc - ellipseWidth, yc - ellipseWidth*MyArc, xc - ellipseWidth*MyArc, yc - ellipseWidth, xc, yc - ellipseWidth);
-				var style:String = filled ? Drawing.CLOSE_AND_FILL_AND_STROKE : Drawing.STROKE;
-				write(style);
+				drawRoundRectComplex ( rect, ellipseWidth, ellipseWidth, ellipseWidth, ellipseWidth );
 			} else
 			{
 				bitmapFillBuffer.graphics.drawRoundRect( rect.x, rect.y, rect.width, rect.height, ellipseWidth, ellipseWidth );
@@ -1805,6 +1787,28 @@ package org.alivepdf.pdf
 			}
 			
 			end();
+		}
+		
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		/*
+		* AlivePDF Visibility API
+		*
+		* setVisible()
+		*
+		*/
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		
+		public function setVisible (visible:String):void
+		{
+			if ( visibility != Visibility.ALL )
+				write('EMC');
+			if ( visible == Visibility.PRINT )
+				write('/OC /OC1 BDC');
+			else if( visible == Visibility.SCREEN )
+			write('/OC /OC2 BDC');
+			else if ( visible != Visibility.ALL )
+				throw new Error('Incorrect visibility: '+visible);
+			visibility = visible;
 		}
 		
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -3542,6 +3546,244 @@ package org.alivepdf.pdf
 		}
 		
 		/**
+		 * The addEPSImage method takes an incoming EPS (.eps) file or Adobe® Illustrator® file (.ai) and render it on the current page.
+		 * 
+		 * @param stream
+		 * @param resizeMode
+		 * @param x
+		 * @param y
+		 * @param width
+		 * @param height
+		 * @param alpha
+		 * @param blendMode
+		 * @param link
+		 * @example
+		 * This example shows how to add an EPS file stream on the current page :
+		 * <div class="listing">
+		 * <pre>
+		 *
+		 * myPDF.addEPSImage ( myEPSStream );
+		 * </pre>
+		 * </div>
+		 */	
+		public function addEPSImage( stream:ByteArray, x:Number=0, y:Number=0, w:Number=0, h:Number=0, useBoundingBox:Boolean=true ):void
+		{
+			stream.position = 0;
+			var source:String = stream.readUTFBytes(stream.bytesAvailable);
+			
+			var regs:Array = source.match(/%%Creator:([^\r\n]+)/);
+			
+			if (regs.length > 1)
+			{
+				var version:String = regs[1];
+
+				if ( version.indexOf("Adobe Illustrator") != -1 )
+				{
+					var buffVersion:Array = version.split(" ");
+					var numVersion:int = buffVersion.pop();
+					
+					if ( numVersion > 8 )
+						throw new Error ("Wrong version, only 1.x, 3.x or 8.x AI files are supported for now.");
+				} else throw new Error("This EPS file was not created with Adobe® Illustrator®");
+			}
+			
+			var start:int = source.indexOf('%!PS-Adobe');
+			if (start != -1) source = source.substr(start);
+
+			regs = source.match(/%%BoundingBox:([^\r\n]+)/);
+			
+			var x1:Number;
+			var y1:Number;
+			var x2:Number;
+			var y2:Number;
+			
+			if (regs.length > 1)
+			{
+				var buffer:Array = regs[1].substr(1).split(" ");
+				x1 = buffer[0];
+				y1 = buffer[1];
+				x2 = buffer[2];
+				y2 = buffer[3];
+				
+				start = source.indexOf('%%EndSetup');
+				if ( start == -1 ) start = source.indexOf('%%EndProlog');
+				if ( start == -1 ) start = source.indexOf('%%BoundingBox');
+				
+				source = source.substr(start);
+				
+				var end:int = source.indexOf('%%PageTrailer');
+				if ( end == -1) end = source.indexOf('showpage');
+				if ( end ) source = source.substr(0, end);
+				
+				write('q');
+				
+				var k:Number = k;
+				var dx:Number;
+				var dy:Number;
+				
+				if (useBoundingBox)
+				{
+					dx = x*k-x1;
+					dy = y*k-y1;
+				}else
+				{
+					dx = x*k;
+					dy = y*k;
+				}
+				
+				write(sprintf('%.3F %.3F %.3F %.3F %.3F %.3F cm', 1,0,0,1,dx,dy+(currentPage.hPt - 2*y*k - (y2-y1))));
+				
+				var scaleX:Number;
+				var scaleY:Number;
+				
+				if (w>0)
+				{
+					scaleX = w/((x2-x1)/k);
+					if (h>0)
+					{
+						scaleY = h/((y2-y1)/k);
+					}else
+					{
+						scaleY = scaleX;
+						h = (y2-y1)/k * scaleY;
+					}
+				}else
+				{
+					if (h>0)
+					{
+						scaleY = h/((y2-y1)/k);
+						scaleX = scaleY;
+						w = (x2-x1)/k * scaleX;
+					}else
+					{
+						w = (x2-x1)/k;
+						h = (y2-y1)/k;
+					}
+				}
+				
+				if (!isNaN(scaleX))
+					write(sprintf('%.3F %.3F %.3F %.3F %.3F %.3F cm', scaleX, 0, 0, scaleY, x1*(1-scaleX), y2*(1-scaleY)));
+				
+				var lines:Array = source.split(/\r\n|[\r\n]/);
+				
+				var u:Number = 0;
+				var cnt:int = lines.length;
+				var line:String;
+				var length:int;
+				var chunks:Array;
+				var c:String;
+				var m:String;
+				var ty:String;
+				var tk:String;
+				var cmd:String;
+				
+				var r:String;
+				var g:String;
+				var b:String;
+				
+				for ( var i:int=0; i<cnt; i++)
+				{
+					line = lines[i];
+					if (line == '' || line.charAt(0) == '%') continue;
+					length = line.length;
+					chunks = line.split(' ');
+					cmd = chunks.pop();
+					
+					if (cmd=='Xa' || cmd=='XA')
+					{
+						r = chunks.pop(); 
+						g = chunks.pop();
+						b = chunks.pop();
+						write(r+" "+g+" "+b+ " " + (cmd == 'Xa' ? 'rg' : 'RG'));
+						continue;
+					}
+					
+					switch (cmd)
+					{
+						case 'm':
+						case 'l':
+						case 'v':
+						case 'y':
+						case 'c':
+							
+						case 'k':
+						case 'K':
+						case 'g':
+						case 'G':
+							
+						case 's':
+						case 'S':
+							
+						case 'J':
+						case 'j':
+						case 'w':
+						case 'M':
+						case 'd':
+						case 'n':
+						case 'v':
+							write(line);
+							break;
+						
+						case 'x':
+							c = chunks[0];
+							m = chunks[1];
+							ty = chunks[2];
+							tk = chunks[3];
+							write(c+" "+m+" "+ty+" "+tk+" k");
+							break;
+						
+						case 'X':
+							c = chunks[0];
+							m = chunks[1];
+							ty = chunks[2];
+							tk = chunks[3];
+							write(c+" "+m+" "+ty+" "+tk+" K");
+							break;
+						
+						case 'Y':
+						case 'N':
+						case 'V':
+						case 'L':
+						case 'C':
+							write(line.toLowerCase());
+							break;
+						
+						case 'b':
+						case 'B':
+							write(cmd + '*');
+							break;
+						
+						case 'f':
+						case 'F':
+							if (u>0)
+							{
+								var isU:Boolean = false;
+								var max:Number = i+5 < cnt ? i+5 : cnt;
+								var j:int = i+1;
+								for ( ; j<max; j++)
+									isU = (isU || (lines[j]=='U' || lines[j]=='*U'));
+								if (isU) write("f*");
+							}else
+								write("f*");
+							break;
+						
+						case '*u':
+							u++;
+							break;
+						
+						case '*U':
+							u--;
+							break;
+					}
+				}
+				
+				write('Q');
+				
+			} else throw new Error("No bounding box found in the current EPS file");
+
+		}
+		
+		/**
 		 * The addImageStream method takes an incoming image as a ByteArray. This method can be used to embed high-quality images (300 dpi) to the PDF.
 		 * You must specify the image color space, if you don't know, there is a lot of chance the color space will be ColorSpace.DEVICE_RGB.
 		 * 
@@ -3864,11 +4106,11 @@ package org.alivepdf.pdf
 			for (var k:String in graphicStates) 
 				write('/GS'+k+' '+graphicStates[k].n +' 0 R');
 			write('>>');
-			// ColorSpot test
 			write('/ColorSpace <<');
 			for each( var color:SpotColor in spotColors)
 				write('/CS'+color.i+' '+color.n+' 0 R');
 			write('>>');
+			write('/Properties <</OC1 '+nOCGPrint+' 0 R /OC2 '+nOCGView+' 0 R>>');
 		}
 		
 		protected function insertImages ():void
@@ -4042,6 +4284,7 @@ package org.alivepdf.pdf
 		
 		protected function writeResources():void
 		{
+			insertOCG();
 			insertSpotColors();
 			insertExtGState();
 			insertFonts();
@@ -4054,6 +4297,20 @@ package org.alivepdf.pdf
 			write('>>');
 			write('endobj');
 			insertBookmarks();
+		}
+		
+		protected function insertOCG():void
+		{
+			newObj();
+			nOCGPrint = n;
+			write('<</Type /OCG /Name '+escapeString('print'));
+			write('/Usage <</Print <</PrintState /ON>> /View <</ViewState /OFF>>>>>>');
+			write('endobj');
+			newObj();
+			nOCGView = n;
+			write('<</Type /OCG /Name '+escapeString('view'));
+			write('/Usage <</Print <</PrintState /OFF>> /View <</ViewState /ON>>>>>>');
+			write('endobj');
 		}
 		
 		protected function insertBookmarks ():void
@@ -4151,6 +4408,11 @@ package org.alivepdf.pdf
 			} else write('/PageMode /'+pageMode);
 			
 			if ( javascript != null )  write('/Names <</JavaScript '+(jsResource)+' 0 R>>');
+			
+			var p:String = nOCGPrint+' 0 R';
+			var v:String = nOCGView+' 0 R';
+			var ast:String = "<</Event /Print /OCGs ["+p+" "+v+"] /Category [/Print]>> <</Event /View /OCGs ["+p+" "+v+"] /Category [/View]>>";
+			write("/OCProperties <</OCGs ["+p+" "+v+"] /D <</ON ["+p+"] /OFF ["+v+"] /AS ["+ast+"]>>>>");
 		}
 		
 		protected function createHeader():void
@@ -4168,7 +4430,7 @@ package org.alivepdf.pdf
 		protected function finishDocument():void
 		{	
 			if ( pageMode == PageMode.USE_ATTACHMENTS ) version = "1.6";
-			else if ( layoutMode == Layout.TWO_PAGE_LEFT || layoutMode == Layout.TWO_PAGE_RIGHT ) version = "1.5";
+			else if ( layoutMode == Layout.TWO_PAGE_LEFT || layoutMode == Layout.TWO_PAGE_RIGHT || visibility != null ) version = "1.5";
 			else if ( graphicStates.length && version < "1.4" ) version = "1.4";
 			else if ( outlines.length ) version = "1.4";
 			//Resources
@@ -4204,7 +4466,7 @@ package org.alivepdf.pdf
 			createTrailer();
 			write('>>');
 			write('startxref');
-			write(o);
+			write(o.toString());
 			write('%%EOF');
 			state = 3;
 		}
@@ -4213,8 +4475,7 @@ package org.alivepdf.pdf
 		{
 			nbPages = arrayPages.length;
 			state = 2;
-			
-			// TBO
+
 			setXY(leftMargin, topMargin);
 			
 			if ( newOrientation == '' ) newOrientation = defaultOrientation;
@@ -4226,6 +4487,7 @@ package org.alivepdf.pdf
 		
 		protected function finishPage():void
 		{
+			setVisible(Visibility.ALL);
 			state = 1;	
 		}
 		
@@ -4272,7 +4534,7 @@ package org.alivepdf.pdf
 			write('endstream');
 		}
 		
-		protected function write( content:* ):void
+		protected function write( content:String ):void
 		{
 			if ( currentPage == null ) throw new Error ("No pages available, please call the addPage method first.");
 			if ( state == 2 ) currentPage.content += content+"\n";
@@ -4281,9 +4543,11 @@ package org.alivepdf.pdf
 				if ( !isLinux ) buffer.writeMultiByte( content+"\n", "windows-1252" );
 				else 
 				{
-					var lng:int = content.length;
-					for(var i:int=0;i<lng;++i)
-						buffer.writeByte(content.charCodeAt(i));
+					var contentTxt:String = content.toString();
+					var lng:int = contentTxt.length;
+					for(var i:int=0; i<lng; ++i)
+						buffer.writeByte(contentTxt.charCodeAt(i));
+					buffer.writeByte(0x0A);
 				}
 			}
 		}
