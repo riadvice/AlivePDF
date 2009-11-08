@@ -10,7 +10,6 @@ package org.alivepdf.images
 		public function TIFFImage(imageStream:ByteArray, colorSpace:String, id:int)
 		{
 			super(imageStream, colorSpace, id);
-			//filter = Filter.DCT_DECODE;
 		}
 		
 		protected override function parse ():void

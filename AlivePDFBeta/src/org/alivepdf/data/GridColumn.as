@@ -8,7 +8,7 @@ package org.alivepdf.data
 		public var _cellAlign:String;
 		public var _headerAlign:String;
 		
-		public function GridColumn( headerText:String, dataField:String, width:Number, headerAlign:String="L", cellAlign:String="L" )
+		public function GridColumn( headerText:String, dataField:String, width:Number=30, headerAlign:String="L", cellAlign:String="L" )
 		{
 			_headerText = headerText;
 			_dataField = dataField;
