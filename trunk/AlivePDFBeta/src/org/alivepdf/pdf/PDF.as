@@ -71,6 +71,7 @@ package org.alivepdf.pdf
 	import org.alivepdf.fonts.FontMetrics;
 	import org.alivepdf.fonts.FontType;
 	import org.alivepdf.fonts.IFont;
+	import org.alivepdf.html.HTMLTag;
 	import org.alivepdf.images.ColorSpace;
 	import org.alivepdf.images.DoJPEGImage;
 	import org.alivepdf.images.DoPNGImage;
@@ -222,6 +223,7 @@ package org.alivepdf.pdf
 		
 		protected static const PDF_VERSION:String = '1.3';
 		protected static const ALIVEPDF_VERSION:String = '0.1.5';
+		protected const I1000:int = 1000;
 		
 		protected var format:Array;
 		protected var size:Size;
@@ -2432,7 +2434,7 @@ package org.alivepdf.pdf
 			
 			if ( width==0 ) width = currentPage.w - rightMargin - currentX;
 			
-			var wmax:Number = (width-2*currentMargin)*1000/fontSize;
+			var wmax:Number = (width-2*currentMargin)*I1000/fontSize;
 			var s:String = findAndReplace ("\r",'',text);
 			var nb:int = s.length;
 			
@@ -2578,7 +2580,7 @@ package org.alivepdf.pdf
 		{
 			var cw:Object = currentFont.charactersWidth;
 			var w:Number = currentPage.w-rightMargin-currentX;
-			var wmax:Number = (w-2*currentMargin)*1000/fontSize;
+			var wmax:Number = (w-2*currentMargin)*I1000/fontSize;
 			
 			var s:String = findAndReplace ("\r",'', text);
 			var nb:int = s.length;
@@ -2606,7 +2608,7 @@ package org.alivepdf.pdf
 					{
 						currentX = leftMargin;
 						w = currentPage.w-rightMargin-currentX;
-						wmax= (w-2*currentMargin)*1000/fontSize;
+						wmax= (w-2*currentMargin)*I1000/fontSize;
 					}
 					nl++;
 					continue;
@@ -2630,7 +2632,7 @@ package org.alivepdf.pdf
 							currentX = leftMargin;
 							currentY += currentPage.h;
 							w = currentPage.w-rightMargin-currentX;
-							wmax = (w-2*currentMargin)*1000/fontSize;
+							wmax = (w-2*currentMargin)*I1000/fontSize;
 							i++;
 							nl++;
 							continue;
@@ -2650,7 +2652,7 @@ package org.alivepdf.pdf
 					{
 						currentX=leftMargin;
 						w=currentPage.w-rightMargin-currentX;
-						wmax=(w-2*currentMargin)*1000/fontSize;
+						wmax=(w-2*currentMargin)*I1000/fontSize;
 					}
 					nl++;
 				}
@@ -2692,11 +2694,11 @@ package org.alivepdf.pdf
 			//Output text in flowing mode
 			var cw    : Object     = currentFont.charactersWidth;
 			var w     : Number     = currentPage.w-rightMargin-currentX;
-			var wmax  : Number     = (w-2*currentMargin)*1000/fontSize;
+			var wmax  : Number     = (w-2*currentMargin)*I1000/fontSize;
 			var s     : String     = findAndReplace ("\r",'',pText);
 			
 			// Strip all \n's as we don't use them - use <br /> tag for returns
-			s = findAndReplace("\n",'',s);  
+			s = findAndReplace("\n",'', s);  
 			
 			var nb      : int;        // Count of number of characters in section
 			var sep     : int = -1;   // Stores the position of the last seperator
@@ -2839,7 +2841,7 @@ package org.alivepdf.pdf
 						w       = currentPage.w-rightMargin-currentX;
 						
 						//Size of a full line of text
-						wmax    = (w-2*currentMargin)*1000/this.fontSize;  
+						wmax    = (w-2*currentMargin)*I1000/this.fontSize;  
 						
 						//get text from string
 						s   = aTaggedString[k].value; 
@@ -2883,7 +2885,7 @@ package org.alivepdf.pdf
 										currentY += pHeight;
 										
 										w    = currentPage.w-rightMargin-currentX;
-										wmax = (w-2*currentMargin)*1000/fontSize;
+										wmax = (w-2*currentMargin)*I1000/fontSize;
 										
 										i++;
 										continue;
@@ -2926,7 +2928,7 @@ package org.alivepdf.pdf
 									
 									if ( textAlign == Align.JUSTIFIED )
 									{
-										ws=(ns>1) ? (wmax-lenAtSep)/1000*fontSize/(ns-1) : 0;
+										ws=(ns>1) ? (wmax-lenAtSep)/I1000*fontSize/(ns-1) : 0;
 										write(sprintf('%.3f Tw',ws*k));
 									}
 									
@@ -2949,7 +2951,7 @@ package org.alivepdf.pdf
 								currentX = leftMargin;
 								
 								w   = currentPage.w - rightMargin - currentX;
-								wmax= ( w-2 * currentMargin ) * 1000 / fontSize;
+								wmax= ( w-2 * currentMargin )*I1000/fontSize;
 								
 							} else 
 								i++;
@@ -3078,29 +3080,31 @@ package org.alivepdf.pdf
 			
 		}
 		
-		protected function parseTags ( myXML : XML ) : Array
+		protected function parseTags ( myXML:XML ):Array
 		{	
-			var aTags    : Array     = new Array();
-			var children : XMLList   = myXML.children();
+			var aTags:Array = new Array();
+			var children:XMLList = myXML.children();
+			var returnedTags:Array;
 			var lng:int = children.length();
+			var subLng:int;
 			
 			for( var i : int=0; i < lng; i++ )
 			{	
 				if ( children[i].name() != null )
 				{	
-					aTags.push({tag:'<'+children[i].name()+'>',attr:children[i].attributes(),value:""});
+					aTags.push( new HTMLTag ('<'+children[i].name()+'>', children[i].attributes(), "") );
 					
-					//Recurse into this tag and return them all as an array
-					var returnedTags    : Array = parseTags ( children[i] );
+					returnedTags = parseTags ( children[i] );
+					subLng = returnedTags.length;
 					
-					for ( var j : int = 0; j < returnedTags.length; j++ )
+					for ( var j : int = 0; j < subLng; j++ )
 						aTags.push( returnedTags[j] );
 					
-					aTags.push({tag:'</'+children[i].name()+'>',attr:children[i].attributes(),value:""});
+					aTags.push( new HTMLTag ('</'+children[i].name()+'>', children[i].attributes(), "") );
 					
 				} else 
 					
-					aTags.push({tag:"none", attr:new XMLList(), value:children[i]});
+					aTags.push( new HTMLTag ("none", new XMLList(), children[i] ) );
 			}
 			
 			return aTags;
@@ -3159,7 +3163,7 @@ package org.alivepdf.pdf
 				columns = new Array();
 				var fieldsLng:int = fields.length;
 				for (i = 0; i< fieldsLng; i++)
-					columns.push ( new GridColumn ( fields[i], fields[i], 30 ) );
+					columns.push ( new GridColumn ( fields[i], fields[i], currentGrid.width ) );
 			}
 			
 			var row:Array;
@@ -3265,7 +3269,7 @@ package org.alivepdf.pdf
 			var cw:Object = currentFont.charactersWidth;
 			if(width==0) width = currentPage.w-rightMargin-leftMargin;
 			
-			var wmax:int = (width-2*currentMargin)*1000/fontSize;
+			var wmax:int = (width-2*currentMargin)*I1000/fontSize;
 			var s:String = findAndReplace("\r",'',text);
 			var nb:int = s.length;
 			
