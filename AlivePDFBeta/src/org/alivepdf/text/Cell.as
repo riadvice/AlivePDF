@@ -5,7 +5,6 @@ package org.alivepdf.text
 	
 	public class Cell
 	{
-		
         public var width:Number=0;
         private var height:Number=0;
         private var text:String='';
@@ -28,11 +27,8 @@ package org.alivepdf.text
         }
         
         public function addCell ( myPDF:PDF ):void
-        {
-        
-        	myPDF.addCell(width,height,text,border,ln,align,fill,link);
-               
+        {  
+        	myPDF.addCell(width,height,text,border,ln,align,fill,link);       
         }
 	}
-
 }

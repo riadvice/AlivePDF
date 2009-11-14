@@ -336,7 +336,7 @@ package org.alivepdf.pdf
 		protected var pushedFontName:String;
 		protected var fontUnderline:Boolean;
 		protected var jsResource:int;
-		protected var javascript:String;
+		protected var js:String;
 		protected var totalEmbeddedFonts:int;
 		protected var widths:*;
 		protected var aligns:Array = new Array();
@@ -2470,8 +2470,7 @@ package org.alivepdf.pdf
 			var cwAux:int = 0;
 			
 			while (i<nb)
-			{
-				
+			{			
 				c = s.charAt(i);
 				
 				if (c=="\n")
@@ -2491,8 +2490,7 @@ package org.alivepdf.pdf
 					nl++;
 					
 					if(border && nl==2) b=b2;
-					continue;
-					
+					continue;			
 				}
 				
 				if(c==' ')
@@ -3450,7 +3448,7 @@ package org.alivepdf.pdf
 		 */	 
 		public function addJavaScript ( script:String ):void
 		{
-			javascript = script;
+			js = script;
 		}
 		
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -3838,7 +3836,7 @@ package org.alivepdf.pdf
 				else if ( !(imageBytes.position = 0) && imageBytes.readUTFBytes(3) == GIFImage.HEADER ) 
 				{
 					imageBytes.position = 0;
-					var decoder:GIFPlayer = new GIFPlayer();
+					var decoder:GIFPlayer = new GIFPlayer(false);
 					var capture:BitmapData = decoder.loadBytes( imageBytes );
 					var bytes:ByteArray = PNGEncoder.encode ( capture, 1 );
 					image = new DoPNGImage ( capture, bytes, id );
@@ -4281,7 +4279,7 @@ package org.alivepdf.pdf
 			newObj();
 			write('<<');
 			write('/S /JavaScript');
-			write('/JS '+escapeString(javascript));
+			write('/JS '+escapeString(js));
 			write('>>');
 			write('endobj');	
 		}
@@ -4293,7 +4291,7 @@ package org.alivepdf.pdf
 			insertExtGState();
 			insertFonts();
 			insertImages();
-			if ( javascript != null ) insertJS();
+			if ( js != null ) insertJS();
 			offsets[2] = buffer.length;
 			write('2 0 obj');
 			write('<<');
@@ -4411,7 +4409,7 @@ package org.alivepdf.pdf
 				write('/PageMode /UseOutlines');
 			} else write('/PageMode /'+pageMode);
 			
-			if ( javascript != null )  write('/Names <</JavaScript '+(jsResource)+' 0 R>>');
+			if ( js != null )  write('/Names <</JavaScript '+(jsResource)+' 0 R>>');
 			
 			var p:String = nOCGPrint+' 0 R';
 			var v:String = nOCGView+' 0 R';
