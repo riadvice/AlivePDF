@@ -1,12 +1,9 @@
 package org.alivepdf.layout
-
 {
-
 	/**
 	 * Represents the size of the printed page.
 	 **/
-	public final class Size
-	
+	public final class Size	
 	{
 		/**
 		 * Constants representing the various paper sizes.
@@ -49,7 +46,6 @@ package org.alivepdf.layout
 		 * size.
 		 **/
 		public static function getSize( value:Object ) : Size
-		
 		{
 			if( value is Size ) { return Size ( value ); }
 			
@@ -67,40 +63,27 @@ package org.alivepdf.layout
 		}
 
 		public function get fullLabel() : String
-		
 		{
 			//Returns format like: Letter - 8.5"x11" - 216x356mm
 			return label + " - " + inchesSize[0] + "x" + inchesSize[1] + "\" - " + mmSize[0] + "x" + mmSize[1] + "mm";
 		}
 		
 		public function toString ():String 
-		
 		{
-			
 			return fullLabel;
-			
 		}
 		
 		public function clone ():Size 
-		
-		{
-			
-			return new Size ( dimensions.slice(), label, inchesSize.slice(), mmSize.slice() );
-			
+		{	
+			return new Size ( dimensions.slice(), label, inchesSize.slice(), mmSize.slice() );	
 		}
 
 		public function Size ( pixelsSize:Array, pLabel:String, pInchesSize:Array, pMmSize:Array )
-		
 		{
-			
 			this.dimensions = pixelsSize;
 			this.label = pLabel;
 			this.inchesSize = pInchesSize;
-			this.mmSize = pMmSize;
-			
+			this.mmSize = pMmSize;	
 		}
-
-
 	}
-
 }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<flexLibProperties includeAllClasses="false" version="1">
+<flexLibProperties includeAllClasses="true" version="1">
   <includeClasses>
     <classEntry path="org.alivepdf.annotations.AttachFileStyle"/>
     <classEntry path="org.alivepdf.annotations.StampStyle"/>
@@ -8,6 +8,7 @@
     <classEntry path="org.alivepdf.colors.GrayColor"/>
     <classEntry path="org.alivepdf.colors.IColor"/>
     <classEntry path="org.alivepdf.colors.RGBColor"/>
+    <classEntry path="org.alivepdf.colors.SpotColor"/>
     <classEntry path="org.alivepdf.data.Grid"/>
     <classEntry path="org.alivepdf.data.GridColumn"/>
     <classEntry path="org.alivepdf.decoding.Filter"/>
@@ -24,6 +25,7 @@
     <classEntry path="org.alivepdf.encoding.IntList"/>
     <classEntry path="org.alivepdf.encoding.JPEGEncoder"/>
     <classEntry path="org.alivepdf.encoding.PNGEncoder"/>
+    <classEntry path="org.alivepdf.encoding.TIFFEncoder"/>
     <classEntry path="org.alivepdf.events.PageEvent"/>
     <classEntry path="org.alivepdf.events.PagingEvent"/>
     <classEntry path="org.alivepdf.events.ProcessingEvent"/>
@@ -60,15 +62,18 @@
     <classEntry path="org.alivepdf.fonts.parsing.tables.cmap.CMAPFormat8"/>
     <classEntry path="org.alivepdf.fonts.unicodefonts.ArialUnicodeMS"/>
     <classEntry path="org.alivepdf.fonts.unicodefonts.CidInfo"/>
+    <classEntry path="org.alivepdf.html.HTMLTag"/>
     <classEntry path="org.alivepdf.images.ColorSpace"/>
     <classEntry path="org.alivepdf.images.DoJPEGImage"/>
     <classEntry path="org.alivepdf.images.DoPNGImage"/>
+    <classEntry path="org.alivepdf.images.DoTIFFImage"/>
     <classEntry path="org.alivepdf.images.GIFImage"/>
     <classEntry path="org.alivepdf.images.IImage"/>
     <classEntry path="org.alivepdf.images.ImageFormat"/>
     <classEntry path="org.alivepdf.images.JPEGImage"/>
     <classEntry path="org.alivepdf.images.PDFImage"/>
     <classEntry path="org.alivepdf.images.PNGImage"/>
+    <classEntry path="org.alivepdf.images.TIFFImage"/>
     <classEntry path="org.alivepdf.images.gif.decoder.GIFDecoder"/>
     <classEntry path="org.alivepdf.images.gif.encoder.GIFEncoder"/>
     <classEntry path="org.alivepdf.images.gif.encoder.LZWEncoder"/>
@@ -90,8 +95,10 @@
     <classEntry path="org.alivepdf.layout.Size"/>
     <classEntry path="org.alivepdf.layout.Unit"/>
     <classEntry path="org.alivepdf.links.HTTPLink"/>
+    <classEntry path="org.alivepdf.links.Highlight"/>
     <classEntry path="org.alivepdf.links.ILink"/>
     <classEntry path="org.alivepdf.links.InternalLink"/>
+    <classEntry path="org.alivepdf.links.Outline"/>
     <classEntry path="org.alivepdf.operators.Drawing"/>
     <classEntry path="org.alivepdf.pages.Page"/>
     <classEntry path="org.alivepdf.pdf.PDF"/>
@@ -112,13 +119,7 @@
     <classEntry path="org.alivepdf.viewing.Title"/>
     <classEntry path="org.alivepdf.viewing.ToolBar"/>
     <classEntry path="org.alivepdf.viewing.WindowUI"/>
-    <classEntry path="org.alivepdf.links.Highlight"/>
-    <classEntry path="org.alivepdf.links.Outline"/>
-    <classEntry path="org.alivepdf.images.TIFFImage"/>
-    <classEntry path="org.alivepdf.images.DoTIFFImage"/>
-    <classEntry path="org.alivepdf.colors.SpotColor"/>
     <classEntry path="org.alivepdf.visibility.Visibility"/>
-    <classEntry path="org.alivepdf.html.HTMLTag"/>
   </includeClasses>
   <includeResources>
     <resourceEntry destPath="org/alivepdf/fonts/map/iso-8859-9.map" sourcePath="org/alivepdf/fonts/map/iso-8859-9.map"/>
