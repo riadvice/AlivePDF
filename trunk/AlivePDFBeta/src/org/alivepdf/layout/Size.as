@@ -78,12 +78,12 @@ package org.alivepdf.layout
 			return new Size ( dimensions.slice(), label, inchesSize.slice(), mmSize.slice() );	
 		}
 
-		public function Size ( pixelsSize:Array, pLabel:String, pInchesSize:Array, pMmSize:Array )
+		public function Size ( pixelsSize:Array, label:String, inchesSize:Array, mmSize:Array )
 		{
 			this.dimensions = pixelsSize;
-			this.label = pLabel;
-			this.inchesSize = pInchesSize;
-			this.mmSize = pMmSize;	
+			this.label = label;
+			this.inchesSize = inchesSize;
+			this.mmSize = mmSize;	
 		}
 	}
 }

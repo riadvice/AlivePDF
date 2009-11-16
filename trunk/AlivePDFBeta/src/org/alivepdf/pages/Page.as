@@ -28,13 +28,12 @@ package org.alivepdf.pages
 		private var _k:Number;
 		private var _unit:String;
 		private var _advanceTiming:int;
-		
-		private static var _NumPage:int = 0;
+		private var _numPage:uint;
 	
-		public function Page ( pOrientation:String, unit:String="Mm", size:Size=null, pRotation:Number=0 )
+		public function Page ( orientation:String, unit:String="Mm", size:Size=null, rotation:Number=0 )
 		{
-			_orientation = pOrientation;
-			_rotation = pRotation;
+			_orientation = orientation;
+			_rotation = rotation;
 			_unit = setUnit( unit );
 
 			if ( size == null )
@@ -48,12 +47,11 @@ package org.alivepdf.pages
 			else throw new RangeError ("Incorrect dimensions.");
 			
 			_fwPt = _format[0];
-			_fhPt = _format[1];
-						
+			_fhPt = _format[1];		
 			_fw = _fwPt/_k;
 			_fh = _fhPt/_k;
 
-			if ( this._orientation == Orientation.PORTRAIT )
+			if ( _orientation == Orientation.PORTRAIT )
 			{
 				wPt = _fwPt;
 				hPt = _fhPt;
@@ -62,7 +60,7 @@ package org.alivepdf.pages
 				_width = wPt;
 				_height = hPt;
 
-			} else if ( this._orientation == Orientation.LANDSCAPE )
+			} else if ( _orientation == Orientation.LANDSCAPE )
 			{		
 				wPt = _fhPt;
 				hPt = _fwPt;
@@ -71,30 +69,12 @@ package org.alivepdf.pages
 				_width = wPt;
 				_height = hPt;
 
-			} else throw new RangeError ('Incorrect orientation: ' + pOrientation);
-			
-			_page = _NumPage++;
+			} else throw new RangeError ('Incorrect orientation: ' + orientation);
 	
 			_annots = new String();
-	
 			_content = new String();
-	
 			transitions = new String();
-		}
-		
-		/**
-		 * 
-		 * @return Page
-		 * @example
-		 * This example shows how to clone a page :
-		 * <div class="listing">
-		 * <pre>
-		 *
-		 * var clonedPage = existingPage.clone();
-		 * myPDF.addPage ( clonedPage );
-		 * </pre>
-		 * </div>
-		 */		
+		}	
 
 		public function get advanceTiming():int
 		{
@@ -106,6 +86,19 @@ package org.alivepdf.pages
 			_advanceTiming = value;
 		}
 
+		/**
+		 * 
+		 * @return Page
+		 * @example
+		 * This example shows how to clone a page :
+		 * <div class="listing">
+		 * <pre>
+		 *
+		 * var clonedPage:Page = existingPage.clone();
+		 * myPDF.addPage ( clonedPage );
+		 * </pre>
+		 * </div>
+		 */	
 		public function clone ( ):Page 
 		{
 			var page:Page = new Page ( orientation, _unit, size, rotation );
@@ -132,12 +125,12 @@ package org.alivepdf.pages
 			return unit;	
 		}
 	
-		public function rotate ( pRotation:Number ):void
+		public function rotate ( rotation:Number ):void
 		{
-			if ( pRotation % 90 )
+			if ( rotation % 90 )
 				throw new RangeError ("Rotation must be a multiple of 90");
 	
-			_rotation = pRotation;
+			_rotation = rotation;
 		}
 		
 		private function paging ( evt:PagingEvent ):void
@@ -171,9 +164,9 @@ package org.alivepdf.pages
 			advanceTiming = timing;	
 		}
 		
-		public function set width ( pWidth:Number ):void 
+		public function set width ( width:Number ):void 
 		{
-			_format[0] = _width = pWidth;
+			_format[0] = _width = width;
 		}
 		
 		public function get width ( ):Number 
@@ -181,9 +174,9 @@ package org.alivepdf.pages
 			return _width;	
 		}
 		
-		public function set height ( pHeight:Number ):void 
+		public function set height ( height:Number ):void 
 		{
-			_format[1] = _height = pHeight;
+			_format[1] = _height = height;
 		}
 		
 		public function get height ( ):Number 
@@ -191,9 +184,9 @@ package org.alivepdf.pages
 			return _height;	
 		}
 		
-		public function set wPt ( pwPt:Number ):void 
+		public function set wPt ( wPt:Number ):void 
 		{	
-			_wPt = pwPt;
+			_wPt = wPt;
 		}
 		
 		public function get wPt ( ):Number 
@@ -201,9 +194,9 @@ package org.alivepdf.pages
 			return _wPt;	
 		}
 		
-		public function set hPt ( phPt:Number ):void 
+		public function set hPt ( hPt:Number ):void 
 		{
-			_hPt = phPt;
+			_hPt = hPt;
 		}
 		
 		public function get hPt ( ):Number 
@@ -211,9 +204,9 @@ package org.alivepdf.pages
 			return _hPt;	
 		}
 		
-		public function set w ( pW:Number ):void 
+		public function set w ( w:Number ):void 
 		{
-			_w = pW;
+			_w = w;
 		}
 		
 		public function get w ( ):Number 
@@ -221,9 +214,9 @@ package org.alivepdf.pages
 			return _w;	
 		}
 		
-		public function set h ( pH:Number ):void 
+		public function set h ( h:Number ):void 
 		{
-			_h = pH;
+			_h = h;
 		}
 		
 		public function get h ( ):Number 
@@ -241,9 +234,9 @@ package org.alivepdf.pages
 			_size = size;	
 		}
 		
-		public function set rotation ( pRotation:Number ):void 
+		public function set rotation ( rotation:Number ):void 
 		{
-			_rotation = pRotation;
+			_rotation = rotation;
 		}
 		
 		public function get rotation ( ):Number 
@@ -251,14 +244,19 @@ package org.alivepdf.pages
 			return _rotation;	
 		}
 		
-		public function get number ( ):int 
+		public function get number ( ):uint 
 		{
 			return _page;	
 		}
 		
-		public function set content ( pContent:String ):void 
+		public function set number ( num:uint ):void 
 		{
-			_content = pContent;	
+			_page = num;	
+		}
+		
+		public function set content ( content:String ):void 
+		{
+			_content = content;	
 		}
 		
 		public function get content ( ):String 
@@ -271,9 +269,9 @@ package org.alivepdf.pages
 			return _pageTransition;	
 		}
 		
-		public function set transitions ( pTransition:String ):void 
+		public function set transitions ( transition:String ):void 
 		{
-			_pageTransition = pTransition;	
+			_pageTransition = transition;	
 		}
 		
 		public function get annotations ( ):String 
@@ -281,14 +279,14 @@ package org.alivepdf.pages
 			return _annots;	
 		}
 		
-		public function set annotations ( pAnnotation:String ):void 
+		public function set annotations ( annotation:String ):void 
 		{
-			_annots = pAnnotation;	
+			_annots = annotation;	
 		}
 		
 		public function toString ( ):String 
 		{
-			return "[Page orientation="+_orientation+" number="+number+" pagewidth="+(w>>0)+" height="+(h>>0)+"]";	
+			return "[Page orientation="+_orientation+" number="+number+" width="+(w>>0)+" height="+(h>>0)+"]";	
 		}	
 	}
 }

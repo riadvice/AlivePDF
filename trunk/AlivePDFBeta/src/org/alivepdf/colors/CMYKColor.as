@@ -7,12 +7,12 @@ package org.alivepdf.colors
 		public var yellow:Number;
 		public var black:Number;
 		
-		public function CMYKColor ( pCyan:Number, pMagenta:Number, pYellow:Number, pBlack:Number )	
+		public function CMYKColor ( cyan:Number, magenta:Number, yellow:Number, black:Number )	
 		{
-			cyan = pCyan;
-			magenta = pMagenta;
-			yellow = pYellow;
-			black = pBlack;	
+			this.cyan = cyan;
+			this.magenta = magenta;
+			this.yellow = yellow;
+			this.black = black;	
 		}
 	}
 }

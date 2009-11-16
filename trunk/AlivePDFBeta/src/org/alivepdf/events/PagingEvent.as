@@ -5,20 +5,14 @@ package org.alivepdf.events
 
 	public final class PagingEvent extends Event
 	{
-				
 		public var page:int;
 		
 		public static const ADDED:String = "paging";
 		
-		public function PagingEvent ( type:String, page:int )
-		
+		public function PagingEvent ( type:String, page:int )	
 		{
-			
-			super(type, false, false);
-			
+			super(type, false, false);	
 			this.page = page;
-			
 		}
-		
 	}
 }

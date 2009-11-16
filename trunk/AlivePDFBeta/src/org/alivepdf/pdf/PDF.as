@@ -796,7 +796,10 @@ package org.alivepdf.pdf
 			if ( page == null ) page = new Page ( defaultOrientation, defaultUnit, defaultSize, defaultRotation );
 			
 			pagesReferences.push ( (3+(arrayPages.length<<1))+' 0 R' );
+			
 			arrayPages.push ( currentPage = page );
+			
+			page.number = pagesReferences.length;
 			
 			if ( state == 0 ) open();
 			
@@ -3782,7 +3785,6 @@ package org.alivepdf.pdf
 				write('Q');
 				
 			} else throw new Error("No bounding box found in the current EPS file");
-
 		}
 		
 		/**

@@ -1,12 +1,9 @@
 package org.alivepdf.events
 {
-	
 	import flash.events.Event;
 
 	public final class ProcessingEvent extends Event
-	
 	{
-		
 		public var duration:Number;
 		
 		public static const COMPLETE:String = "complete";
@@ -15,14 +12,9 @@ package org.alivepdf.events
 		public static const STARTED:String = "started";
 		
 		public function ProcessingEvent ( type:String, duration:Number=0 )
-		
 		{
-		
 			super(type, false, false);
-			
 			this.duration = duration;
-		
 		}
-		
 	}
 }

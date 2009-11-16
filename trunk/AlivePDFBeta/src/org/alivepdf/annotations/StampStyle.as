@@ -1,10 +1,7 @@
 package org.alivepdf.annotations
 {
-	
-	public final class StampStyle
-	
+	public final class StampStyle	
 	{
-		
 		public static const APPROVED:String = "Approved";
 		public static const AS_IS:String = "AsIs";
 		public static const CONFIDENTIAL:String = "Confidential";
@@ -19,7 +16,5 @@ package org.alivepdf.annotations
 		public static const NOT_APPROVED:String = "Not_Approved";
 		public static const SOLD:String = "Sold";
 		public static const TOP_SECRET:String = "TopSecret";
-		
 	}
-	
 }
