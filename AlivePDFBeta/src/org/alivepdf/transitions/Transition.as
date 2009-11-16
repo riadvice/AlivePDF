@@ -1,11 +1,7 @@
 package org.alivepdf.transitions 
-
 {
-	
-	public final class Transition 
-	
+	public final class Transition 	
 	{
-		
 		public static const SPLIT:String = "Split";
 		public static const BLINDS:String = "Blinds";
 		public static const BOX:String = "Box";
@@ -17,8 +13,6 @@ package org.alivepdf.transitions
 		public static const COVER:String = "Cover";
 		public static const UNCOVER:String = "Uncover";
 		public static const FADE:String = "Fade";
-		public static const NONE:String = "None";
-		
+		public static const NONE:String = "None";	
 	}
-	
 }

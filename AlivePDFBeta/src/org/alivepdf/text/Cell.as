@@ -14,21 +14,21 @@ package org.alivepdf.text
         private var fill:Number=0;
         private var link:ILink;
         
-        public function Cell( pWidth:Number=0, pHeight:Number=0, pText:String='', pBorder:*=0, pLn:Number=0, pAlign:String='', pFill:Number=0, pLink:ILink=null)
+        public function Cell( width:Number=0, height:Number=0, text:String='', border:*=0, ln:Number=0, align:String='', fill:Number=0, link:ILink=null )
         {
-                width = pWidth;
-                height = pHeight;
-                text = pText;
-                border = pBorder;
-                ln = pLn;
-                align = pAlign;
-                fill = pFill;
-                link = pLink;
+			this.width = width;
+            this.height = height;
+            this.text = text;
+            this.border = border;
+            this.ln = ln;
+            this.align = align;
+            this.fill = fill;
+			this.link = link;
         }
         
-        public function addCell ( myPDF:PDF ):void
+        public function addCell ( pdf:PDF ):void
         {  
-        	myPDF.addCell(width,height,text,border,ln,align,fill,link);       
+        	pdf.addCell(width,height,text,border,ln,align,fill,link);       
         }
 	}
 }

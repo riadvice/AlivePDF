@@ -1,21 +1,12 @@
 package org.alivepdf.colors
-
 {
-	
-	public final class GrayColor implements IColor
-	
-	{
-		
+	public final class GrayColor implements IColor	
+	{	
 		public var gray:Number;
 		
-		public function GrayColor ( pGray:Number )
-		
+		public function GrayColor ( gray:Number )	
 		{
-			
-			gray = pGray;
-			
+			this.gray = gray;	
 		}
-		
 	}
-	
 }
