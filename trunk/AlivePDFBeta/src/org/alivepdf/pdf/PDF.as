@@ -347,6 +347,7 @@ package org.alivepdf.pdf
 		protected var visibility:String = Visibility.ALL;
 		protected var nOCGPrint:int;
 		protected var nOCGView:int;
+		protected var startingPageIndex:uint;
 
 		/**
 		 * The PDF class represents a PDF document.
@@ -704,11 +705,6 @@ package org.alivepdf.pdf
 			documentCreator = creator;
 		}
 		
-		public function setPermissions ( ):void
-		{
-			
-		}
-		
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		/*
 		* AlivePDF paging API
@@ -852,10 +848,11 @@ package org.alivepdf.pdf
 		 * </pre>
 		 * </div>
 		 */
-		public function getPage ( page:int ):Page
+		public function getPage ( index:int ):Page
 		{
-			if ( page > 0 && page <= arrayPages.length ) return arrayPages [page-1];
-			else throw new RangeError ("Can't retrieve page " + page + ".");
+			var lng:int = arrayPages.length;
+			if ( index > 0 && index <= lng ) return arrayPages [index-1];
+			else throw new RangeError ("Can't retrieve page " + index + ". "+lng+" page(s) available.");
 		}
 		
 		/**
@@ -901,10 +898,11 @@ package org.alivepdf.pdf
 		 * </pre>
 		 * </div>
 		 */
-		public function gotoPage ( page:int ):void
+		public function gotoPage ( index:int ):void
 		{
-			if ( page > 0 && page <= arrayPages.length ) currentPage = arrayPages[page-1];	
-			else throw new RangeError ("Can't find page " + page + ".");
+			var lng:int = arrayPages.length;
+			if ( index > 0 && index <= lng ) currentPage = arrayPages[index-1];	
+			else throw new RangeError ("Can't find page " + index + ". "+lng+" page(s) available.");
 		}
 		
 		/**
@@ -924,10 +922,10 @@ package org.alivepdf.pdf
 		 * </pre>
 		 * </div>
 		 */
-		public function removePage ( page:int ):Page
+		public function removePage ( index:int ):Page
 		{
-			if ( page > 0 && page <= arrayPages.length ) return arrayPages.splice ( page-1, 1 )[0];
-			else throw new RangeError ("Cannot remove page " + page + ".");
+			if ( index > 0 && index <= arrayPages.length ) return arrayPages.splice ( index-1, 1 )[0];
+			else throw new RangeError ("Cannot remove page " + index + ".");
 		}
 		
 		/**
@@ -1240,7 +1238,6 @@ package org.alivepdf.pdf
 		public function setAlpha ( alpha:Number, blendMode:String='Normal' ):void
 		{
 			var graphicState:int = addExtGState( { 'ca' : alpha, 'SA' : true, 'CA' : alpha, 'BM' : '/' + blendMode } );
-			
 			setExtGState ( graphicState );
 		}
 		
@@ -1712,7 +1709,7 @@ package org.alivepdf.pdf
 		 */
 		public function drawEllipse ( x:Number, y:Number, radiusX:Number, radiusY:Number ):void
 		{
-			if ( !bitmapFilled)
+			if ( !bitmapFilled )
 			{
 				var style:String = filled ? Drawing.CLOSE_AND_FILL_AND_STROKE : Drawing.STROKE;
 				
@@ -2045,6 +2042,26 @@ package org.alivepdf.pdf
 		public function setViewerPreferences ( toolbar:String='false', menubar:String='false', windowUI:String='false', fitWindow:String='false', centeredWindow:String='false', displayTitle:String='false' ):void
 		{
 			viewerPreferences = '<< /HideToolbar '+toolbar+' /HideMenubar '+menubar+' /HideWindowUI '+windowUI+' /FitWindow '+fitWindow+' /CenterWindow '+centeredWindow+' /DisplayDocTitle '+displayTitle+' >>';
+		}
+		
+		/**
+		 * Lets you specify which page should be viewed by default when the document is opened.
+		 *
+		 * @param index Page number
+		 * @example
+		 * This example shows how to sepcify the second page to be viewed by default :
+		 * <div class="listing">
+		 * <pre>
+		 *
+		 * myPDF.setStartingPage (2);
+		 * </pre>
+		 * </div>
+		 */
+		public function setStartingPage ( index:int ):void
+		{
+			var lng:int = arrayPages.length;
+			if ( index > 0 && index <=  lng ) startingPageIndex = index-1;
+			else throw new RangeError ("Can't set page " + index + ". "+lng+ " page(s) available.")
 		}
 		
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -4397,10 +4414,12 @@ package org.alivepdf.pdf
 			write('/Type /Catalog');
 			write('/Pages 1 0 R');
 			
-			if ( zoomMode == Display.FULL_PAGE ) write('/OpenAction [3 0 R /Fit]');
-			else if ( zoomMode == Display.FULL_WIDTH ) write('/OpenAction [3 0 R /FitH null]');
-			else if ( zoomMode == Display.REAL ) write('/OpenAction [3 0 R /XYZ null null '+zoomFactor+']');
-			else if ( !(zoomMode is String) ) write('/OpenAction [3 0 R /XYZ null null '+(zoomMode*.01)+']');
+			var startingPage:String = pagesReferences[startingPageIndex];
+			
+			if ( zoomMode == Display.FULL_PAGE ) write('/OpenAction ['+startingPage+' /Fit]');
+			else if ( zoomMode == Display.FULL_WIDTH ) write('/OpenAction ['+startingPage+' /FitH null]');
+			else if ( zoomMode == Display.REAL ) write('/OpenAction ['+startingPage+' /XYZ null null '+zoomFactor+']');
+			else if ( !(zoomMode is String) ) write('/OpenAction ['+startingPage+' /XYZ null null '+(zoomMode*.01)+']');
 			
 			write('/PageLayout /'+layoutMode);
 			
