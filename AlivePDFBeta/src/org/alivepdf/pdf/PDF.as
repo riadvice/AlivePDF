@@ -943,7 +943,8 @@ package org.alivepdf.pdf
 		 */
 		public function removeAllPages ():void 
 		{	
-			arrayPages = new Array();	
+			arrayPages = new Array();
+			pagesReferences = new Array();
 		}
 		
 		/**
