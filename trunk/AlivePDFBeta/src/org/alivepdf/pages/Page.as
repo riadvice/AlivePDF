@@ -28,7 +28,6 @@ package org.alivepdf.pages
 		private var _k:Number;
 		private var _unit:String;
 		private var _advanceTiming:int;
-		private var _numPage:uint;
 	
 		public function Page ( orientation:String, unit:String="Mm", size:Size=null, rotation:Number=0 )
 		{

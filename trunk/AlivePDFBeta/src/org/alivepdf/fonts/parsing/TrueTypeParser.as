@@ -14,7 +14,6 @@ package org.alivepdf.fonts.parsing
 	public final class TrueTypeParser
 	{	
 		private var fontStream:ByteArray;
-		private var allowEmbedding:Boolean;
 		private var nb:Number;
 		private var offset:Number;
 		private var fsType:Number;

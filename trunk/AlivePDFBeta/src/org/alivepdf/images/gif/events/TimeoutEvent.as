@@ -10,5 +10,10 @@ package org.alivepdf.images.gif.events
 		{
 			super ( pType, false, false );	
 		}
+		
+		public override function clone():Event
+		{
+			return new TimeoutEvent ( type );	
+		}
 	}
 }

@@ -6,6 +6,7 @@
 package org.alivepdf.images.gif.events
 {
 	import flash.events.Event;
+	
 	import org.alivepdf.images.gif.frames.GIFFrame;
 	
 	public class FrameEvent extends Event	
@@ -18,6 +19,11 @@ package org.alivepdf.images.gif.events
 			super ( pType, false, false );
 			
 			frame = pFrame;	
+		}
+		
+		public override function clone():Event
+		{
+			return new FrameEvent ( type, frame );	
 		}
 	}
 }

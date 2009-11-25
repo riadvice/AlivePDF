@@ -8,12 +8,12 @@ package org.alivepdf.layout
 		/**
 		 * Constants representing the various paper sizes.
 		 **/
-		public static var A3:Size          = new Size([841.89, 1190.55],"A3",	  [11.7, 16.5],[297, 420]);
-		public static var A4:Size          = new Size([595.28, 841.89],	"A4",	  [8.3, 11.7], [210, 297]);
-		public static var A5:Size          = new Size([420.94, 595.28],	"A5",	  [5.8,  8.3], [148, 210]);
-		public static var LETTER:Size      = new Size([612, 792],		"Letter", [8.5, 11],   [216, 279]);
-		public static var LEGAL:Size       = new Size([612, 1008],		"Legal",  [8.5, 14],   [216, 356]);
-		public static var TABLOID:Size     = new Size([792, 1224],		"Tabloid",[11, 17],    [279, 432]);
+		public static const A3:Size          = new Size([841.89, 1190.55],"A3",	  [11.7, 16.5],[297, 420]);
+		public static const A4:Size          = new Size([595.28, 841.89],	"A4",	  [8.3, 11.7], [210, 297]);
+		public static const A5:Size          = new Size([420.94, 595.28],	"A5",	  [5.8,  8.3], [148, 210]);
+		public static const LETTER:Size      = new Size([612, 792],		"Letter", [8.5, 11],   [216, 279]);
+		public static const LEGAL:Size       = new Size([612, 1008],		"Legal",  [8.5, 14],   [216, 356]);
+		public static const TABLOID:Size     = new Size([792, 1224],		"Tabloid",[11, 17],    [279, 432]);
 
 		/**
 		 * An array containing all the available paper sizes.

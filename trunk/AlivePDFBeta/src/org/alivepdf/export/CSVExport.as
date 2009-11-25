@@ -8,7 +8,6 @@ package org.alivepdf.export
 	{
 		private var _data:Array;
 		private var _columns:Array;
-		private var _delimiter:String;
 		private var buffer:String = new String();
 		private var output:ByteArray = new ByteArray();
 		

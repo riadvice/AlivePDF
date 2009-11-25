@@ -16,5 +16,10 @@ package org.alivepdf.events
 			super(type, false, false);
 			this.duration = duration;
 		}
+		
+		public override function clone():Event
+		{
+			return new ProcessingEvent ( type, duration );	
+		}
 	}
 }

@@ -10,7 +10,7 @@ package org.alivepdf.images
 		private var physicalWidthDpi:int;
 		private var physicalHeightDpi:int;
 		
-		public static var FORMAT:int = 0;
+		public static const FORMAT:int = 0;
 		public static const HEADER:int = 0xFFD8;
 		
 		public function JPEGImage( imageStream:ByteArray, colorSpace:String, id:int )
