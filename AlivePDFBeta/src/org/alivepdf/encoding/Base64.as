@@ -7,6 +7,7 @@ package org.alivepdf.encoding
 	*/
 	
 	import flash.utils.ByteArray;
+	import flash.utils.Dictionary;
 	
 	public class Base64 {
 		
@@ -29,11 +30,11 @@ package org.alivepdf.encoding
 		takes a byteArray as input and return the base64 string
 		*/
 		
-		private static var lookupObject:Object = buildLookUpObject();
+		private static var lookupObject:Dictionary = buildLookUpObject();
 		
-		private static function buildLookUpObject ():Object
+		private static function buildLookUpObject ():Dictionary
 		{
-			var obj:Object = new Object();
+			var obj:Dictionary = new Dictionary();
 			
 			for (var i:int = 0; i< _b64Chars.length; i++ ) obj[_b64Chars[i]] = i;
 			

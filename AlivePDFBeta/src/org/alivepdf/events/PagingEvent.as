@@ -1,7 +1,6 @@
 package org.alivepdf.events
 {
 	import flash.events.Event;
-	import org.alivepdf.pages.Page;
 
 	public final class PagingEvent extends Event
 	{
@@ -13,6 +12,11 @@ package org.alivepdf.events
 		{
 			super(type, false, false);	
 			this.page = page;
+		}
+		
+		public override function clone():Event
+		{
+			return new PagingEvent ( type, page );	
 		}
 	}
 }

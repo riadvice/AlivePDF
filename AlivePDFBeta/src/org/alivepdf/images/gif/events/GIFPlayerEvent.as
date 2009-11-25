@@ -19,5 +19,10 @@ package org.alivepdf.images.gif.events
 			
 			rect = pRect;	
 		}
+		
+		public override function clone():Event
+		{
+			return new GIFPlayerEvent ( type, rect );	
+		}
 	}
 }

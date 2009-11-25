@@ -266,8 +266,7 @@ package org.alivepdf.pdf
 		protected var currentMatrix:Matrix;
 		protected var lasth:Number;       
 		protected var strokeThickness:Number;  
-		protected var fonts:Array;          
-		protected var fontFiles:Object;    
+		protected var fonts:Array;
 		protected var differences:Array;                   
 		protected var fontFamily:String;     
 		protected var fontStyle:String;       
@@ -381,7 +380,6 @@ package org.alivepdf.pdf
 			buffer = new ByteArray();
 			offsets = new Array();
 			fonts = new Array();
-			fontFiles = new Object();
 			differences = new Array();
 			streamDictionary = new Dictionary();
 			inHeader = inFooter = false;
@@ -3560,6 +3558,7 @@ package org.alivepdf.pdf
 				
 			} else image = streamDictionary[displayObject];
 			
+			setAlpha( alpha, blendMode );
 			placeImage( x, y, width, height, rotation, resizeMode, link );
 		}
 		
@@ -3725,7 +3724,6 @@ package org.alivepdf.pdf
 					{
 						case 'm':
 						case 'l':
-						case 'v':
 						case 'y':
 						case 'c':
 							
@@ -3743,7 +3741,7 @@ package org.alivepdf.pdf
 						case 'M':
 						case 'd':
 						case 'n':
-						case 'v':
+						case 'v': // NO P
 							write(line);
 							break;
 						
@@ -4021,7 +4019,8 @@ package org.alivepdf.pdf
 				newObj();
 				graphicStates[i].n = n;
 				write('<</Type /ExtGState');
-				for (var k:String in graphicStates[i]) write('/'+k+' '+graphicStates[i][k]);
+				for (var k:String in graphicStates[i]) 
+					write('/'+k+' '+graphicStates[i][k]);
 				write('>>');
 				write('endobj');
 			}
