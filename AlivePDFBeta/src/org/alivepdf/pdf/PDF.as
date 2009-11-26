@@ -3840,9 +3840,7 @@ package org.alivepdf.pdf
 		 * </div>
 		 */	 
 		public function addImageStream ( imageBytes:ByteArray, colorSpace:String, resizeMode:Resize=null, x:Number=0, y:Number=0, width:Number=0, height:Number=0, rotation:Number=0, alpha:Number=1, blendMode:String="Normal", link:ILink=null ):void
-		{	
-			setAlpha ( alpha, blendMode );
-
+		{
 			if ( streamDictionary[imageBytes] == null )
 			{
 				imageBytes.position = 0;
@@ -3868,6 +3866,7 @@ package org.alivepdf.pdf
 				
 			} else image = streamDictionary[imageBytes];
 			
+			setAlpha ( alpha, blendMode );
 			placeImage( x, y, width, height, rotation, resizeMode, link );
 		}
 		
