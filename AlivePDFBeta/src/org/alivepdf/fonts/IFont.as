@@ -1,8 +1,9 @@
 package org.alivepdf.fonts
 {
-	public interface IFont
+	import flash.events.IEventDispatcher;
+
+	public interface IFont extends IEventDispatcher
 	{
-		
 		function get name():String;
 		function get id():int;
 		function get type():String;
@@ -12,6 +13,5 @@ package org.alivepdf.fonts
 		function get underlineThickness():int;
 		function get charactersWidth():Object;
 		function get numGlyphs():int;
-		
 	}
 }

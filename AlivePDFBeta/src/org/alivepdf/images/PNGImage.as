@@ -9,11 +9,19 @@ package org.alivepdf.images
 		protected var idataBytes:ByteArray;
 		private var palBytes:ByteArray;
 		private var type:int;
+		
 		public static const HEADER:int = 0x8950;
 		public static const PLTE:int = 0x504C5445;
 		public static const TRNS:int = 0x74524E53;
 		public static const IDAT:int = 0x49444154;
 		public static const IEND:int = 0x49454E44;
+		
+		public static const IO:int = 0;
+		public static const I1:int = 1;
+		public static const I2:int = 2;
+		public static const I3:int = 3;
+		public static const I4:int = 4;
+		public static const I16:int = 16;
 		
 		public function PNGImage ( imageStream:ByteArray, colorSpace:String, id:int )
 		{
@@ -26,7 +34,7 @@ package org.alivepdf.images
 			palBytes = new ByteArray();
 			idataBytes = new ByteArray();
 			
-			stream.position = 16;
+			stream.position = PNGImage.I16;
 			
 			width = stream.readInt();
 			height = stream.readInt();
@@ -35,18 +43,24 @@ package org.alivepdf.images
 			
 			ct = stream.readByte();
 			
-			if(ct==0) colorSpace = ColorSpace.DEVICE_GRAY;
-			else if(ct==2) colorSpace = ColorSpace.DEVICE_RGB;
-			else if(ct==3) colorSpace = ColorSpace.INDEXED;
+			if ( ct == PNGImage.IO ) 
+				colorSpace = ColorSpace.DEVICE_GRAY;
+			else if (ct == PNGImage.I2 ) 
+				colorSpace = ColorSpace.DEVICE_RGB;
+			else if ( ct == PNGImage.I3 ) 
+				colorSpace = ColorSpace.INDEXED;
 			else throw new Error("Alpha channel not supported for now");
 			
-			if ( stream.readByte() != 0 ) throw new Error ("Unknown compression method");
-			if ( stream.readByte() != 0 ) throw new Error ("Unknown filter method");
-			if ( stream.readByte() != 0 ) throw new Error ("Interlacing not supported");
+			if ( stream.readByte() != 0 ) 
+				throw new Error ("Unknown compression method");
+			if ( stream.readByte() != 0 ) 
+				throw new Error ("Unknown filter method");
+			if ( stream.readByte() != 0 ) 
+				throw new Error ("Interlacing not supported");
 			
-			stream.position += 4;
+			stream.position += PNGImage.I4;
 			
-			parameters = '/DecodeParms <</Predictor 15 /Colors '+(ct == 2 ? 3 : 1)+' /BitsPerComponent '+bitsPerComponent+' /Columns '+width+'>>';
+			parameters = '/DecodeParms <</Predictor 15 /Colors '+(ct == PNGImage.I2 ? PNGImage.I3 : PNGImage.I1)+' /BitsPerComponent '+bitsPerComponent+' /Columns '+width+'>>';
 			
 			var trns:String = '';
 			
@@ -59,7 +73,7 @@ package org.alivepdf.images
 				{
 					stream.readBytes(palBytes, stream.position, n);
 					stream.readUnsignedInt();
-					palBytes.position = 0;
+					palBytes.position = PNGImage.IO;
 					pal = palBytes.readUTFBytes(palBytes.bytesAvailable);
 					
 				} else if ( type == PNGImage.TRNS )
@@ -68,17 +82,18 @@ package org.alivepdf.images
 				} else if ( type == PNGImage.IDAT )
 				{	
 					stream.readBytes(idataBytes, idataBytes.length, n);
-					stream.position += 4;
+					stream.position += PNGImage.I4;
 					
 				} else if ( type == PNGImage.IEND )
 				{	
 					break;
 					
-				} else stream.position += n+4;
+				} else stream.position += n+PNGImage.I4;
 				
-			} while ( n > 0 );
+			} while ( n > PNGImage.IO );
 			
-			if ( colorSpace == ColorSpace.INDEXED && !pal.length ) throw new Error ("Missing palette in current picture");
+			if ( colorSpace == ColorSpace.INDEXED && !pal.length ) 
+				throw new Error ("Missing palette in current picture");
 		}
 		
 		public override function get bytes():ByteArray

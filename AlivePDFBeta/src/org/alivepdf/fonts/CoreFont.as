@@ -1,6 +1,8 @@
 package org.alivepdf.fonts
 {	
-	
+	import flash.events.Event;
+	import flash.events.EventDispatcher;
+	import flash.events.IEventDispatcher;
 	
 	/**
 	 * This class represents a core font.
@@ -19,9 +21,11 @@ package org.alivepdf.fonts
 		protected var _numGlyphs:int;
 		protected var _resourceId:int;
 		protected var _id:int;
+		protected var dispatcher:EventDispatcher;
 
 		public function CoreFont( name:String="Helvetica" )
 		{
+			dispatcher = new EventDispatcher();
 			_name = name;
 			_id = CoreFont.idRef++;
 			_type = FontType.CORE;
@@ -134,6 +138,35 @@ package org.alivepdf.fonts
 		public function toString ():String 
 		{
 			return "[CoreFont name="+name+" type=Type1]";	
+		}
+		
+		//--
+		//-- IEventDispatcher
+		//--
+		
+		public function addEventListener( type:String, listener:Function, useCapture:Boolean = false, priority:int = 0, useWeakReference:Boolean = false ):void
+		{
+			dispatcher.addEventListener( type, listener, useCapture, priority, useWeakReference );
+		}
+		
+		public function dispatchEvent( event:Event ):Boolean
+		{
+			return dispatcher.dispatchEvent( event );
+		}
+		
+		public function hasEventListener( type:String ):Boolean
+		{
+			return dispatcher.hasEventListener( type );
+		}
+		
+		public function removeEventListener( type:String, listener:Function, useCapture:Boolean = false ):void
+		{
+			dispatcher.removeEventListener( type, listener, useCapture );
+		}
+		
+		public function willTrigger( type:String ):Boolean
+		{
+			return dispatcher.willTrigger( type );
 		}
 	}
 }

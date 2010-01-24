@@ -4,6 +4,7 @@ package org.alivepdf.fonts
 	{		
 		public static const CORE:String="Core";
 		public static const TRUETYPE:String="TrueType";
+		public static const OPENTYPE:String="OpenType";
 		public static const TYPE1:String="Type1";
 	}
 }
