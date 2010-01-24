@@ -44,8 +44,6 @@
     <classEntry path="org.alivepdf.fonts.ICidFont"/>
     <classEntry path="org.alivepdf.fonts.IFont"/>
     <classEntry path="org.alivepdf.fonts.Style"/>
-    <classEntry path="org.alivepdf.fonts.unicodefonts.ArialUnicodeMS"/>
-    <classEntry path="org.alivepdf.fonts.unicodefonts.CidInfo"/>
     <classEntry path="org.alivepdf.html.HTMLTag"/>
     <classEntry path="org.alivepdf.images.ColorSpace"/>
     <classEntry path="org.alivepdf.images.DoJPEGImage"/>
@@ -106,16 +104,16 @@
     <classEntry path="org.alivepdf.visibility.Visibility"/>
   </includeClasses>
   <includeResources>
-    <resourceEntry destPath="org/alivepdf/fonts/map/iso-8859-1.map" sourcePath="org/alivepdf/fonts/map/iso-8859-1.map"/>
     <resourceEntry destPath="org/alivepdf/fonts/map/koi8-u.map" sourcePath="org/alivepdf/fonts/map/koi8-u.map"/>
+    <resourceEntry destPath="org/alivepdf/fonts/map/iso-8859-1.map" sourcePath="org/alivepdf/fonts/map/iso-8859-1.map"/>
     <resourceEntry destPath="org/alivepdf/fonts/unicodefonts/uni2cid/uni2cid_ac15" sourcePath="org/alivepdf/fonts/unicodefonts/uni2cid/uni2cid_ac15"/>
     <resourceEntry destPath="org/alivepdf/fonts/map/iso-8859-5.map" sourcePath="org/alivepdf/fonts/map/iso-8859-5.map"/>
     <resourceEntry destPath="org/alivepdf/fonts/map/cp1255.map" sourcePath="org/alivepdf/fonts/map/cp1255.map"/>
     <resourceEntry destPath="org/alivepdf/fonts/map/cp1251.map" sourcePath="org/alivepdf/fonts/map/cp1251.map"/>
     <resourceEntry destPath="org/alivepdf/fonts/map/cp1254.map" sourcePath="org/alivepdf/fonts/map/cp1254.map"/>
     <resourceEntry destPath="org/alivepdf/.DS_Store" sourcePath="org/alivepdf/.DS_Store"/>
-    <resourceEntry destPath="org/alivepdf/fonts/map/cp1250.map" sourcePath="org/alivepdf/fonts/map/cp1250.map"/>
     <resourceEntry destPath="org/alivepdf/fonts/map/iso-8859-7.map" sourcePath="org/alivepdf/fonts/map/iso-8859-7.map"/>
+    <resourceEntry destPath="org/alivepdf/fonts/map/cp1250.map" sourcePath="org/alivepdf/fonts/map/cp1250.map"/>
     <resourceEntry destPath="org/alivepdf/fonts/unicodefonts/arialunicid0_metrics" sourcePath="org/alivepdf/fonts/unicodefonts/arialunicid0_metrics"/>
     <resourceEntry destPath="org/alivepdf/fonts/map/iso-8859-15.map" sourcePath="org/alivepdf/fonts/map/iso-8859-15.map"/>
     <resourceEntry destPath="org/alivepdf/fonts/map/cp1258.map" sourcePath="org/alivepdf/fonts/map/cp1258.map"/>
