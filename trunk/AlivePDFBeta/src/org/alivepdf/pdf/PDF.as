@@ -2085,8 +2085,6 @@ package org.alivepdf.pdf
 		{
 			pushedFontName = font.name;
 			
-			font.addEventListener( CharacterEvent.CHARACTER_MISSING, characterMissing );
-			
 			if ( !fonts.some(filterCallback) ) 
 				fonts.push ( font );
 			if ( font is EmbeddedFont ) 
