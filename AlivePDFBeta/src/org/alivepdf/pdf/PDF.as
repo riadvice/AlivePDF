@@ -365,59 +365,9 @@ package org.alivepdf.pdf
 		
 		public function PDF ( orientation:String='Portrait', unit:String='Mm', pageSize:Size=null, rotation:int=0 )
 		{
-			size = ( pageSize != null ) ? Size.getSize(pageSize).clone() : Size.A4.clone();
-			
-			if ( size == null  ) throw new RangeError ('Unknown page format : ' + pageSize +', please use a org.alivepdf.layout.' + 
-				'Size object or any of those strings : Size.A3, Size.A4, Size.A5, Size.Letter, Size.Legal, Size.Tabloid');
-			
-			dispatcher = new EventDispatcher ( this );
-			
-			viewerPreferences = new String();
-			outlines = new Array();
-			arrayPages = new Array();
-			arrayNotes = new Array();
-			graphicStates = new Array();
-			orientationChanges = new Array();
-			nbPages = arrayPages.length;
-			buffer = new ByteArray();
-			offsets = new Array();
-			fonts = new Array();
-			differences = new Array();
-			streamDictionary = new Dictionary();
-			inHeader = inFooter = false;
-			fontFamily = new String();
-			fontStyle = new String();
-			underline = false;
-			
-			colorFlag = false;
-			matrix = new Matrix();
-			
-			pagesReferences = new Array();
-			compressedPages = new ByteArray();
-			coreFontMetrics = new FontMetrics();
-			
-			defaultUnit = setUnit ( unit );
-			defaultSize = size;
-			defaultOrientation = orientation;
-			defaultRotation = rotation;
-			
-			n = 2;
-			state = 0;
-			lasth = 0;
-			fontSizePt = 12;
-			ws = 0;
-			margin = 28.35/k;
-			
-			setMargins ( margin, margin );
-			currentMargin = margin/10;
-			strokeThickness = .567/k;
-			setAutoPageBreak ( true, margin * 2 );			
-			setDisplayMode( Display.FULL_WIDTH );
-			
-			isLinux = Capabilities.version.indexOf ("LNX") != -1;
-			version = PDF.PDF_VERSION;
+			init ( orientation, unit, pageSize, rotation );
 		}
-		
+	
 		/**
 		 * Lets you specify the left, top, and right margins.
 		 *
@@ -3096,7 +3046,6 @@ package org.alivepdf.pdf
 				
 				//Is there a finished line     
 				// or last line and there is something to display
-				
 				if ( k == aTaggedString.length && currentLine.length > 0 )
 				{
 					renderLine(currentLine,textAlign);	
@@ -3430,11 +3379,11 @@ package org.alivepdf.pdf
 			if(nb>0 && s.charAt(nb-1) == "\n") 
 				nb--;
 			
-			var sep:Number=-1;
-			var i:int=0;
-			var j:int=0;
-			var l:int=0;
-			var nl:int=1;
+			var sep:Number = -1;
+			var i:int = 0;
+			var j:int = 0;
+			var l:int = 0;
+			var nl:int = 1;
 			var c:String;
 			var cwAux:int;
 			
@@ -3759,7 +3708,8 @@ package org.alivepdf.pdf
 			
 			var start:int = source.indexOf('%!PS-Adobe');
 
-			if (start != -1) source = source.substr(start);
+			if (start != -1) 
+				source = source.substr(start);
 
 			regs = source.match(/%%BoundingBox:([^\r\n]+)/);
 			
@@ -4082,7 +4032,8 @@ package org.alivepdf.pdf
 			write (sprintf('q %.2f 0 0 %.2f %.2f %.2f cm', width*k, height*k, xPos, yPos));
 			write (sprintf('/I%d Do Q', image.resourceId));
 			
-			if ( link != null ) addLink( xPos, yPos, width*k, height*k, link );
+			if ( link != null ) 
+				addLink( xPos, yPos, width*k, height*k, link );
 		}
 		
 		public function toString ():String
@@ -4095,6 +4046,62 @@ package org.alivepdf.pdf
 		* protected members
 		*/
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		
+		protected function init ( orientation:String='Portrait', unit:String='Mm', pageSize:Size=null, rotation:int=0 ):void
+		{
+			size = ( pageSize != null ) ? Size.getSize(pageSize).clone() : Size.A4.clone();
+			
+			if ( size == null  ) 
+				throw new RangeError ('Unknown page format : ' + pageSize +', please use a org.alivepdf.layout.' + 
+					'Size object or any of those strings : Size.A3, Size.A4, Size.A5, Size.Letter, Size.Legal, Size.Tabloid');
+			
+			dispatcher = new EventDispatcher ( this );
+			
+			viewerPreferences = new String();
+			outlines = new Array();
+			arrayPages = new Array();
+			arrayNotes = new Array();
+			graphicStates = new Array();
+			orientationChanges = new Array();
+			nbPages = arrayPages.length;
+			buffer = new ByteArray();
+			offsets = new Array();
+			fonts = new Array();
+			differences = new Array();
+			streamDictionary = new Dictionary();
+			inHeader = inFooter = false;
+			fontFamily = new String();
+			fontStyle = new String();
+			underline = false;
+			
+			colorFlag = false;
+			matrix = new Matrix();
+			
+			pagesReferences = new Array();
+			compressedPages = new ByteArray();
+			coreFontMetrics = new FontMetrics();
+			
+			defaultUnit = setUnit ( unit );
+			defaultSize = size;
+			defaultOrientation = orientation;
+			defaultRotation = rotation;
+			
+			n = 2;
+			state = 0;
+			lasth = 0;
+			fontSizePt = 12;
+			ws = 0;
+			margin = 28.35/k;
+			
+			setMargins ( margin, margin );
+			currentMargin = margin/10;
+			strokeThickness = .567/k;
+			setAutoPageBreak ( true, margin * 2 );			
+			setDisplayMode( Display.FULL_WIDTH );
+			
+			isLinux = Capabilities.version.indexOf ("LNX") != -1;
+			version = PDF.PDF_VERSION;
+		}
 		
 		protected function finish():void
 		{
