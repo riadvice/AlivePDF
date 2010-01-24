@@ -2113,7 +2113,7 @@ package org.alivepdf.pdf
 				write('[/Separation /'+findAndReplace(' ', '#20', color.name));
 				write('/DeviceCMYK <<');
 				write('/Range [0 1 0 1 0 1 0 1] /C0 [0 0 0 0] ');
-				write(sprintf('/C1 [%.3F %.3F %.3F %.3F] ',color.color.cyan*.01, color.color.magenta*.01, color.color.yellow*.01, color.color.black*.01));
+				write(sprintf('/C1 [%.3F %.3F %.3F %.3F] ', color.color.cyan*.01, color.color.magenta*.01, color.color.yellow*.01, color.color.black*.01));
 				write('/FunctionType 2 /Domain [0 1] /N 1>>]');
 				write('endobj');
 				color.n = n;
@@ -2721,8 +2721,10 @@ package org.alivepdf.pdf
 					sep=i;
 				
 				cwAux = cw[c] as int;
+				
 				if (cwAux == 0) 
 					cwAux = FontMetrics.DEFAULT_WIDTH;
+				
 				l += cwAux;
 				
 				if( l > wmax )
@@ -2834,7 +2836,7 @@ package org.alivepdf.pdf
 			
 			var cwAux            : int;
 			var fs               : int;      // Font size
-			var fontColor               : RGBColor; // font color;
+			var fontColor        : RGBColor; // font color;
 			var cs               : int;      // character space ( not implemented yet )
 			
 			// total number of HTML tags
@@ -3418,7 +3420,7 @@ package org.alivepdf.pdf
 		{
 			var cw:Object = currentFont.charactersWidth;
 			
-			if (width==0) 
+			if (width == 0) 
 				width = currentPage.w-rightMargin-leftMargin;
 			
 			var wmax:int = (width-2*currentMargin)*I1000/fontSize;
@@ -3434,6 +3436,7 @@ package org.alivepdf.pdf
 			var l:int=0;
 			var nl:int=1;
 			var c:String;
+			var cwAux:int;
 			
 			while(i<nb)
 			{
@@ -3451,17 +3454,22 @@ package org.alivepdf.pdf
 				
 				if(c==' ') 
 					sep = i;
-				l += cw[c];
 				
-				if(l>wmax)
+				cwAux = cw[c] as int;
+				
+				if ( cwAux == 0 ) 
+					cwAux = FontMetrics.DEFAULT_WIDTH;
+				
+				l += cwAux;
+				
+				if (l>wmax)
 				{
 					if(sep==-1)
 					{
 						if(i==j)
 							i++;
-					}
-					else
-						i = sep+1;
+					} else i = sep+1;
+					
 					sep = -1;
 					j = i;
 					l = 0;
