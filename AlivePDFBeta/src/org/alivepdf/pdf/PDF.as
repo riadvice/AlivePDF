@@ -226,6 +226,11 @@ package org.alivepdf.pdf
 		protected static const ALIVEPDF_VERSION:String = '0.1.5 RC';
 		protected const I1000:int = 1000;
 		
+		protected static const STATE_0:int = 0;
+		protected static const STATE_1:int = 1;
+		protected static const STATE_2:int = 2;
+		protected static const STATE_3:int = 3;
+		
 		protected var format:Array;
 		protected var size:Size;
 		protected var margin:Number;
@@ -753,7 +758,7 @@ package org.alivepdf.pdf
 			
 			page.number = pagesReferences.length;
 			
-			if ( state == 0 ) 
+			if ( state == PDF.STATE_0 ) 
 				open();
 			
 			if( nbPages > 0 )
@@ -1065,6 +1070,14 @@ package org.alivepdf.pdf
 		*/
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		
+		/**
+		 * Allows you to skew any content drawn after the skew() call  
+		 * @param ax X skew angle
+		 * @param ay Y skew angle
+		 * @param x X position
+		 * @param y Y position
+		 * 
+		 */		
 		public function skew(ax:Number, ay:Number, x:Number=-1, y:Number=-1):void
 		{
 			if(x == -1)
@@ -1089,6 +1102,13 @@ package org.alivepdf.pdf
 			transform(matrix);
 		}
 		
+		/**
+		 * Allows you to rotate any content drawn after the rotate() call  
+		 * @param angle Rotation angle
+		 * @param x X position
+		 * @param y Y position
+		 * 
+		 */		
 		public function rotate(angle:Number, x:Number=-1, y:Number=-1):void
 		{
 			if(x == -1)
@@ -1106,29 +1126,6 @@ package org.alivepdf.pdf
 			transform(matrix);
 		}
 		
-		protected function transform(tm:Matrix):void
-		{
-			write(sprintf('%.3f %.3f %.3f %.3f %.3f %.3f cm', tm.a, tm.b, tm.c, tm.d, tm.tx, tm.ty));
-		}
-		
-		protected function getMatrixTransformPoint(px:Number, py:Number):void
-		{
-			var position:Point = new Point(px, py);
-			var deltaPoint:Point = matrix.deltaTransformPoint(position);
-			matrix.tx = px - deltaPoint.x;
-			matrix.ty = py - deltaPoint.y;
-		}
-		
-		protected function startTransform():void
-		{
-			write('q');
-		}
-		
-		protected function stopTransform():void
-		{
-			write('Q');
-		}
-		
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		/*
 		* AlivePDF Header and Footer API
@@ -1138,10 +1135,10 @@ package org.alivepdf.pdf
 		*/
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		
-		public function header():void
+		protected function header():void
 		{
 			/*
-			//to be overriden (uncomment for a demo )
+			//to be overriden by subclassing (uncomment for a demo )
 			var newFont:CoreFont = new CoreFont ( FontFamily.HELVETICA );
 			this.setFont(newFont, 12);
 			this.textStyle( new RGBColor (0x000000) );
@@ -1150,10 +1147,10 @@ package org.alivepdf.pdf
 			this.newLine(20);*/
 		}
 		
-		public function footer():void
+		protected function footer():void
 		{
 			/*
-			//to be overriden (uncomment for a demo )
+			//to be overriden by subclassing (uncomment for a demo )
 			this.setXY (15, -15);
 			var newFont:CoreFont = new CoreFont ( FontFamily.HELVETICA );
 			this.setFont(newFont, 8);
@@ -3585,26 +3582,36 @@ package org.alivepdf.pdf
 		/**
 		 * The addImage method takes an incoming DisplayObject. A JPG or PNG (non-transparent) snapshot is done and included in the PDF document.
 		 * 
-		 * @param displayObject
-		 * @param resizeMode
-		 * @param x
-		 * @param y
-		 * @param width
-		 * @param height
-		 * @param keepTransformation
-		 * @param imageFormat
-		 * @param quality
-		 * @param alpha
-		 * @param blendMode
-		 * @param link
+		 * @param displayObject The DisplayObject to embed as a bitmap in the PDF
+		 * @param resizeMode A resizing behavior, like : new Resize ( Mode.FIT_TO_PAGE, Position.CENTERED ) to center the image in the page
+		 * @param x The x position
+		 * @param y The y position
+		 * @param width The width of the image
+		 * @param height The height of the image
+		 * @param rotation The rotation of the image
+		 * @param alpha The image alpha
+		 * @param keepTransformation Do you want the image current transformation (scaled, rotated) to be preserved
+		 * @param imageFormat The compression to use for the image (PNG or JPG)
+		 * @param quality The compression quality if JPG is used
+		 * @param blendMode The blend mode to use if multiple images are overlapping
+		 * @param link The link to associate the image with when clicked
 		 * @example
-		 * This example shows how to add a 100% compression quality JPG image into the current page at a position of 0,0 with no resizing behavior :
+		 * This example shows how to add a 100% compression quality JPG image centerd on the page :
 		 * <div class="listing">
 		 * <pre>
 		 *
-		 * myPDF.addImage ( displayObject, 0, 0, 0, 0, true, ImageFormat.JPG, 100, .2 );
+		 * myPDF.addImage( displayObject, new Resize ( Mode.FIT_TO_PAGE, Position.CENTERED ) );
 		 * </pre>
 		 * </div>
+		 * 
+		 * This example shows how to add a 100% compression quality JPG image with no resizing behavior positioned at 20, 20 on the page:
+		 * <div class="listing">
+		 * <pre>
+		 *
+		 * myPDF.addImage( displayObject, null, 20, 20 );
+		 * </pre>
+		 * </div>
+		 * 
 		 */	 
 		public function addImage ( displayObject:DisplayObject, resizeMode:Resize=null, x:Number=0, y:Number=0, width:Number=0, height:Number=0, rotation:Number=0, alpha:Number=1, keepTransformation:Boolean=true, imageFormat:String="PNG", quality:Number=100, blendMode:String="Normal", link:ILink=null ):void
 		{			
@@ -3911,17 +3918,18 @@ package org.alivepdf.pdf
 		 * The addImageStream method takes an incoming image as a ByteArray. This method can be used to embed high-quality images (300 dpi) to the PDF.
 		 * You must specify the image color space, if you don't know, there is a lot of chance the color space will be ColorSpace.DEVICE_RGB.
 		 * 
-		 * @param imageBytes
-		 * @param colorSpace
-		 * @param resizeMode
-		 * @param x
-		 * @param y
-		 * @param width
-		 * @param height
-		 * @param alpha
-		 * @param blendMode
-		 * @param keepTransformation
-		 * @param link
+		 * @param imageBytes The image stream (PNG, JPEG, GIF)
+		 * @param colorSpace The image colorspace
+		 * @param resizeMode A resizing behavior, like : new Resize ( Mode.FIT_TO_PAGE, Position.CENTERED ) to center the image in the page
+		 * @param x The x position
+		 * @param y The y position
+		 * @param width The width of the image
+		 * @param height The height of the image
+		 * @param rotation The rotation of the image
+		 * @param alpha The image alpha
+		 * @param blendMode The blend mode to use if multiple images are overlapping
+		 * @param keepTransformation Do you want the image current transformation (scaled, rotated) to be preserved
+		 * @param link The link to associate the image with when clicked
 		 * @example
 		 * This example shows how to add an RGB image as a ByteArray into the current page :
 		 * <div class="listing">
@@ -4087,7 +4095,7 @@ package org.alivepdf.pdf
 			defaultRotation = rotation;
 			
 			n = 2;
-			state = 0;
+			state = PDF.STATE_0;
 			lasth = 0;
 			fontSizePt = 12;
 			ws = 0;
@@ -4101,6 +4109,29 @@ package org.alivepdf.pdf
 			
 			isLinux = Capabilities.version.indexOf ("LNX") != -1;
 			version = PDF.PDF_VERSION;
+		}
+		
+		protected function transform(tm:Matrix):void
+		{
+			write(sprintf('%.3f %.3f %.3f %.3f %.3f %.3f cm', tm.a, tm.b, tm.c, tm.d, tm.tx, tm.ty));
+		}
+		
+		protected function getMatrixTransformPoint(px:Number, py:Number):void
+		{
+			var position:Point = new Point(px, py);
+			var deltaPoint:Point = matrix.deltaTransformPoint(position);
+			matrix.tx = px - deltaPoint.x;
+			matrix.ty = py - deltaPoint.y;
+		}
+		
+		protected function startTransform():void
+		{
+			write('q');
+		}
+		
+		protected function stopTransform():void
+		{
+			write('Q');
 		}
 		
 		protected function finish():void
@@ -4155,7 +4186,7 @@ package org.alivepdf.pdf
 		
 		protected function open():void
 		{
-			state = 1;
+			state = PDF.STATE_1;
 		}
 		
 		protected function close ():void
@@ -4280,7 +4311,7 @@ package org.alivepdf.pdf
 		protected function writeXObjectDictionary():void
 		{
 			for each ( var image:PDFImage in streamDictionary ) 
-			write('/I'+image.resourceId+' '+image.n+' 0 R');
+				write('/I'+image.resourceId+' '+image.n+' 0 R');
 		}
 		
 		protected function writeResourcesDictionary():void
@@ -4489,7 +4520,8 @@ package org.alivepdf.pdf
 			insertExtGState();
 			insertFonts();
 			insertImages();
-			if ( js != null ) insertJS();
+			if ( js != null ) 
+				insertJS();
 			offsets[2] = buffer.length;
 			write('2 0 obj');
 			write('<<');
@@ -4690,13 +4722,13 @@ package org.alivepdf.pdf
 			write('startxref');
 			write(o.toString());
 			write('%%EOF');
-			state = 3;
+			state = PDF.STATE_3;
 		}
 		
 		protected function startPage ( newOrientation:String ):void
 		{
 			nbPages = arrayPages.length;
-			state = 2;
+			state = PDF.STATE_2;
 			
 			setXY(leftMargin, topMargin);
 			
@@ -4712,7 +4744,7 @@ package org.alivepdf.pdf
 		protected function finishPage():void
 		{
 			setVisible(Visibility.ALL);
-			state = 1;	
+			state = PDF.STATE_1;	
 		}
 		
 		protected function newObj():void
@@ -4763,7 +4795,7 @@ package org.alivepdf.pdf
 		{
 			if ( currentPage == null ) 
 				throw new Error ("No pages available, please call the addPage method first.");
-			if ( state == 2 ) 
+			if ( state == PDF.STATE_2 ) 
 				currentPage.content += content+"\n";
 			else 
 			{
