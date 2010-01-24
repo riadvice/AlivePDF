@@ -3188,8 +3188,6 @@ package org.alivepdf.pdf
 				
 				colorFlag = ( fillColor != addTextColor );
 				
-				trace( cellVO.width, cellVO.height, cellVO.text, currentY, offsetY, cellVO.y );
-				
 				addCell ( cellVO.width, cellVO.height, cellVO.text, cellVO.border, 2, null, cellVO.fill, cellVO.link );
 			}
 		}
