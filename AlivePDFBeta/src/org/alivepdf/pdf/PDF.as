@@ -4177,7 +4177,7 @@ package org.alivepdf.pdf
 			{	
 				cwAux += charactersWidth[content.charAt(l)] as int;
 				
-				if ( isNaN ( cwAux ) ) 
+				if ( cwAux == 0 ) 
 					cwAux = FontMetrics.DEFAULT_WIDTH;
 			}
 			
