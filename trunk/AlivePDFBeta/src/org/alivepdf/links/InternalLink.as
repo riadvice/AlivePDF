@@ -11,7 +11,8 @@ package org.alivepdf.links
 		
 		public function InternalLink( page:int=1, y:Number=0, fit:Boolean=false, rectangle:Rectangle=null )
 		{
-			if ( page == 0 ) throw new Error("Page number must be over 0 and below the total number of pages.");
+			if ( page == 0 ) 
+				throw new Error("Page number must be over 0 and below the total number of pages.");
 			this.page = page;
 			this.y = y;
 			this.fit = fit;

@@ -1,6 +1,6 @@
 ﻿/**
 * PNG encoding class from kaourantin.net, optimised by 5etdemi.com/blog
-* AlivePDF modification : encode() method has been modified to return only the needed IDAT chunk
+* AlivePDF modification : encode() method has been modified to return only the needed IDAT chunk for AlivePDF.
 * @author kaourantin
 * @version 0.1
 */
@@ -11,22 +11,24 @@ package org.alivepdf.encoding
 	import flash.geom.Rectangle;
 	import flash.utils.ByteArray;
 	
-	public final class PNGEncoder {
+	public final class PNGEncoder
+	{
 	
-	    public static function encode(img:BitmapData, type:uint = 0):ByteArray
+		/**
+		 * Allows you to encode a BitmapData to a PNG stream for AlivePDF. 
+		 * @param image The BitmapData to encode
+		 * @param transparent Specify if the PNG is transparent or not. The value of this parameter is false by default.
+		 * @return 
+		 * 
+		 */		
+	    public static function encode(image:BitmapData, transparent:Boolean=false):ByteArray
 	    {
 	        // Build IDAT chunk
-	        var IDAT:ByteArray= new ByteArray();
+	        var IDAT:ByteArray = new ByteArray();
 	        
-	        switch(type)
-	        {
-	        	case 0:
-	        		writeRaw(img, IDAT);
-	        		break;
-	        	case 1:
-	        		writeSub(img, IDAT);
-	        		break;
-	        }
+	        if (transparent)
+				writeRaw(image, IDAT);
+			else writeSub(image, IDAT);
 	        
 	        IDAT.compress();
 	        return IDAT;
@@ -38,32 +40,35 @@ package org.alivepdf.encoding
 	        var w:int = img.width;
 	        var transparent:Boolean = img.transparent;
 	        var subImage:ByteArray;
+			var rectangle:Rectangle = new Rectangle(0, 0, w, 1)
 	        
-	        for(var i:int=0;i < h;i++) {
+	        for(var i:int=0;i < h;i++)
+			{
 	            // no filter
-	            if ( !transparent ) {
-	            	subImage = img.getPixels(
-	            		new Rectangle(0, i, w, 1));
+	            if ( !transparent )
+				{
+					rectangle.y = i;
+	            	subImage = img.getPixels(rectangle);
 	            	//Here we overwrite the alpha value of the first pixel
 	            	//to be the filter 0 flag
 	            	subImage[0] = 0;
 					IDAT.writeBytes(subImage);
 					//And we add a byte at the end to wrap the alpha values
 					IDAT.writeByte(0xff);
-	            } else {
+	            } else 
+				{
 	            	IDAT.writeByte(0);
 	            	var p:uint;
-	                for(var j:int=0;j < w;j++) {
+	                for(var j:int=0;j < w;j++)
+					{
 	                    p = img.getPixel32(j,i);
-	                    IDAT.writeUnsignedInt(
-	                        uint(((p&0xFFFFFF) << 8)|
-	                        (p>>>24)));
+	                    IDAT.writeUnsignedInt( uint(((p&0xFFFFFF) << 8)| (p>>>24)));
 	                }
 	            }
 	        }
 	    }
 	    
-	    private static function writeSub(img:BitmapData, IDAT:ByteArray):void
+	    private static function writeSub(image:BitmapData, IDAT:ByteArray):void
 	    {
             var r1:uint;
             var g1:uint;
@@ -81,19 +86,24 @@ package org.alivepdf.encoding
             var a3:uint;
             
             var p:uint;
-	        var h:int = img.height;
-	        var w:int = img.width;
+	        var h:int = image.height;
+	        var w:int = image.width;
 	        
-	        for(var i:int=0;i < h;i++) {
+	        for(var i:int=0;i < h;i++)
+			{
 	            // no filter
 	            IDAT.writeByte(1);
-	            if ( !img.transparent ) {
+				
+	            if ( !image.transparent )
+				{
 					r1 = 0;
 					g1 = 0;
 					b1 = 0;
 					a1 = 0xff;
-	                for(var j:int=0;j < w;j++) {
-	                    p = img.getPixel(j,i);
+					
+	                for(var j:int=0;j < w;j++)
+					{
+	                    p = image.getPixel(j,i);
 	                    
 	                    r2 = p >> 16 & 0xff;
 	                    g2 = p >> 8  & 0xff;
@@ -112,13 +122,16 @@ package org.alivepdf.encoding
 	                    b1 = b2;
 	                    a1 = 0;
 	                }
-	            } else {
+	            } else
+				{
 					r1 = 0;
 					g1 = 0;
 					b1 = 0;
 					a1 = 0;
-	                for(var k:int=0;k < w;k++) {
-	                    p = img.getPixel32(k,i);
+					
+	                for(var k:int=0;k < w;k++)
+					{
+	                    p = image.getPixel32(k,i);
 	                    
 	                    a2 = p >> 24 & 0xff;
 	                    r2 = p >> 16 & 0xff;

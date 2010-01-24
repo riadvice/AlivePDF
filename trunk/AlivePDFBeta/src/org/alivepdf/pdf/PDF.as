@@ -20,7 +20,7 @@ _  ___ |  / _  / __ |/ //  __/  ____/_  /_/ /_  __/
  * This library lets you generate PDF files with the Adobe Flash Player 9 and 10.
  * AlivePDF contains some code from the FPDF PHP library by Olivier Plathey (http://www.fpdf.org/)
  * Core Team : Thibault Imbert, Mark Lynch, Alexandre Pires, Marc Hugues
- * @version 0.1.5 current release
+ * @version 0.1.5 RC current release
  * @url http://alivepdf.bytearray.org
  */
 
@@ -45,6 +45,8 @@ package org.alivepdf.pdf
 	import flash.utils.Endian;
 	import flash.utils.getTimer;
 	
+	import mx.utils.object_proxy;
+	
 	import org.alivepdf.cells.CellVO;
 	import org.alivepdf.colors.CMYKColor;
 	import org.alivepdf.colors.GrayColor;
@@ -62,6 +64,7 @@ package org.alivepdf.pdf
 	import org.alivepdf.encoding.JPEGEncoder;
 	import org.alivepdf.encoding.PNGEncoder;
 	import org.alivepdf.encoding.TIFFEncoder;
+	import org.alivepdf.events.CharacterEvent;
 	import org.alivepdf.events.PageEvent;
 	import org.alivepdf.events.ProcessingEvent;
 	import org.alivepdf.fonts.CoreFont;
@@ -222,7 +225,7 @@ package org.alivepdf.pdf
 	{
 		
 		protected static const PDF_VERSION:String = '1.3';
-		protected static const ALIVEPDF_VERSION:String = '0.1.5';
+		protected static const ALIVEPDF_VERSION:String = '0.1.5 RC';
 		protected const I1000:int = 1000;
 		
 		protected var format:Array;
@@ -337,6 +340,7 @@ package org.alivepdf.pdf
 		protected var jsResource:int;
 		protected var js:String;
 		protected var totalEmbeddedFonts:int;
+		protected var totalCoreFonts:int;
 		protected var widths:*;
 		protected var aligns:Array = new Array();
 		protected var spotColors:Array = new Array();
@@ -417,7 +421,7 @@ package org.alivepdf.pdf
 		}
 		
 		/**
-		 * Lets you specify the left, top, and right margins
+		 * Lets you specify the left, top, and right margins.
 		 *
 		 * @param left Left margin
 		 * @param top Right number
@@ -436,13 +440,14 @@ package org.alivepdf.pdf
 		{
 			leftMargin = left;
 			topMargin = top;
-			if( right == -1 ) right = left;
+			if( right == -1 ) 
+				right = left;
 			bottomMargin = bottom;
 			rightMargin = right;
 		}
 		
 		/**
-		 * Lets you retrieve the margins dimensions
+		 * Lets you retrieve the margins dimensions.
 		 *
 		 * @return Rectangle
 		 * @example
@@ -458,11 +463,11 @@ package org.alivepdf.pdf
 		 */
 		public function getMargins ():Rectangle
 		{
-			return new Rectangle( leftMargin, topMargin, getCurrentPage().width - rightMargin - leftMargin, getCurrentPage().height - bottomMargin - topMargin );
+			return new Rectangle( leftMargin, topMargin, getCurrentPage().w - rightMargin - leftMargin, getCurrentPage().h - bottomMargin - topMargin );
 		}
 		
 		/**
-		 * Lets you specify the left margin
+		 * Lets you specify the left margin.
 		 *
 		 * @param margin Left margin
 		 * @example
@@ -477,11 +482,12 @@ package org.alivepdf.pdf
 		public function setLeftMargin (margin:Number):void
 		{
 			leftMargin = margin;
-			if( nbPages > 0 && currentX < margin ) currentX = margin;
+			if( nbPages > 0 && currentX < margin ) 
+				currentX = margin;
 		}
 		
 		/**
-		 * Lets you specify the top margin
+		 * Lets you specify the top margin.
 		 *
 		 * @param margin Top margin
 		 * @example
@@ -517,7 +523,7 @@ package org.alivepdf.pdf
 		}
 		
 		/**
-		 * Lets you specify the right margin
+		 * Lets you specify the right margin.
 		 *
 		 * @param margin Right margin
 		 * @example
@@ -535,7 +541,7 @@ package org.alivepdf.pdf
 		}
 		
 		/**
-		 * Lets you enable or disable auto page break mode and triggering margin 
+		 * Lets you enable or disable auto page break mode and triggering margin.
 		 * 
 		 * @param auto Page break mode
 		 * @param margin Bottom margin
@@ -545,7 +551,8 @@ package org.alivepdf.pdf
 		{
 			autoPageBreak = auto;
 			bottomMargin = margin;
-			if ( currentPage != null ) pageBreakTrigger = currentPage.h-margin;
+			if ( currentPage != null ) 
+				pageBreakTrigger = currentPage.h-margin;
 		}
 		
 		/**
@@ -587,7 +594,7 @@ package org.alivepdf.pdf
 		}
 		
 		/**
-		 * Lets you set specify the timing (in seconds) a page is shown when the PDF is shown in fullscreen mode
+		 * Lets you set specify the timing (in seconds) a page is shown when the PDF is shown in fullscreen mode.
 		 *
 		 * @param title The title
 		 * @example
@@ -614,7 +621,7 @@ package org.alivepdf.pdf
 		}
 		
 		/**
-		 * Lets you set a title for the PDF
+		 * Lets you set a title for the PDF.
 		 *
 		 * @param title The title
 		 * @example
@@ -632,7 +639,7 @@ package org.alivepdf.pdf
 		}
 		
 		/**
-		 * Lets you set a subject for the PDF
+		 * Lets you set a subject for the PDF.
 		 *
 		 * @param subject The subject
 		 * @example
@@ -650,7 +657,7 @@ package org.alivepdf.pdf
 		}
 		
 		/**
-		 * Sets the specified author for the PDF
+		 * Sets the specified author for the PDF.
 		 *
 		 * @param author The author
 		 * @example
@@ -668,7 +675,7 @@ package org.alivepdf.pdf
 		}
 		
 		/**
-		 * Sets the specified keywords for the PDF
+		 * Sets the specified keywords for the PDF.
 		 *
 		 * @param keywords The keywords
 		 * @example
@@ -686,7 +693,7 @@ package org.alivepdf.pdf
 		}
 		
 		/**
-		 * Sets the specified creator for the PDF
+		 * Sets the specified creator for the PDF.
 		 *
 		 * @param creator Name of the PDF creator
 		 * @example
@@ -710,7 +717,7 @@ package org.alivepdf.pdf
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		
 		/**
-		 * Lets you specify an alias for the total number of pages
+		 * Lets you specify an alias for the total number of pages.
 		 *
 		 * @param alias Alias to use
 		 * @example
@@ -732,7 +739,7 @@ package org.alivepdf.pdf
 		}
 		
 		/**
-		 * Lets you rotate a specific page (between 1 and n-1)
+		 * Lets you rotate a specific page (between 1 and n-1).
 		 *
 		 * @param number Page number
 		 * @param rotation Page rotation (must be a multiple of 90)
@@ -756,14 +763,16 @@ package org.alivepdf.pdf
 		 */
 		public function rotatePage ( number:int, rotation:Number ):void
 		{
-			if ( number > 0 && number <= arrayPages.length ) arrayPages[number-1].rotate ( rotation );
+			if ( number > 0 && number <= arrayPages.length ) 
+				arrayPages[int(number-1)].rotate ( rotation );
 			else throw new RangeError ("No page available, please select a page from 1 to " + arrayPages.length);
 		}
 		
 		/**
-		 * Lets you add a page to the current PDF
+		 * Lets you add a page to the current PDF.
 		 *  
 		 * @param page
+		 * @returns page
 		 * @example
 		 * 
 		 * This example shows how to add an A4 page with a landscape orientation :
@@ -787,7 +796,8 @@ package org.alivepdf.pdf
 		 */		
 		public function addPage ( page:Page=null ):Page
 		{
-			if ( page == null ) page = new Page ( defaultOrientation, defaultUnit, defaultSize, defaultRotation );
+			if ( page == null ) 
+				page = new Page ( defaultOrientation, defaultUnit, defaultSize, defaultRotation );
 			
 			pagesReferences.push ( (3+(arrayPages.length<<1))+' 0 R' );
 			
@@ -795,7 +805,8 @@ package org.alivepdf.pdf
 			
 			page.number = pagesReferences.length;
 			
-			if ( state == 0 ) open();
+			if ( state == 0 ) 
+				open();
 			
 			if( nbPages > 0 )
 			{
@@ -818,7 +829,8 @@ package org.alivepdf.pdf
 			
 			if ( currentFont != null ) 
 				setFont ( currentFont, fontSizePt );
-			else {
+			else 
+			{
 				currentFont = new CoreFont ( FontFamily.HELVETICA );
 				setFont(currentFont, 9);
 			}
@@ -833,7 +845,7 @@ package org.alivepdf.pdf
 		}
 		
 		/**
-		 * Lets you retrieve a Page object
+		 * Lets you retrieve a Page object.
 		 *
 		 * @param page page number, from 1 to total numbers of pages
 		 * @return Page
@@ -849,12 +861,13 @@ package org.alivepdf.pdf
 		public function getPage ( index:int ):Page
 		{
 			var lng:int = arrayPages.length;
-			if ( index > 0 && index <= lng ) return arrayPages [index-1];
+			if ( index > 0 && index <= lng ) 
+				return arrayPages [int(index-1)];
 			else throw new RangeError ("Can't retrieve page " + index + ". "+lng+" page(s) available.");
 		}
 		
 		/**
-		 * Lets you retrieve all the PDF pages
+		 * Lets you retrieve all the PDF pages.
 		 *
 		 * @return Array
 		 * @example
@@ -876,12 +889,13 @@ package org.alivepdf.pdf
 		 */
 		public function getPages ():Array
 		{
-			if ( arrayPages.length ) return arrayPages;
+			if ( arrayPages.length ) 
+				return arrayPages;
 			else throw new RangeError ("No pages available.");
 		}
 		
 		/**
-		 * Lets you move to a Page in the PDF
+		 * Lets you move to a Page in the PDF.
 		 *
 		 * @param page page number, from 1 to total numbers of pages
 		 * @example
@@ -899,12 +913,13 @@ package org.alivepdf.pdf
 		public function gotoPage ( index:int ):void
 		{
 			var lng:int = arrayPages.length;
-			if ( index > 0 && index <= lng ) currentPage = arrayPages[index-1];	
+			if ( index > 0 && index <= lng ) 
+				currentPage = arrayPages[index-1];	
 			else throw new RangeError ("Can't find page " + index + ". "+lng+" page(s) available.");
 		}
 		
 		/**
-		 * Lets you remove a Page from the PDF
+		 * Lets you remove a Page from the PDF.
 		 *
 		 * @param page page number, from 1 to total numbers of pages
 		 * @return Page
@@ -922,12 +937,13 @@ package org.alivepdf.pdf
 		 */
 		public function removePage ( index:int ):Page
 		{
-			if ( index > 0 && index <= arrayPages.length ) return arrayPages.splice ( index-1, 1 )[0];
+			if ( index > 0 && index <= arrayPages.length ) 
+				return arrayPages.splice ( index-1, 1 )[0];
 			else throw new RangeError ("Cannot remove page " + index + ".");
 		}
 		
 		/**
-		 * Lets you remove all the pages from the PDF
+		 * Lets you remove all the pages from the PDF.
 		 *
 		 * @example
 		 * This example shows how to remove all the pages :
@@ -944,7 +960,7 @@ package org.alivepdf.pdf
 		}
 		
 		/**
-		 * Lets you retrieve the current Page
+		 * Lets you retrieve the current Page.
 		 *
 		 * @return Page A Page object
 		 * @example
@@ -958,12 +974,13 @@ package org.alivepdf.pdf
 		 */
 		public function getCurrentPage ():Page
 		{
-			if ( arrayPages.length > 0 ) return currentPage;
+			if ( arrayPages.length > 0 ) 
+				return currentPage;
 			else throw new RangeError ("Can't retrieve the current page, " + arrayPages.length + " pages available.");
 		}
 		
 		/**
-		 * Lets you retrieve the number of pages in the PDF document
+		 * Lets you retrieve the number of pages in the PDF document.
 		 *
 		 * @return int Number of pages in the PDF
 		 * @example
@@ -981,7 +998,7 @@ package org.alivepdf.pdf
 		}
 		
 		/**
-		 * Lets you insert a line break for text
+		 * Lets you insert a line break for text.
 		 *
 		 * @param height Line break height
 		 * @example
@@ -1000,7 +1017,7 @@ package org.alivepdf.pdf
 		}
 		
 		/**
-		 * Lets you retrieve the X position for the current page
+		 * Lets you retrieve the X position for the current page.
 		 *
 		 * @return Number the X position
 		 */
@@ -1010,7 +1027,7 @@ package org.alivepdf.pdf
 		}
 		
 		/**
-		 * Lets you retrieve the Y position for the current page
+		 * Lets you retrieve the Y position for the current page.
 		 *
 		 * @return Number the Y position
 		 */
@@ -1020,18 +1037,19 @@ package org.alivepdf.pdf
 		}
 		
 		/**
-		 * Lets you specify the X position for the current page
+		 * Lets you specify the X position for the current page.
 		 *
 		 * @param x The X position
 		 */
 		public function setX ( x:Number ):void
 		{
-			if (acceptPageBreak()) currentX = ( x >= 0 ) ? x : currentPage.w + x;	
+			if (acceptPageBreak()) 
+				currentX = ( x >= 0 ) ? x : currentPage.w + x;	
 			else currentX = x;
 		}
 		
 		/**
-		 * Lets you specify the Y position for the current page
+		 * Lets you specify the Y position for the current page.
 		 *
 		 * @param y The Y position
 		 */
@@ -1045,7 +1063,7 @@ package org.alivepdf.pdf
 		}
 		
 		/**
-		 * Lets you specify the X and Y position for the current page
+		 * Lets you specify the X and Y position for the current page.
 		 *
 		 * @param x The X position
 		 * @param y The Y position
@@ -1057,7 +1075,7 @@ package org.alivepdf.pdf
 		}
 		
 		/**
-		 * Returns the default PDF Size
+		 * Returns the default PDF Size.
 		 * 
 		 * @return Size
 		 * 
@@ -1068,7 +1086,7 @@ package org.alivepdf.pdf
 		}
 		
 		/**
-		 * Returns the default PDF orientation
+		 * Returns the default PDF orientation.
 		 * 
 		 * @return String
 		 * 
@@ -1079,7 +1097,7 @@ package org.alivepdf.pdf
 		}
 		
 		/**
-		 * Returns the default PDF unit unit
+		 * Returns the default PDF unit unit.
 		 * 
 		 * @return String
 		 * 
@@ -1153,12 +1171,12 @@ package org.alivepdf.pdf
 			matrix.ty = py - deltaPoint.y;
 		}
 		
-		public function startTransform():void
+		protected function startTransform():void
 		{
 			write('q');
 		}
 		
-		public function stopTransform():void
+		protected function stopTransform():void
 		{
 			write('Q');
 		}
@@ -1220,7 +1238,7 @@ package org.alivepdf.pdf
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		
 		/**
-		 * Lets you specify the opacity for the next drawing operations, from 0 (100% transparent) to 1 (100% opaque)
+		 * Lets you specify the opacity for the next drawing operations, from 0 (100% transparent) to 1 (100% opaque).
 		 *
 		 * @param alpha Opacity
 		 * @param blendMode Blend mode, can be Blend.DIFFERENCE, BLEND.HARDLIGHT, etc.
@@ -1240,7 +1258,7 @@ package org.alivepdf.pdf
 		}
 		
 		/**
-		 * Lets you move the current drawing point to the specified destination
+		 * Lets you move the current drawing point to the specified destination.
 		 *
 		 * @param x X position
 		 * @param y Y position
@@ -1259,7 +1277,7 @@ package org.alivepdf.pdf
 		}
 		
 		/**
-		 * Lets you draw a stroke from the current point to the new point
+		 * Lets you draw a stroke from the current point to the new point.
 		 *
 		 * @param x X position
 		 * @param y Y position
@@ -1285,7 +1303,7 @@ package org.alivepdf.pdf
 		}
 		
 		/**
-		 * The end method closes the stroke
+		 * The end method closes the stroke.
 		 *
 		 * @example
 		 * This example shows how to draw some dashed lines in the current page with specific caps style and joint style :
@@ -1310,7 +1328,8 @@ package org.alivepdf.pdf
 		}
 		
 		/**
-		 * The curveTo method draws a cubic bezier curve
+		 * The curveTo method draws a cubic bezier curve.
+		 * 
 		 * @param controlX1
 		 * @param controlY1
 		 * @param controlX2
@@ -1337,7 +1356,8 @@ package org.alivepdf.pdf
 		}
 		
 		/**
-		 * Sets the stroke style
+		 * Sets the stroke style.
+		 * 
 		 * @param color
 		 * @param thickness
 		 * @param flatness
@@ -1396,16 +1416,19 @@ package org.alivepdf.pdf
 			strokeJoints = joints;
 			strokeMiter = miterLimit;
 			setAlpha ( alpha, blendMode );
-			if ( nbPages > 0 ) write ( sprintf ('%.2f w', thickness*k) );
+			if ( nbPages > 0 ) 
+				write ( sprintf ('%.2f w', thickness*k) );
 			write ( flatness + " i ");
 			write ( style != null ? style.pattern : '[] 0 d' );
-			if ( caps != null ) write ( caps );
-			if ( joints != null ) write ( joints );
+			if ( caps != null ) 
+				write ( caps );
+			if ( joints != null ) 
+				write ( joints );
 			write ( miterLimit + " M" );
 		}
 		
 		/**
-		 * Sets the stroke color for different color spaces CMYK, RGB and DEVICEGRAY
+		 * Sets the stroke color for different color spaces CMYK, RGB or DEVICEGRAY.
 		 */
 		protected function setStrokeColor ( color:IColor, tint:Number=100 ):void
 		{
@@ -1430,7 +1453,8 @@ package org.alivepdf.pdf
 				
 			} else if ( color is SpotColor )
 			{
-				if ( spotColors.indexOf (color) == -1 ) spotColors.push ( color );
+				if ( spotColors.indexOf (color) == -1 ) 
+					spotColors.push ( color );
 				write (sprintf('/CS%d CS %.3F SCN', (color as SpotColor).i, tint*.01));
 				
 			} else 
@@ -1442,7 +1466,7 @@ package org.alivepdf.pdf
 		}
 		
 		/**
-		 * Sets the text color for different color spaces CMYK, RGB, and DEVICEGRAY
+		 * Sets the text color for different color spaces CMYK, RGB, or DEVICEGRAY.
 		 * @param
 		 */
 		protected function setTextColor ( color:IColor, tint:Number=100 ):void
@@ -1468,7 +1492,8 @@ package org.alivepdf.pdf
 				
 			} else if ( color is SpotColor )
 			{
-				if ( spotColors.indexOf (color) == -1 ) spotColors.push ( color );
+				if ( spotColors.indexOf (color) == -1 ) 
+					spotColors.push ( color );
 				addTextColor = sprintf('/CS%d cs %.3F scn', (color as SpotColor).i, tint*.01);
 				colorFlag = (fillColor != textColor);
 				
@@ -1481,7 +1506,7 @@ package org.alivepdf.pdf
 		}
 		
 		/**
-		 * Sets the filling color for different color spaces CMYK/RGB/DEVICEGRAY
+		 * Sets the filling color for different color spaces CMYK, RGB or DEVICEGRAY.
 		 *
 		 * @param color Color object, can be CMYKColor, GrayColor, or RGBColor
 		 * @example
@@ -1520,7 +1545,8 @@ package org.alivepdf.pdf
 				
 			} else if ( color is SpotColor )
 			{
-				if ( spotColors.indexOf (color) == -1 ) spotColors.push ( color );
+				if ( spotColors.indexOf (color) == -1 ) 
+					spotColors.push ( color );
 				write (sprintf('/CS%d cs %.3F scn', (color as SpotColor).i, tint*.01));
 				colorFlag = (fillColor != textColor);
 				
@@ -1533,7 +1559,8 @@ package org.alivepdf.pdf
 		}
 		
 		/**
-		 * The beginBitmapFill method fills a surface with a bitmap as a texture
+		 * The beginBitmapFill method fills a surface with a bitmap as a texture.
+		 * 
 		 * @param bitmap A flash.display.BitmapData object
 		 * @param matrix A flash.geom.Matrix object
 		 * 
@@ -1558,7 +1585,7 @@ package org.alivepdf.pdf
 		}
 		
 		/**
-		 * Ends all previous filling
+		 * Ends all previous filling.
 		 *
 		 * @example
 		 * This example shows how to create a red rectangle in the current page :
@@ -1576,12 +1603,14 @@ package org.alivepdf.pdf
 		 */
 		public function endFill ():void
 		{
-			if ( !bitmapFilled ) filled = false;
+			if ( !bitmapFilled ) 
+				filled = false;
 			else bitmapFilled = false;
 		}
 		
 		/**
-		 * The drawRect method draws a rectangle shape
+		 * The drawRect method draws a rectangle shape.
+		 * 
 		 * @param rect A flash.geom.Rectange object
 		 * @example
 		 * This example shows how to create a blue rectangle in the current page :
@@ -1608,7 +1637,8 @@ package org.alivepdf.pdf
 		}
 		
 		/**
-		 * The drawRoundedRect method draws a rounded rectangle shape
+		 * The drawRoundedRect method draws a rounded rectangle shape.
+		 * 
 		 * @param rect A flash.geom.Rectange object
 		 * @param ellipseWidth Angle radius
 		 * @example
@@ -1635,7 +1665,7 @@ package org.alivepdf.pdf
 		}
 		
 		/**
-		 * The drawComplexRoundRect method draws a rounded rectangle shape
+		 * The drawComplexRoundRect method draws a rounded rectangle shape.
 		 * 
 		 * @param rect A flash.geom.Rectange object
 		 * @param topLeftEllipseWidth Angle radius
@@ -1689,7 +1719,8 @@ package org.alivepdf.pdf
 		}
 		
 		/**
-		 * The drawEllipse method draws an ellipse
+		 * The drawEllipse method draws an ellipse.
+		 * 
 		 * @param x X Position
 		 * @param y Y Position
 		 * @param radiusX X Radius
@@ -1742,7 +1773,8 @@ package org.alivepdf.pdf
 		}
 		
 		/**
-		 * The drawCircle method draws a circle
+		 * The drawCircle method draws a circle.
+		 * 
 		 * @param x X Position
 		 * @param y Y Position
 		 * @param radius Circle Radius
@@ -1762,7 +1794,8 @@ package org.alivepdf.pdf
 		}
 		
 		/**
-		 * The drawPolygone method draws a polygone
+		 * The drawPolygone method draws a polygone.
+		 * 
 		 * @param points Array of points
 		 * @example
 		 * This example shows how to create a polygone with a few points :
@@ -1825,7 +1858,7 @@ package org.alivepdf.pdf
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		
 		/**
-		 * Lets you add a text annotation to the current page
+		 * Lets you add a text annotation to the current page.
 		 *
 		 * @param x Note X position
 		 * @param y Note Y position
@@ -1848,7 +1881,7 @@ package org.alivepdf.pdf
 		}
 		
 		/**
-		 * Lets you add a stamp annotation to the current page
+		 * Lets you add a stamp annotation to the current page.
 		 *
 		 * @param style Stamp style can be StampStyle.CONFIDENTIAL, StampStyle.FOR_PUBLIC_RELEASE, etc.
 		 * @param x Note X position
@@ -1871,7 +1904,7 @@ package org.alivepdf.pdf
 		}
 		
 		/**
-		 * Lets you add a bookmark
+		 * Lets you add a bookmark.
 		 *
 		 * @param text Text appearing in the outline panel
 		 * @param level Specify the bookmark's level
@@ -1908,14 +1941,16 @@ package org.alivepdf.pdf
 		 */
 		public function addBookmark ( text:String, level:int=0, y:Number=-1, color:RGBColor=null ):void
 		{
-			if ( color == null ) color = new RGBColor ( 0x000000 );
-			if( y == -1 ) y = getY();
+			if ( color == null ) 
+				color = new RGBColor ( 0x000000 );
+			if( y == -1 ) 
+				y = getY();
 			outlines.push ( new Outline ( text, level, nbPages, y, color.r, color.g, color.b ) );
 		}
 		
 		/**
 		 * Lets you add clickable link to a specific position
-		 * Link can be internal (document level navigation) or external (HTTP)
+		 * Link can be internal (document level navigation) or external (HTTP).
 		 *
 		 * @param x Page Format, can be Size.A3, Size.A4, Size.A5, Size.LETTER or Size.LEGAL
 		 * @param y
@@ -1963,11 +1998,13 @@ package org.alivepdf.pdf
 			
 			currentPage.annotations += "<</Type /Annot /Subtype /Link /Rect ["+rectangle+"] /Border [0 0 0] /H /"+highlight+" ";
 			
-			if ( link is HTTPLink ) currentPage.annotations += "/A <</S /URI /URI "+escapeString((link as HTTPLink).link)+">>>>";
+			if ( link is HTTPLink ) 
+				currentPage.annotations += "/A <</S /URI /URI "+escapeString((link as HTTPLink).link)+">>>>";
 			else 
 			{
 				var currentLink:InternalLink = link as InternalLink;
 				var h:Number = orientationChanges[currentLink.page] != null ? currentPage.wPt : currentPage.hPt;
+				
 				if ( currentLink.rectangle != null ) 
 					currentPage.annotations += sprintf('/Dest [%d 0 R /FitR %.2f %.2f %.2f %.2f]>>',1+2*currentLink.page, currentLink.rectangle.x*k, (currentPage.h-currentLink.rectangle.y-currentLink.rectangle.height)*k, (currentLink.rectangle.x+currentLink.rectangle.width)*k, (currentPage.h-currentLink.rectangle.y)*k );
 				else if ( !currentLink.fit ) 
@@ -1977,9 +2014,9 @@ package org.alivepdf.pdf
 		}
 		
 		/**
-		 * Returns an InternalLink object linked to the current page at the current Y in the page 
-		 * @return InternalLink
+		 * Returns an InternalLink object linked to the current page at the current Y in the page.
 		 * 
+		 * @return InternalLink
 		 * @example
 		 * This example shows how to add an internal link using the getInternalLink method :
 		 * <div class="listing">
@@ -1998,7 +2035,7 @@ package org.alivepdf.pdf
 		
 		/**
 		 * Lets you add a transition between each PDF page
-		 * Note : PDF must be shown in fullscreen to see the transitions, use the setDisplayMode method with the PageMode.FULL_SCREEN parameter
+		 * Note : PDF must be shown in fullscreen to see the transitions, use the setDisplayMode method with the PageMode.FULL_SCREEN parameter.
 		 * 
 		 * @param style Transition style, can be Transition.SPLIT, Transition.BLINDS, BLINDS.BOX, Transition.WIPE, etc.
 		 * @param duration The transition duration
@@ -2058,7 +2095,8 @@ package org.alivepdf.pdf
 		public function setStartingPage ( index:int ):void
 		{
 			var lng:int = arrayPages.length;
-			if ( index > 0 && index <=  lng ) startingPageIndex = index-1;
+			if ( index > 0 && index <=  lng ) 
+				startingPageIndex = index-1;
 			else throw new RangeError ("Can't set page " + index + ". "+lng+ " page(s) available.")
 		}
 		
@@ -2102,8 +2140,13 @@ package org.alivepdf.pdf
 		{
 			pushedFontName = font.name;
 			
-			if ( !fonts.some(filterCallback) ) fonts.push ( font );
-			if ( font is EmbeddedFont ) totalEmbeddedFonts++;
+			font.addEventListener( CharacterEvent.CHARACTER_MISSING, characterMissing );
+			
+			if ( !fonts.some(filterCallback) ) 
+				fonts.push ( font );
+			if ( font is EmbeddedFont ) 
+				totalEmbeddedFonts++;
+			else totalCoreFonts++;
 			
 			fontFamily = font.name;
 			
@@ -2113,29 +2156,34 @@ package org.alivepdf.pdf
 			{
 				addedFont = font as EmbeddedFont;	
 				
-				if ( addedFont.differences )
+				if ( addedFont.differences != null )
 				{
-					d = 0;
+					d = -1;
 					nb = differences.length;
-					for ( var j:int = 1; j <= nb ;j++ )
+					for ( var j:int = 0; j < nb ; j++ )
 					{
 						if(differences[j] == addedFont.differences)
 						{
-							d=j;
+							d = j;
 							break;
 						}
 					}
-					if( d == 0 )
+					
+					if( d == -1 )
 					{
-						d = nb+1;
+						d = nb;
 						differences[d] = addedFont.differences;
 					}
+					
 					fonts[fonts.length-1].differences = d;
-				}
-				
+				}		
 			}
-			
 			return font;
+		}
+		
+		private function characterMissing (e:Event):void
+		{
+			dispatchEvent( e );
 		}
 		
 		private function filterCallback ( element:IFont, index:int, arr:Array ):Boolean
@@ -2144,7 +2192,8 @@ package org.alivepdf.pdf
 		}
 		
 		/**
-		 * Lets you set a specific font
+		 * Lets you set a specific font.
+		 * Note : Since release 0.1.5, you do not need to call the addFont method anymore. It will be called automatically internally if needed.
 		 *
 		 * @param A font, can be a core font (org.alivepdf.fonts.CoreFont), or an embedded font (org.alivepdf.fonts.EmbeddedFont)
 		 * @param size Any font size
@@ -2171,11 +2220,12 @@ package org.alivepdf.pdf
 			fontSizePt = size;
 			fontSize = size/k;
 			
-			if ( nbPages > 0 ) write (sprintf('BT /F%d %.2f Tf ET', currentFont.id, fontSizePt));
+			if ( nbPages > 0 ) 
+				write (sprintf('BT /F%d %.2f Tf ET', currentFont.id, fontSizePt));
 		}
 		
 		/**
-		 * Lets you set a new size for the current font
+		 * Lets you set a new size for the current font.
 		 *
 		 * @param size Font size
 		 * @example
@@ -2189,14 +2239,16 @@ package org.alivepdf.pdf
 		 */
 		public function setFontSize ( size:int ):void
 		{	
-			if( fontSizePt == size ) return;
+			if( fontSizePt == size ) 
+				return;
 			fontSizePt = size;
 			fontSize = size/k;
-			if( nbPages > 0 ) write (sprintf('BT /F%d %.2f Tf ET', currentFont.id, fontSizePt));	
+			if( nbPages > 0 ) 
+				write (sprintf('BT /F%d %.2f Tf ET', currentFont.id, fontSizePt));	
 		}
 		
 		/**
-		 * Lets you remove an embedded font from the PDF
+		 * Lets you remove an embedded font from the PDF.
 		 *
 		 * @param font The embedded font
 		 * @example
@@ -2210,14 +2262,16 @@ package org.alivepdf.pdf
 		 */
 		public function removeFont ( font:IFont ):void
 		{
-			if ( font.type == FontType.CORE ) throw new Error('The font you have passed is a Core font. Core fonts cannot be removed as they are not embedded in the PDF.');
+			if ( font.type == FontType.CORE ) 
+				throw new Error('The font you have passed is a Core font. Core fonts cannot be removed as they are not embedded in the PDF.');
 			var position:int = fonts.indexOf(font);
-			if ( position != -1 ) fonts.splice(position, 1);
+			if ( position != -1 ) 
+				fonts.splice(position, 1);
 			else throw new Error ("Font cannot be found.");	
 		}
 		
 		/**
-		 * Lets you retrieve the total number of fonts used in the PDF document
+		 * Lets you retrieve the total number of fonts used in the PDF document.
 		 *
 		 * @return int Number of fonts (embedded or not) used in the PDF
 		 * @example
@@ -2235,7 +2289,7 @@ package org.alivepdf.pdf
 		}
 		
 		/**
-		 * Lets you retrieve the fonts used in the PDF document
+		 * Lets you retrieve the fonts used in the PDF document.
 		 *
 		 * @return Array An Array of fonts objects (CoreFont, EmbeddedFont)
 		 * @example
@@ -2266,7 +2320,8 @@ package org.alivepdf.pdf
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		
 		/**
-		 * Lets you set some text to any position on the page
+		 * Lets you set some text to any position on the page.
+		 * Note : addText is a low level method which does not take care of line return and paragraph requirements. Use writeText for that or writeFlashHtmlText if you need HTML on top of that.
 		 *
 		 * @param text The text to add
 		 * @param x X position
@@ -2283,13 +2338,15 @@ package org.alivepdf.pdf
 		public function addText ( text:String, x:Number=0, y:Number=0 ):void	
 		{
 			var s:String = sprintf('BT %.2f %.2f Td (%s) Tj ET',x*k, (currentPage.h-y)*k, escapeIt(text));
-			if (underline && text !='') s += ' '+doUnderline(x,y,text);
-			if (colorFlag) s = 'q ' + addTextColor + ' ' + s +' Q';
+			if (underline && text !='') 
+				s += ' '+doUnderline(x,y,text);
+			if (colorFlag) 
+				s = 'q ' + addTextColor + ' ' + s +' Q';
 			write(s);
 		}
 		
 		/**
-		 * Sets the text style
+		 * Sets the text style with an appropriate color, alpha etc.
 		 *
 		 * @param color Color object, can be CMYKColor, GrayColor, or RGBColor
 		 * @param alpha Text opacity
@@ -2324,7 +2381,7 @@ package org.alivepdf.pdf
 		}
 		
 		/**
-		 * Add a cell with some text to the current page
+		 * Add a cell with some text to the current page.
 		 *
 		 * @param width Cell width
 		 * @param height Cell height
@@ -2342,7 +2399,7 @@ package org.alivepdf.pdf
 		 * var font:CoreFont = new CoreFont ( FontFamily.HELVETICA_BOLD );
 		 * myPDF.setFont( font );
 		 * myPDF.textStyle ( new RGBColor ( 0x990000 ) );
-		 * myPDF.addCell(50,10,'Some text into a cell !',1,1);
+		 * myPDF.addCell(50, 10, 'Some text into a cell !', 1, 1);
 		 * </pre>
 		 * </div>
 		 * This example shows how to write some clickable text within a cell :
@@ -2352,7 +2409,7 @@ package org.alivepdf.pdf
 		 * var font:CoreFont = new CoreFont ( FontFamily.HELVETICA_BOLD );
 		 * myPDF.setFont( font );
 		 * myPDF.textStyle ( new RGBColor ( 0x990000 ) );
-		 * myPDF.addCell(50,10,'A clickable cell !', 1, 1, null, 0, new HTTPLink ("http://www.alivepdf.org") );
+		 * myPDF.addCell(50, 10, 'A clickable cell !', 1, 1, null, 0, new HTTPLink ("http://www.alivepdf.org") );
 		 * </div>
 		 */
 		public function addCell ( width:Number=0, height:Number=0, text:String='', border:*=0, ln:Number=0, align:String='', fill:Number=0, link:ILink=null ):void
@@ -2361,25 +2418,31 @@ package org.alivepdf.pdf
 			{
 				var x:Number = currentX;
 				
-				if( ws>0 )
+				if( ws > 0 )
 				{
-					ws=0;
+					ws = 0;
 					write('0 Tw');
 				}
-				addPage( new Page ( currentOrientation, defaultUnit, defaultSize ,currentPage.rotation ) );
+				
+				addPage( new Page ( currentOrientation, defaultUnit, defaultSize , currentPage.rotation ) );
 				currentX = x;
-				if( ws>0 ) write(sprintf('%.3f Tw',ws*k));
+				
+				if( ws > 0 ) 
+					write(sprintf('%.3f Tw', ws*k));
 			}
 			
-			if ( currentPage.w == 0 ) currentPage.w = currentPage.w-rightMargin-currentX;
+			if ( currentPage.w == 0 ) 
+				currentPage.w = currentPage.w-rightMargin-currentX;
 			
 			var s:String = new String();
 			var op:String;
 			
 			if( fill == 1 || border == 1 )
 			{
-				if ( fill == 1 ) op = ( border == 1 ) ? Drawing.FILL_AND_STROKE : Drawing.FILL;
+				if ( fill == 1 ) 
+					op = ( border == 1 ) ? Drawing.FILL_AND_STROKE : Drawing.FILL;
 				else op = Drawing.STROKE;
+				
 				s = sprintf('%.2f %.2f %.2f %.2f re %s ', currentX*k, (currentPage.h-currentY)*k, width*k, -height*k, op);
 				endFill();
 			}
@@ -2388,45 +2451,57 @@ package org.alivepdf.pdf
 			{
 				var borderBuffer:String = String ( border );
 				var currentPageHeight:Number = currentPage.h;
-				if( borderBuffer.indexOf (Align.LEFT) != -1 ) s+=sprintf('%.2f %.2f m %.2f %.2f l S ',currentX*k,(currentPageHeight-currentY)*k,currentX*k,(currentPageHeight-(currentY+height))*k);
-				if( borderBuffer.indexOf (Align.TOP) != -1) s+=sprintf('%.2f %.2f m %.2f %.2f l S ',currentX*k,(currentPageHeight-currentY)*k,(currentX+width)*k,(currentPageHeight-currentY)*k);
-				if( borderBuffer.indexOf (Align.RIGHT) != -1) s+=sprintf('%.2f %.2f m %.2f %.2f l S ',(currentX+width)*k,(currentPageHeight-currentY)*k,(currentX+width)*k,(currentPageHeight-(currentY+height))*k);
-				if( borderBuffer.indexOf (Align.BOTTOM) != -1 ) s+=sprintf('%.2f %.2f m %.2f %.2f l S ',currentX*k,(currentPageHeight-(currentY+height))*k,(currentX+width)*k,(currentPageHeight-(currentY+height))*k);
+				if( borderBuffer.indexOf (Align.LEFT) != -1 ) 
+					s+=sprintf('%.2f %.2f m %.2f %.2f l S ', currentX*k,(currentPageHeight-currentY)*k,currentX*k,(currentPageHeight-(currentY+height))*k);
+				if( borderBuffer.indexOf (Align.TOP) != -1) 
+					s+=sprintf('%.2f %.2f m %.2f %.2f l S ', currentX*k,(currentPageHeight-currentY)*k,(currentX+width)*k,(currentPageHeight-currentY)*k);
+				if( borderBuffer.indexOf (Align.RIGHT) != -1) 
+					s+=sprintf('%.2f %.2f m %.2f %.2f l S ', (currentX+width)*k,(currentPageHeight-currentY)*k,(currentX+width)*k,(currentPageHeight-(currentY+height))*k);
+				if( borderBuffer.indexOf (Align.BOTTOM) != -1 ) 
+					s+=sprintf('%.2f %.2f m %.2f %.2f l S ', currentX*k,(currentPageHeight-(currentY+height))*k,(currentX+width)*k,(currentPageHeight-(currentY+height))*k);
 			}
 			
 			if ( text !== '' )
 			{
 				var dx:Number;
 				
-				if ( align == Align.RIGHT ) dx = width-currentMargin-getStringWidth(text);
-				else if ( align == Align.CENTER ) dx = (width-getStringWidth(text))*.5;
+				if ( align == Align.RIGHT ) 
+					dx = width-currentMargin-getStringWidth(text);
+				else if ( align == Align.CENTER ) 
+					dx = (width-getStringWidth(text))*.5;
 				else dx = currentMargin;
 				
-				if (colorFlag) s += 'q '+addTextColor+' ';
+				if (colorFlag) 
+					s += 'q '+addTextColor+' ';
 				
 				var txt2:String = findAndReplace(')','\\)',findAndReplace('(','\\(',findAndReplace('\\','\\\\',text)));
 				s += sprintf('BT %.2f %.2f Td (%s) Tj ET',(currentX+dx)*k,(currentPage.h-(currentY+.5*height+.3*fontSize))*k,txt2);
 				
-				if (underline) s += ' '+doUnderline(currentX+dx,currentY+.5*height+.3*fontSize,text);
-				if (colorFlag) s += ' Q';
+				if (underline) 
+					s += ' ' + doUnderline(currentX+dx,currentY+.5*height+.3*fontSize,text);
+				if (colorFlag) 
+					s += ' Q';
 				
-				if ( link != null ) addLink (currentX+dx,currentY+.5*height-.5*fontSize,getStringWidth(text),fontSize, link);
+				if ( link != null ) 
+					addLink (currentX+dx,currentY+.5*height-.5*fontSize,getStringWidth(text),fontSize, link);
 			}
 			
-			if ( s != '' ) write(s);
+			if ( s != '' ) 
+				write(s);
 			
 			lasth = currentPage.h;
 			
 			if ( ln > 0 )
 			{
 				currentY += height;
-				if( ln == 1 ) currentX = leftMargin;
+				if ( ln == 1 ) 
+					currentX = leftMargin;
 				
 			} else currentX += width;
 		}
 		
 		/**
-		 * Add a multicell with some text to the current page
+		 * Add a multicell with some text to the current page.
 		 *
 		 * @param width Cell width
 		 * @param height Cell height
@@ -2451,13 +2526,15 @@ package org.alivepdf.pdf
 		{
 			charactersWidth = currentFont.charactersWidth;
 			
-			if ( width==0 ) width = currentPage.w - rightMargin - currentX;
+			if ( width == 0 ) 
+				width = currentPage.w - rightMargin - currentX;
 			
 			var wmax:Number = (width-2*currentMargin)*I1000/fontSize;
 			var s:String = findAndReplace ("\r",'',text);
 			var nb:int = s.length;
 			
-			if( nb > 0 && s.charAt(nb-1) == "\n" ) nb--;
+			if( nb > 0 && s.charAt(nb-1) == "\n" ) 
+				nb--;
 			
 			var b:* = 0;
 			
@@ -2472,9 +2549,12 @@ package org.alivepdf.pdf
 				else
 				{
 					b2 = '';
-					if (border.indexOf(Align.LEFT)!= -1) b2+= Align.LEFT;
-					if (border.indexOf(Align.RIGHT)!= -1) b2+= Align.RIGHT;
-					b = (border.indexOf(Align.TOP)!= -1) ? b2+Align.TOP : b2;
+					if (border.indexOf(Align.LEFT)!= -1) 
+						b2+= Align.LEFT;
+					if (border.indexOf(Align.RIGHT)!= -1) 
+						b2+= Align.RIGHT;
+					b = (border.indexOf(Align.TOP)!= -1) ? 
+						b2+Align.TOP : b2;
 				}
 			}
 			
@@ -2500,37 +2580,41 @@ package org.alivepdf.pdf
 						write('0 Tw');
 					}
 					
-					addCell(width,height,s.substr(j,i-j),b,2,align,filled);
+					addCell(width, height, s.substr(j,i-j), b, 2, align, filled);
+					
 					i++;
-					sep=-1;
-					j=i;
-					l=0;
-					ns=0;
+					sep = -1;
+					j = i;
+					l = 0;
+					ns = 0;
 					nl++;
 					
-					if(border && nl==2) b=b2;
+					if (border && nl==2) 
+						b = b2;
 					continue;			
 				}
 				
 				if(c==' ')
 				{
-					sep=i;
+					sep = i;
 					var ls:int = l;
 					ns++;
 				}
 				
-				// TBO
 				cwAux = charactersWidth[c] as int;
-				if (cwAux == 0) cwAux = 580;
+				
+				if (cwAux == 0) 
+					cwAux = FontMetrics.DEFAULT_WIDTH;
+				
 				l += cwAux;
 				
 				if (l>wmax)
 				{
-					
-					if(sep==-1)
+					if (sep==-1)
 					{
-						if(i==j) i++;
-						if(ws>0)
+						if (i==j) 
+							i++;
+						if (ws>0)
 						{
 							ws=0;
 							write('0 Tw');
@@ -2539,9 +2623,9 @@ package org.alivepdf.pdf
 					}
 					else
 					{
-						if(align==Align.JUSTIFIED)
+						if (align == Align.JUSTIFIED)
 						{
-							ws=(ns>1) ? ((wmax-ls)*.001)*fontSize/(ns-1) : 0;
+							ws = (ns>1) ? ((wmax-ls)*.001)*fontSize/(ns-1) : 0;
 							write(sprintf('%.3f Tw',ws*k));
 						}
 						
@@ -2549,30 +2633,35 @@ package org.alivepdf.pdf
 						i=sep+1;
 					}
 					
-					sep=-1;
-					j=i;
-					l=0;
-					ns=0;
+					sep = -1;
+					j = i;
+					l = 0;
+					ns = 0;
 					nl++;
-					if ( border && nl == 2 ) b = b2;
+					
+					if ( border && nl == 2 ) 
+						b = b2;
 					
 				}
 				else i++;
 			}
 			
-			if(ws>0)
+			if ( ws>0 )
 			{
-				ws=0;
+				ws = 0;
 				write('0 Tw');
 			}
 			
-			if ( border && border.indexOf ('B')!= -1 ) b += 'B';
-			addCell ( width,height,s.substr(j,i-j),b,2,align,filled );
+			if ( border && border.indexOf ('B')!= -1 ) 
+				b += 'B';
+			
+			addCell ( width, height, s.substr(j,i-j), b, 2, align, filled );
 			currentX = leftMargin;
 		}
 		
 		/**
-		 * Lets you write some text
+		 * Lets you write some text in the current page.
+		 * Note : writeText takes care of line return and paragraphs requirements. If you need HTML in top of that, use writeFlashHtmlText.
 		 *
 		 * @param lineHeight Line height, lets you specify height between each lines
 		 * @param text Text to write, to put a line break just add a \n in the text string
@@ -2615,13 +2704,12 @@ package org.alivepdf.pdf
 				
 				if( c == "\n" )
 				{
-					
 					addCell (w,lineHeight,s.substr(j,i-j),0,2,'',0,link);
 					i++;
-					sep=-1;
-					j=i;
-					l=0;
-					if(nl==1)
+					sep = -1;
+					j = i;
+					l = 0;
+					if (nl==1)
 					{
 						currentX = leftMargin;
 						w = currentPage.w-rightMargin-currentX;
@@ -2631,17 +2719,18 @@ package org.alivepdf.pdf
 					continue;
 				}
 				
-				if(c==' ') sep=i;
+				if(c == ' ') 
+					sep=i;
 				
-				// TBO
 				cwAux = cw[c] as int;
-				if (cwAux == 0) cwAux = 580;
+				if (cwAux == 0) 
+					cwAux = FontMetrics.DEFAULT_WIDTH;
 				l += cwAux;
 				
 				if( l > wmax )
 				{
 					//Automatic line break
-					if(sep==-1)
+					if( sep==-1 )
 					{
 						if(currentX>leftMargin)
 						{
@@ -2654,32 +2743,34 @@ package org.alivepdf.pdf
 							nl++;
 							continue;
 						}
-						if(i==j) i++;
+						if ( i==j ) 
+							i++;
 						addCell (w,lineHeight,s.substr(j,i-j),0,2,'',0,link);
 					}
 					else
 					{
 						addCell (w,lineHeight,s.substr(j,sep-j),0,2,'',0,link);
-						i=sep+1;
+						i = sep+1;
 					}
-					sep=-1;
-					j=i;
-					l=0;
-					if(nl==1)
+					sep = -1;
+					j = i;
+					l = 0;
+					if( nl==1 )
 					{
-						currentX=leftMargin;
-						w=currentPage.w-rightMargin-currentX;
-						wmax=(w-2*currentMargin)*I1000/fontSize;
+						currentX = leftMargin;
+						w = currentPage.w-rightMargin-currentX;
+						wmax = (w-2*currentMargin)*I1000/fontSize;
 					}
 					nl++;
 				}
 				else i++;
 			}
-			if (i!=j) addCell ((l*.001)*fontSize,lineHeight,s.substr(j),0,0,'',0,link);
+			if ( i != j ) 
+				addCell ((l*.001)*fontSize,lineHeight,s.substr(j),0,0,'',0,link);
 		}
 		
 		/**
-		 * Lets you write some text with basic HTML type formatting
+		 * Lets you write some text with basic HTML type formatting.
 		 *
 		 * @param pHeight Line height, lets you specify height between each lines
 		 * @param pText Text to write, to put a line break just add a \n in the text string
@@ -2702,7 +2793,7 @@ package org.alivepdf.pdf
 		 * <div class="listing">
 		 * <pre>
 		 *
-		 * myPDF.writeFlashHtmlText ( 5, "Lorem ipsum dolor sit amet, consectetuer adipiscing elit.", "http://www.google.fr");
+		 * myPDF.writeFlashHtmlText ( 5, "Lorem ipsum dolor sit amet, consectetuer adipiscing elit.", "http://www.google.com");
 		 * </pre>
 		 * </div>
 		 */
@@ -2847,18 +2938,18 @@ package org.alivepdf.pdf
 						cellVO.underlined = fontUnderline;
 						
 						//Set the font for calculation of character widths
-						var newFont:IFont = new CoreFont ( getFontStyleString(fontBold,fontItalic,fontFamily) );
+						var newFont:IFont = new CoreFont ( getFontStyleString(fontBold, fontItalic, fontFamily) );
 						setFont ( newFont, cellVO.fontSizePt );
 						cellVO.font = newFont;
 						
 						//Font character width lookup table
-						cw      = this.currentFont.charactersWidth; 
+						cw      = currentFont.charactersWidth; 
 						
 						//Current remaining space per line
 						w       = currentPage.w-rightMargin-currentX;
 						
 						//Size of a full line of text
-						wmax    = (w-2*currentMargin)*I1000/this.fontSize;  
+						wmax    = (w-2*currentMargin)*I1000/fontSize;  
 						
 						//get text from string
 						s   = aTaggedString[k].value; 
@@ -2885,7 +2976,12 @@ package org.alivepdf.pdf
 							}
 							
 							//Add the character width to the length;
-							l += cw[c];
+							cwAux = cw[c] as int;
+							
+							if ( cwAux == 0 ) 
+								cwAux = FontMetrics.DEFAULT_WIDTH;
+							
+							l += cwAux;
 							
 							//Are we Over the char width limit?
 							if ( l > wmax )
@@ -2893,8 +2989,7 @@ package org.alivepdf.pdf
 								//Automatic line break
 								if ( sep == -1 )
 								{
-									// No seperator to force at character
-									
+									// No seperator to force at character									
 									if(currentX>leftMargin)
 									{	
 										//Move to next line
@@ -2911,7 +3006,8 @@ package org.alivepdf.pdf
 									if ( i == j ) 
 										i++;
 									
-									l = 0;
+									//Set the length to the size before it was greater than wmax
+									l -= cwAux;
 									
 									//Add the cell to the current line
 									cellVO.x     = currentX;
@@ -2930,10 +3026,8 @@ package org.alivepdf.pdf
 									currentX = leftMargin;
 									
 								} else 
-								{
-									
-									//Split at last seperator
-									
+								{	
+									//Split at last seperator	
 									//Add the cell to the current line								
 									cellVO.x      = currentX;
 									cellVO.y      = currentY;
@@ -2945,7 +3039,7 @@ package org.alivepdf.pdf
 									
 									if ( textAlign == Align.JUSTIFIED )
 									{
-										ws=(ns>1) ? (wmax-lenAtSep)/I1000*fontSize/(ns-1) : 0;
+										ws = (ns>1) ? (wmax-lenAtSep)/I1000*fontSize/(ns-1) : 0;
 										write(sprintf('%.3f Tw',ws*k));
 									}
 									
@@ -2968,7 +3062,7 @@ package org.alivepdf.pdf
 								currentX = leftMargin;
 								
 								w   = currentPage.w - rightMargin - currentX;
-								wmax= ( w-2 * currentMargin )*I1000/fontSize;
+								wmax = ( w-2 * currentMargin )*I1000/fontSize;
 								
 							} else 
 								i++;
@@ -2979,7 +3073,6 @@ package org.alivepdf.pdf
 						{	
 							//If any remaining chars then print them out                            
 							//Add the cell to the current line
-							
 							cellVO.x = currentX;
 							cellVO.y = currentY;
 							cellVO.width = (l*.001)*fontSize;
@@ -3013,7 +3106,7 @@ package org.alivepdf.pdf
 			}
 			
 			//Is there anything left to render before we exit?
-			if ( currentLine.length ) 
+			if ( currentLine.length > 0 ) 
 			{	
 				renderLine ( currentLine, textAlign );
 				lineBreak ( pHeight );
@@ -3030,7 +3123,7 @@ package org.alivepdf.pdf
 			currentY += pHeight;
 		}
 		
-		protected function getFontStyleString (  bold : Boolean, italic : Boolean, family: String ) : String
+		protected function getFontStyleString (  bold : Boolean, italic : Boolean, family: String ):String
 		{
 			var font:String = family;
 			var position:int;
@@ -3048,7 +3141,7 @@ package org.alivepdf.pdf
 			return font;
 		}
 		
-		protected function renderLine ( lineArray : Array, align : String = '' ) : void
+		protected function renderLine ( lineArray : Array, align : String = '' ):void
 		{	
 			var cellVO    : CellVO;
 			var availWidth: Number = currentPage.w - leftMargin - rightMargin;
@@ -3065,10 +3158,11 @@ package org.alivepdf.pdf
 			//Check if we need a new page for this line
 			if ( firstCell.y + firstCell.height > pageBreakTrigger )
 			{	
-				addPage ( currentPage.clone() );
+				addPage ();
 				//Use offsetY to push already specified coord for this line back up to top of page
-				offsetY = currentY - firstCell.y;                                
+				offsetY = currentY - firstCell.y;
 			}
+			
 			var lng:int = lineArray.length;
 			
 			//Calculate offset if we are aligning center or right
@@ -3085,16 +3179,21 @@ package org.alivepdf.pdf
 			for(i = 0; i < lng; i++)
 			{	
 				cellVO = CellVO ( lineArray[int(i)] );
-				
+
 				currentX = cellVO.x + offsetX;
 				currentY = cellVO.y + offsetY;
 				
 				setFont ( cellVO.font, cellVO.fontSizePt, cellVO.underlined );
-				if ( cellVO.color != null ) setTextColor ( cellVO.color );
+				
+				if ( cellVO.color != null ) 
+					setTextColor ( cellVO.color );
+				
 				colorFlag = ( fillColor != addTextColor );
-				addCell ( cellVO.width, cellVO.height, cellVO.text, cellVO.border, 2, "", cellVO.fill, cellVO.link );
+				
+				trace( cellVO.width, cellVO.height, cellVO.text, currentY, offsetY, cellVO.y );
+				
+				addCell ( cellVO.width, cellVO.height, cellVO.text, cellVO.border, 2, null, cellVO.fill, cellVO.link );
 			}
-			
 		}
 		
 		protected function parseTags ( myXML:XML ):Array
@@ -3123,7 +3222,6 @@ package org.alivepdf.pdf
 					
 					aTags.push( new HTMLTag ("none", new XMLList(), children[i] ) );
 			}
-			
 			return aTags;
 		}
 		
@@ -3137,12 +3235,12 @@ package org.alivepdf.pdf
 		*/
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		
-		public function importTemplate ( template:XML ):void
+		protected function importTemplate ( template:XML ):void
 		{
 			// TBD
 		}
 		
-		public function getTemplate ( template:XML ):XML
+		protected function getTemplate ( template:XML ):XML
 		{
 			// TBD
 			return null;
@@ -3157,9 +3255,43 @@ package org.alivepdf.pdf
 		*/
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		
+		/**
+		 * Adds a dynamic table to the current page. This can be useful if you need to render large amount of data coming from an existing DataGrid or any data collection.
+		 * 
+		 * @param grid
+		 * @param x
+		 * @param y
+		 * @param repeatHeader
+		 * 
+		 * This example shows how to add such a grid to the current page :
+		 * <div class="listing">
+		 * <pre>
+		 *
+		 * var grid:Grid = new Grid ( dp.toArray(), 200, 120, new Array (40, 50, 40, 30), new Array ( Align.LEFT, Align.LEFT, Align.LEFT, Align.LEFT ), new RGBColor (0x666666), new RGBColor (0xCCCCCC), new RGBColor (0), true, new RGBColor ( 0x0 ), Joint.MITER );
+		 * 
+		 * // create columns to specify the column order
+		 * var gridColumnAge:GridColumn = new GridColumn("City", "city", 20, Align.LEFT, Align.LEFT);
+		 * var gridColumnEmail:GridColumn = new GridColumn("E-Mail", "email", 20, Align.LEFT, Align.LEFT);
+		 * var gridColumnFirstName:GridColumn = new GridColumn("First Name", "firstName", 40, Align.LEFT, Align.LEFT);
+		 * var gridColumnLastName:GridColumn = new GridColumn("Last Name", "lastName", 45, Align.LEFT, Align.LEFT);
+		 * 
+		 * // create a columns Array
+		 * // it determines the order shown in the PDF
+		 * var columns:Array = new Array ( gridColumnAge, gridColumnEmail, gridColumnFirstName, gridColumnLastName );
+		 * 
+		 * // create a Grid object as usual
+		 * var grid:Grid = new Grid( dp.toArray(), 200, 120, new RGBColor ( 0xCCCCCC ), new RGBColor (0xFFFFFF), new RGBColor (0xFFFFFF), false, new RGBColor(0x000000) );				
+		 * 
+		 * // pass the columns
+		 * grid.columns = columns;
+		 * p.addGrid( grid );
+		 * </pre>
+		 * </div>
+		 */	
 		public function addGrid ( grid:Grid, x:Number=0, y:Number=0, repeatHeader:Boolean=true ):void
 		{	
-			if ( textColor == null ) throw new Error("Please call the setFont and textStyle method before adding a Grid.");
+			if ( textColor == null ) 
+				throw new Error("Please call the setFont and textStyle method before adding a Grid.");
 			
 			currentGrid = grid;
 			currentGrid.x = x;
@@ -3239,9 +3371,14 @@ package org.alivepdf.pdf
 		protected function getRect ( rows:Array ):Rectangle
 		{
 			var nb:int = 0;
+			var nbL:int;
 			var lng:int = rows.length;
 			
-			for(var i:int=0;i<lng;i++) nb = Math.max(nb,nbLines(columns[i].width,rows[i]));
+			for(var i:int=0;i<lng;i++)
+			{
+				if ( (nbL = nbLines(columns[i].width, rows[i])) > nb ) 
+					nb = nbL;
+			}
 			
 			var ph:int = 5;
 			var h:Number = ph*nb;
@@ -3284,34 +3421,42 @@ package org.alivepdf.pdf
 		protected function nbLines(width:int,text:String):int
 		{
 			var cw:Object = currentFont.charactersWidth;
-			if(width==0) width = currentPage.w-rightMargin-leftMargin;
+			
+			if (width==0) 
+				width = currentPage.w-rightMargin-leftMargin;
 			
 			var wmax:int = (width-2*currentMargin)*I1000/fontSize;
 			var s:String = findAndReplace("\r",'',text);
 			var nb:int = s.length;
 			
-			if(nb>0 && s.charAt(nb-1)=="\n") nb--;
+			if(nb>0 && s.charAt(nb-1) == "\n") 
+				nb--;
 			
 			var sep:Number=-1;
 			var i:int=0;
 			var j:int=0;
 			var l:int=0;
 			var nl:int=1;
+			var c:String;
 			
 			while(i<nb)
 			{
-				var c:String = s.charAt(i);
-				if(c=="\n")
+				c = s.charAt(i);
+				
+				if( c == "\n" )
 				{
 					i++;
-					sep=-1;
-					j=i;
-					l=0;
+					sep = -1;
+					j = i;
+					l = 0;
 					nl++;
 					continue;
 				}
-				if(c==' ') sep=i;
-				l+=cw[c];
+				
+				if(c==' ') 
+					sep = i;
+				l += cw[c];
+				
 				if(l>wmax)
 				{
 					if(sep==-1)
@@ -3320,10 +3465,10 @@ package org.alivepdf.pdf
 							i++;
 					}
 					else
-						i=sep+1;
-					sep=-1;
-					j=i;
-					l=0;
+						i = sep+1;
+					sep = -1;
+					j = i;
+					l = 0;
 					nl++;
 				}
 				else
@@ -3346,7 +3491,7 @@ package org.alivepdf.pdf
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		
 		/**
-		 * 
+		 * Allows you to save the PDF locally (Flash Player 10 minmum required) or remotely through a server-side script.
 		 *
 		 * @param method Can be se to Method.LOCAL, the savePDF will return the PDF ByteArray. When Method.REMOTE is passed, just specify the path to the create.php file
 		 * @param url The url of the create.php file
@@ -3453,7 +3598,7 @@ package org.alivepdf.pdf
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		
 		/**
-		 * The addJavaScript allows you to inject JavaScript code to be executed when the PDF document is opened
+		 * The addJavaScript allows you to inject JavaScript code to be executed when the PDF document is opened.
 		 * 
 		 * @param script
 		 * @example
@@ -3485,7 +3630,7 @@ package org.alivepdf.pdf
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		
 		/**
-		 * The addImage method takes an incoming DisplayObject. A JPG or PNG snapshot is done and included in the PDF document
+		 * The addImage method takes an incoming DisplayObject. A JPG or PNG (non-transparent) snapshot is done and included in the PDF document.
 		 * 
 		 * @param displayObject
 		 * @param resizeMode
@@ -3509,8 +3654,7 @@ package org.alivepdf.pdf
 		 * </div>
 		 */	 
 		public function addImage ( displayObject:DisplayObject, resizeMode:Resize=null, x:Number=0, y:Number=0, width:Number=0, height:Number=0, rotation:Number=0, alpha:Number=1, keepTransformation:Boolean=true, imageFormat:String="PNG", quality:Number=100, blendMode:String="Normal", link:ILink=null ):void
-		{	
-			
+		{			
 			if ( streamDictionary[displayObject] == null )
 			{	
 				var bytes:ByteArray;				
@@ -3545,7 +3689,7 @@ package org.alivepdf.pdf
 					
 				} else if ( imageFormat == ImageFormat.PNG )
 				{
-					bytes = PNGEncoder.encode ( bitmapDataBuffer, 1 );
+					bytes = PNGEncoder.encode ( bitmapDataBuffer );
 					image = new DoPNGImage ( bitmapDataBuffer, bytes, id );
 					
 				} else
@@ -3610,6 +3754,7 @@ package org.alivepdf.pdf
 			}
 			
 			var start:int = source.indexOf('%!PS-Adobe');
+
 			if (start != -1) source = source.substr(start);
 
 			regs = source.match(/%%BoundingBox:([^\r\n]+)/);
@@ -3618,18 +3763,23 @@ package org.alivepdf.pdf
 			var y1:Number;
 			var x2:Number;
 			var y2:Number;
+			var buffer:Array;
 			
 			if (regs.length > 1)
 			{
-				var buffer:Array = regs[1].substr(1).split(" ");
+				buffer = regs[1].substr(1).split(" ");
+				
 				x1 = buffer[0];
 				y1 = buffer[1];
 				x2 = buffer[2];
 				y2 = buffer[3];
 				
 				start = source.indexOf('%%EndSetup');
-				if ( start == -1 ) start = source.indexOf('%%EndProlog');
-				if ( start == -1 ) start = source.indexOf('%%BoundingBox');
+				
+				if ( start == -1 ) 
+					start = source.indexOf('%%EndProlog');
+				if ( start == -1 ) 
+					start = source.indexOf('%%BoundingBox');
 				
 				source = source.substr(start);
 				
@@ -3831,6 +3981,7 @@ package org.alivepdf.pdf
 		 * var resize:Resize = new Resize ( Mode.FULL_PAGE, Position.CENTERED ); 
 		 * myPDF.addImageStream( bytes, ColorSpace.DEVICE_RGB, resize );
 		 * </pre>
+		 * </div>
 		 * This example shows how to add a CMYK image as a ByteArray into the current page, the image will take the whole page but white margins will be preserved :
 		 * <div class="listing">
 		 * <pre>
@@ -3847,14 +3998,16 @@ package org.alivepdf.pdf
 				
 				var id:int = getTotalProperties ( streamDictionary )+1;
 				
-				if ( imageBytes.readUnsignedShort() == JPEGImage.HEADER ) image = new JPEGImage ( imageBytes, colorSpace, id );
-				else if ( !(imageBytes.position = 0) && imageBytes.readUnsignedShort() == PNGImage.HEADER ) image = new PNGImage ( imageBytes, colorSpace, id );
+				if ( imageBytes.readUnsignedShort() == JPEGImage.HEADER ) 
+					image = new JPEGImage ( imageBytes, colorSpace, id );
+				else if ( !(imageBytes.position = 0) && imageBytes.readUnsignedShort() == PNGImage.HEADER ) 
+					image = new PNGImage ( imageBytes, colorSpace, id );
 				else if ( !(imageBytes.position = 0) && imageBytes.readUTFBytes(3) == GIFImage.HEADER ) 
 				{
 					imageBytes.position = 0;
 					var decoder:GIFPlayer = new GIFPlayer(false);
 					var capture:BitmapData = decoder.loadBytes( imageBytes );
-					var bytes:ByteArray = PNGEncoder.encode ( capture, 1 );
+					var bytes:ByteArray = PNGEncoder.encode ( capture );
 					image = new DoPNGImage ( capture, bytes, id );
 				} else if ( !(imageBytes.position = 0) && (imageBytes.endian = Endian.LITTLE_ENDIAN) && imageBytes.readByte() == 73 )
 				{
@@ -3878,8 +4031,10 @@ package org.alivepdf.pdf
 				height = image.height/k;
 			}
 			
-			if ( width == 0 ) width = height*image.width/image.height;
-			if ( height == 0 ) height = width*image.height/image.width;
+			if ( width == 0 ) 
+				width = height*image.width/image.height;
+			if ( height == 0 ) 
+				height = width*image.height/image.width;
 			
 			var realWidth:Number = currentPage.width-(leftMargin+rightMargin)*k;
 			var realHeight:Number = currentPage.height-(bottomMargin+topMargin)*k;
@@ -3916,7 +4071,7 @@ package org.alivepdf.pdf
 					x = (realWidth - (width*k));
 			}
 			
-			xPos = x+leftMargin*k;
+			xPos = (x+leftMargin)*k;
 			yPos = (resizeMode.position == Position.CENTERED && resizeMode.mode != Mode.RESIZE_PAGE) ? y+(bottomMargin+topMargin)*k : ((currentPage.h-topMargin)-(y+height))*k;
 
 			rotate(rotation);
@@ -3928,7 +4083,7 @@ package org.alivepdf.pdf
 		
 		public function toString ():String
 		{	
-			return "[PDF totalPages="+totalPages+" nbImages="+getTotalProperties(streamDictionary)+" totalFonts="+totalFonts+" embeddedFonts="+totalEmbeddedFonts+" PDFVersion="+version+" AlivePDFVersion="+PDF.ALIVEPDF_VERSION+"]";	
+			return "[PDF totalPages="+totalPages+" nbImages="+getTotalProperties(streamDictionary)+" totalFonts="+totalFonts+" coreFonts="+totalCoreFonts+" embeddedFonts="+totalEmbeddedFonts+" PDFVersion="+version+" AlivePDFVersion="+PDF.ALIVEPDF_VERSION+"]";	
 		} 
 		
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -3944,12 +4099,15 @@ package org.alivepdf.pdf
 		
 		protected function setUnit ( unit:String ):String
 		{	
-			if ( unit == Unit.POINT ) k = 1;
-			else if ( unit == Unit.MM ) k = 72/25.4;
-			else if ( unit == Unit.CM ) k = 72/2.54;
-			else if ( unit == Unit.INCHES ) k = 72;
+			if ( unit == Unit.POINT ) 
+				k = 1;
+			else if ( unit == Unit.MM ) 
+				k = 72/25.4;
+			else if ( unit == Unit.CM ) 
+				k = 72/2.54;
+			else if ( unit == Unit.INCHES ) 
+				k = 72;
 			else throw new RangeError ('Incorrect unit: ' + unit);
-			
 			return unit;	
 		}
 		
@@ -3975,7 +4133,9 @@ package org.alivepdf.pdf
 			while (l--) 
 			{	
 				cwAux += charactersWidth[content.charAt(l)] as int;
-				if ( isNaN ( cwAux ) ) cwAux = 580;
+				
+				if ( isNaN ( cwAux ) ) 
+					cwAux = FontMetrics.DEFAULT_WIDTH;
 			}
 			
 			w = cwAux;
@@ -4057,7 +4217,7 @@ package org.alivepdf.pdf
 			
 			if( aliasNbPages != null )
 				for( n = 0; n<nb; n++ ) 
-					arrayPages[n].content = findAndReplace ( aliasNbPages, ( nb as String ), arrayPages[n].content );
+					arrayPages[n].content = findAndReplace ( aliasNbPages, ( nb.toString() ), arrayPages[n].content );
 			
 			filter = (compress) ? '/Filter /'+Filter.FLATE_DECODE+' ' : '';
 			
@@ -4117,7 +4277,7 @@ package org.alivepdf.pdf
 			write('/ProcSet [/PDF /Text /ImageB /ImageC /ImageI]');
 			write('/Font <<');
 			for each( var font:IFont in fonts ) 
-			write('/F'+font.id+' '+font.resourceId+' 0 R');
+				write('/F'+font.id+' '+font.resourceId+' 0 R');
 			write('>>');
 			write('/XObject <<');
 			writeXObjectDictionary();
@@ -4147,26 +4307,31 @@ package org.alivepdf.pdf
 				write('/Width '+image.width);
 				write('/Height '+image.height);
 				
-				if( image.colorSpace == ColorSpace.INDEXED ) write ('/ColorSpace [/'+ColorSpace.INDEXED+' /'+ColorSpace.DEVICE_RGB+' '+((image as PNGImage).pal.length/3-1)+' '+(n+1)+' 0 R]');
+				if( image.colorSpace == ColorSpace.INDEXED ) 
+					write ('/ColorSpace [/'+ColorSpace.INDEXED+' /'+ColorSpace.DEVICE_RGB+' '+((image as PNGImage).pal.length/3-1)+' '+(n+1)+' 0 R]');
 				else
 				{
 					write('/ColorSpace /'+image.colorSpace);
-					if( image.colorSpace == ColorSpace.DEVICE_CMYK ) write ('/Decode [1 0 1 0 1 0 1 0]');
+					if( image.colorSpace == ColorSpace.DEVICE_CMYK ) 
+						write ('/Decode [1 0 1 0 1 0 1 0]');
 				}
 				
 				write ('/BitsPerComponent '+image.bitsPerComponent);
 				
-				if (image.filter != null ) write ('/Filter /'+image.filter);
+				if (image.filter != null ) 
+					write ('/Filter /'+image.filter);
 				
 				if ( image is PNGImage || image is GIFImage )
 				{
-					if ( image.parameters != null ) write (image.parameters);
+					if ( image.parameters != null ) 
+						write (image.parameters);
 					
 					if ( image.transparency != null && image.transparency is Array )
 					{
 						var trns:String = '';
 						var lng:int = image.transparency.length;
-						for (var i:int=0;i<lng;i++) trns += image.transparency[i]+' '+image.transparency[i]+' ';
+						for (var i:int=0;i<lng;i++) 
+							trns += image.transparency[i]+' '+image.transparency[i]+' ';
 						write('/Mask ['+trns+']');	
 					}
 				}
@@ -4194,7 +4359,7 @@ package org.alivepdf.pdf
 		{
 			var nf:int = n;
 			
-			for (var diff:String in differences)
+			for each(var diff:String in differences)
 			{
 				newObj();
 				write('<</Type /Encoding /BaseEncoding /WinAnsiEncoding /Differences ['+diff+']>>');
@@ -4240,11 +4405,12 @@ package org.alivepdf.pdf
 					write('<</Type /Font');
 					write('/BaseFont /'+name);
 					write('/Subtype /Type1');
-					if( name != FontFamily.SYMBOL && name != FontFamily.ZAPFDINGBATS ) write ('/Encoding /WinAnsiEncoding');
+					if( name != FontFamily.SYMBOL && name != FontFamily.ZAPFDINGBATS ) 
+						write ('/Encoding /WinAnsiEncoding');
 					write('>>');
 					write('endobj');
 				}
-				else if( type == FontType.TYPE1 || type == FontType.TRUETYPE )
+				else if( type == FontType.TYPE1 || type == FontType.TRUETYPE || type == FontType.OPENTYPE )
 				{						
 					newObj();
 					write('<</Type /Font');
@@ -4256,20 +4422,22 @@ package org.alivepdf.pdf
 					write('/FontDescriptor '+(n+2)+' 0 R');
 					if( embeddedFont.encoding != null )
 					{
-						if( embeddedFont.differences != null ) this.write ('/Encoding '+(int(nf)+int(embeddedFont.differences))+' 0 R');
-						this.write ('/Encoding /WinAnsiEncoding');
+						if( embeddedFont.differences != null ) 
+							write ('/Encoding '+(int(nf)+int(embeddedFont.differences)+1)+' 0 R');
+						else write ('/Encoding /WinAnsiEncoding');
 					}
 					write('>>');
 					write('endobj');
 					newObj();
 					s = '[ ';
-					for(var i:int=0; i<255; i++) s += (embeddedFont.widths[i])+' ';
+					for(var i:int=32; i<=0xFF; ++i) 
+						s += (embeddedFont.widths[String.fromCharCode(i)])+' ';
 					write(s+']');
 					write('endobj');
 					newObj();
 					write('<</Type /FontDescriptor');
 					write('/FontName /'+name); 
-					write('/FontWeight '+fontDescription.fontWeight);
+					write('/FontWeight /'+fontDescription.fontWeight);
 					write('/Descent '+fontDescription.descent);
 					write('/Ascent '+fontDescription.ascent);
 					write('/AvgWidth '+fontDescription.averageWidth);
@@ -4279,7 +4447,8 @@ package org.alivepdf.pdf
 					write('/StemV '+fontDescription.stemV);
 					write('/MissingWidth '+fontDescription.missingWidth);
 					write('/CapHeight '+fontDescription.capHeight);
-					write('/FontFile'+(type=='Type1' ? '' : '2')+' '+(embeddedFont.resourceId-1)+' 0 R>>');
+					write('/FontFile'+(type=='Type1' ? '' : '2')+' '+(embeddedFont.resourceId-1)+' 0 R');
+					write('>>');
 					write('endobj');
 					
 				} else throw new Error("Unsupported font type: " + type + "\nMake sure you used the UnicodePDF class if you used the ArialUnicodeMS font class" );
@@ -4350,8 +4519,8 @@ package org.alivepdf.pdf
 				{
 					var parent:* = lru[int(o.level-1)];
 					//Set parent and last pointers
-					outlines[i].parent=parent;
-					outlines[parent].last=i;
+					outlines[i].parent = parent;
+					outlines[parent].last = i;
 					if(o.level > level)
 					{
 						//Level increasing: set first pointer
@@ -4359,14 +4528,15 @@ package org.alivepdf.pdf
 					}
 				}
 				else outlines[i].parent=nb;
+				
 				if(o.level<=level && int(i)>0)
 				{
 					//Set prev and next pointers
-					var prev:int =lru[o.level];
-					outlines[prev].next=i;
+					var prev:int = lru[o.level];
+					outlines[prev].next = i;
 					outlines[i].prev=prev;
 				}
-				lru[o.level]=i;
+				lru[o.level] = i;
 				level=o.level;
 			}
 			
@@ -4378,10 +4548,14 @@ package org.alivepdf.pdf
 				newObj();
 				write('<</Title '+escapeString(p.text));
 				write('/Parent '+(n+int(p.parent))+' 0 R');
-				if(p.prev != null ) write('/Prev '+(n+int(p.prev))+' 0 R');
-				if(p.next != null ) write('/Next '+(n+int(p.next))+' 0 R');
-				if(p.first != null ) write('/First '+(n+int(p.first))+' 0 R');
-				if(p.last != null ) write('/Last '+(n+int(p.last))+' 0 R');
+				if(p.prev != null ) 
+					write('/Prev '+(n+int(p.prev))+' 0 R');
+				if(p.next != null ) 
+					write('/Next '+(n+int(p.next))+' 0 R');
+				if(p.first != null ) 
+					write('/First '+(n+int(p.first))+' 0 R');
+				if(p.last != null ) 
+					write('/Last '+(n+int(p.last))+' 0 R');
 				write ('/C ['+p.redMultiplier+' '+p.greenMultiplier+' '+p.blueMultiplier+']');
 				write(sprintf('/Dest [%d 0 R /XYZ 0 %.2f null]',1+2*p.pages,(currentPage.h-p.y)*k));
 				write('/Count 0>>');
@@ -4399,11 +4573,16 @@ package org.alivepdf.pdf
 		protected function insertInfos():void
 		{
 			write ('/Producer '+escapeString('AlivePDF '+PDF.ALIVEPDF_VERSION));
-			if ((documentTitle != null)) write('/Title '+escapeString(documentTitle));
-			if ((documentSubject != null)) write('/Subject '+escapeString(documentSubject));
-			if ((documentAuthor != null)) write('/Author '+escapeString(documentAuthor));
-			if ((documentKeywords != null)) write('/Keywords '+escapeString(documentKeywords));
-			if ((documentCreator != null)) write('/Creator '+escapeString(documentCreator));
+			if ((documentTitle != null)) 
+				write('/Title '+escapeString(documentTitle));
+			if ((documentSubject != null)) 
+				write('/Subject '+escapeString(documentSubject));
+			if ((documentAuthor != null)) 
+				write('/Author '+escapeString(documentAuthor));
+			if ((documentKeywords != null)) 
+				write('/Keywords '+escapeString(documentKeywords));
+			if ((documentCreator != null)) 
+				write('/Creator '+escapeString(documentCreator));
 			write('/CreationDate '+escapeString('D:'+getCurrentDate()));
 		}
 		
@@ -4414,10 +4593,14 @@ package org.alivepdf.pdf
 			
 			var startingPage:String = pagesReferences[startingPageIndex];
 			
-			if ( zoomMode == Display.FULL_PAGE ) write('/OpenAction ['+startingPage+' /Fit]');
-			else if ( zoomMode == Display.FULL_WIDTH ) write('/OpenAction ['+startingPage+' /FitH null]');
-			else if ( zoomMode == Display.REAL ) write('/OpenAction ['+startingPage+' /XYZ null null '+zoomFactor+']');
-			else if ( !(zoomMode is String) ) write('/OpenAction ['+startingPage+' /XYZ null null '+(zoomMode*.01)+']');
+			if ( zoomMode == Display.FULL_PAGE ) 
+				write('/OpenAction ['+startingPage+' /Fit]');
+			else if ( zoomMode == Display.FULL_WIDTH ) 
+				write('/OpenAction ['+startingPage+' /FitH null]');
+			else if ( zoomMode == Display.REAL ) 
+				write('/OpenAction ['+startingPage+' /XYZ null null '+zoomFactor+']');
+			else if ( !(zoomMode is String) ) 
+				write('/OpenAction ['+startingPage+' /XYZ null null '+(zoomMode*.01)+']');
 			
 			write('/PageLayout /'+layoutMode);
 			
@@ -4429,7 +4612,8 @@ package org.alivepdf.pdf
 				write('/PageMode /UseOutlines');
 			} else write('/PageMode /'+pageMode);
 			
-			if ( js != null )  write('/Names <</JavaScript '+(jsResource)+' 0 R>>');
+			if ( js != null )
+				write('/Names <</JavaScript '+(jsResource)+' 0 R>>');
 			
 			var p:String = nOCGPrint+' 0 R';
 			var v:String = nOCGView+' 0 R';
@@ -4451,10 +4635,14 @@ package org.alivepdf.pdf
 		
 		protected function finishDocument():void
 		{	
-			if ( pageMode == PageMode.USE_ATTACHMENTS ) version = "1.6";
-			else if ( layoutMode == Layout.TWO_PAGE_LEFT || layoutMode == Layout.TWO_PAGE_RIGHT || visibility != null ) version = "1.5";
-			else if ( graphicStates.length && version < "1.4" ) version = "1.4";
-			else if ( outlines.length ) version = "1.4";
+			if ( pageMode == PageMode.USE_ATTACHMENTS ) 
+				version = "1.6";
+			else if ( layoutMode == Layout.TWO_PAGE_LEFT || layoutMode == Layout.TWO_PAGE_RIGHT || visibility != null ) 
+				version = "1.5";
+			else if ( graphicStates.length && version < "1.4" ) 
+				version = "1.4";
+			else if ( outlines.length ) 
+				version = "1.4";
 			//Resources
 			createHeader();
 			var started:Number;
@@ -4481,7 +4669,8 @@ package org.alivepdf.pdf
 			write('xref');
 			write('0 '+(n+1));
 			write('0000000000 65535 f ');
-			for(var i:int=1;i<=n;i++) write(sprintf('%010d 00000 n ',offsets[i]));
+			for( var i:int=1; i<=n; i++) 
+				write(sprintf('%010d 00000 n ', offsets[i]));
 			//Trailer
 			write('trailer');
 			write('<<');
@@ -4497,11 +4686,13 @@ package org.alivepdf.pdf
 		{
 			nbPages = arrayPages.length;
 			state = 2;
-
+			
 			setXY(leftMargin, topMargin);
 			
-			if ( newOrientation == '' ) newOrientation = defaultOrientation;
-			else if ( newOrientation != defaultOrientation ) orientationChanges[nbPages] = true;
+			if ( newOrientation == '' ) 
+				newOrientation = defaultOrientation;
+			else if ( newOrientation != defaultOrientation ) 
+				orientationChanges[nbPages] = true;
 			
 			pageBreakTrigger = arrayPages[nbPages-1].h-bottomMargin;
 			currentOrientation = newOrientation;
@@ -4523,7 +4714,7 @@ package org.alivepdf.pdf
 		{
 			underlinePosition = currentFont.underlinePosition;
 			underlineThickness = currentFont.underlineThickness;
-			var w:Number = getStringWidth(content)+ws*substrCount(content,' ');
+			var w:Number = getStringWidth(content)+ws*substrCount(content, ' ');
 			return sprintf('%.2f %.2f %.2f %.2f re f',x*k,(currentPage.h-(y-(underlinePosition*.001)*fontSize))*k,w*k,(-underlineThickness*.001)*fontSizePt);
 		}
 		
@@ -4535,7 +4726,8 @@ package org.alivepdf.pdf
 		protected function getTotalProperties ( object:Object ):int
 		{
 			var num:int = 0;
-			for (var p:String in object) num++;
+			for (var p:String in object) 
+				num++;
 			return num;
 		}
 		
@@ -4558,11 +4750,14 @@ package org.alivepdf.pdf
 		
 		protected function write( content:String ):void
 		{
-			if ( currentPage == null ) throw new Error ("No pages available, please call the addPage method first.");
-			if ( state == 2 ) currentPage.content += content+"\n";
+			if ( currentPage == null ) 
+				throw new Error ("No pages available, please call the addPage method first.");
+			if ( state == 2 ) 
+				currentPage.content += content+"\n";
 			else 
 			{
-				if ( !isLinux ) buffer.writeMultiByte( content+"\n", "windows-1252" );
+				if ( !isLinux ) 
+					buffer.writeMultiByte( content+"\n", "windows-1252" );
 				else 
 				{
 					var contentTxt:String = content.toString();
@@ -4602,6 +4797,5 @@ package org.alivepdf.pdf
 		{
 			return dispatcher.willTrigger( type );
 		}
-		
 	}	
 }

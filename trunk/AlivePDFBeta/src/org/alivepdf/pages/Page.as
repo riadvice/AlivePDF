@@ -42,7 +42,6 @@ package org.alivepdf.pages
 			
 			if ( _size != null )
 				 _format = _size.dimensions;
-				 
 			else throw new RangeError ("Incorrect dimensions.");
 			
 			_fwPt = _format[0];

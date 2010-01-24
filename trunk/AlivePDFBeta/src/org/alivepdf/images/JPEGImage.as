@@ -54,11 +54,15 @@ package org.alivepdf.images
 						{
 							physicalWidthDpi = getShortBigEndian(data, 8);
 							physicalHeightDpi = getShortBigEndian(data, 10);
+							if ( (data[12] & 0xFF) == 1) 
+								colorSpace = ColorSpace.DEVICE_GRAY;
 							
 						} else if ( data[7] == 2 )
 						{	
 							x = getShortBigEndian(data, 8);
 							y = getShortBigEndian(data, 10);
+							if ( (data[12] & 0xFF) == 1) 
+								colorSpace = ColorSpace.DEVICE_GRAY;
 							
 							physicalWidthDpi = int ( x * 2.54 );
 							physicalHeightDpi = int ( y * 2.54 );	
@@ -77,6 +81,8 @@ package org.alivepdf.images
 					
 					width = getShortBigEndian(data, 3);
 					height = getShortBigEndian(data, 1);
+					if ( (data[5] & 0xFF) == 1) 
+						colorSpace = ColorSpace.DEVICE_GRAY;
 					
 				} else stream.position += size - 2;	
 			}

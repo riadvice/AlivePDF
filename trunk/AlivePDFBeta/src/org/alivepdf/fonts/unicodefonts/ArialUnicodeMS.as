@@ -1,7 +1,11 @@
 package org.alivepdf.fonts.unicodefonts
 {
+	import flash.events.Event;
+	import flash.events.EventDispatcher;
 	import flash.utils.getTimer;
+	
 	import mx.core.ByteArrayAsset;
+	
 	import org.alivepdf.fonts.ICidFont;
 
 	public class ArialUnicodeMS implements ICidFont
@@ -57,12 +61,14 @@ package org.alivepdf.fonts.unicodefonts
 		protected var _cidinfo:Object;
 		
 		protected var _uni2cid:Object;
+		protected var dispatcher:EventDispatcher;
 
 		/**
 		 * Constructor
 		 */		
 		public function ArialUnicodeMS(cid:int=CidInfo.CHINESE_SIMPLIFIED)
 		{
+			dispatcher = new EventDispatcher();
 			_id = getTimer();
 			initCID(cid);
 			_charactersWidth = parseMetricsFile(new arialunicid0Metrics);
@@ -316,6 +322,35 @@ package org.alivepdf.fonts.unicodefonts
 				ret[arr[0]] = arr[1];
 			}
 			return ret;
+		}
+		
+		//--
+		//-- IEventDispatcher
+		//--
+		
+		public function addEventListener( type:String, listener:Function, useCapture:Boolean = false, priority:int = 0, useWeakReference:Boolean = false ):void
+		{
+			dispatcher.addEventListener( type, listener, useCapture, priority, useWeakReference );
+		}
+		
+		public function dispatchEvent( event:Event ):Boolean
+		{
+			return dispatcher.dispatchEvent( event );
+		}
+		
+		public function hasEventListener( type:String ):Boolean
+		{
+			return dispatcher.hasEventListener( type );
+		}
+		
+		public function removeEventListener( type:String, listener:Function, useCapture:Boolean = false ):void
+		{
+			dispatcher.removeEventListener( type, listener, useCapture );
+		}
+		
+		public function willTrigger( type:String ):Boolean
+		{
+			return dispatcher.willTrigger( type );
 		}
 		
 	}

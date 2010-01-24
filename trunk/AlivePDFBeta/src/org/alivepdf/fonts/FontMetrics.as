@@ -10,6 +10,8 @@
 		private static var lookupTables:Array = new Array();
 		private static var lookupFontName:String;
 		
+		public static const DEFAULT_WIDTH:uint = 580;
+		
 		private static var HelveticaBold:Object = {' ':278,'!':333,'"':474,'#':556,'$':556,'%':889,'&':722,'\'':238,'(':333,')':333,'*':389,'+':584,
 		',':278,'-':333,'.':278,'/':278,'0':556,'1':556,'2':556,'3':556,'4':556,'5':556,'6':556,'7':556,'8':556,'9':556,':':333,';':333,'<':584,'=':584,'>':584,'?':611,'@':975,'A':722,
 		'B':722,'C':722,'D':722,'E':667,'F':611,'G':778,'H':722,'I':278,'J':556,'K':722,'L':611,'M':833,'N':722,'O':778,'P':667,'Q':778,'R':722,'S':667,'T':611,'U':722,'V':667,'W':944,
@@ -96,7 +98,8 @@
 		private static function generate ():Object
 		{
 			var obj:Object = new Object();
-			for(var i:int=0;i<=255;i++) obj[String.fromCharCode(i)]=600;
+			for(var i:int=0; i<=0xFF; i++) 
+				obj[String.fromCharCode(i)] = 600;
 			return obj;	
 		}
 				
@@ -109,14 +112,16 @@
 		{	
 			FontMetrics.lookupFontName = fontName;
 			var result:Array = FontMetrics.lookupTables.filter(filter);
-			if ( !result.length ) FontMetrics.lookupTables.push ( { alias : fontName, metrics : metrics } );
+			if ( result.length == 0 ) 
+				FontMetrics.lookupTables.push ( { alias : fontName, metrics : metrics } );
 		}
 		
 		public static function lookUp ( fontName:String ):Object
 		{	
 			FontMetrics.lookupFontName = fontName;
 			var result:Array = FontMetrics.lookupTables.filter(filter);
-			if ( result.length ) return result[0].metrics;
+			if ( result.length > 0 ) 
+				return result[0].metrics;
 			else throw new Error ("Font not available.");	
 		}		
 	}

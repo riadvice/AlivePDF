@@ -16,10 +16,10 @@ package org.alivepdf.fonts
 		private var _italicAngle:int;
 		private var _stemV:int;
 		private var _missingWidth:int;
-		private var _fontWeight:int;
+		private var _fontWeight:String;
 		private var _averageWidth:int;
 		
-		public function FontDescription( fontWeight:int, averageWidth:int, ascent:int, descent:int, capHeight:int, flags:int, fontBoundingBox:Array, italicAngle:int, stemV:int, missingWidth:int )
+		public function FontDescription( fontWeight:String, averageWidth:int, ascent:int, descent:int, capHeight:int, flags:int, fontBoundingBox:Array, italicAngle:int, stemV:int, missingWidth:int )
 		{		
 			_fontWeight = fontWeight;
 			_averageWidth = averageWidth;
@@ -33,7 +33,7 @@ package org.alivepdf.fonts
 			_missingWidth = missingWidth;	
 		}
 		
-		public function get fontWeight ():int
+		public function get fontWeight ():String
 		{	
 			return _fontWeight;	
 		}
