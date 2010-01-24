@@ -45,8 +45,6 @@ package org.alivepdf.pdf
 	import flash.utils.Endian;
 	import flash.utils.getTimer;
 	
-	import mx.utils.object_proxy;
-	
 	import org.alivepdf.cells.CellVO;
 	import org.alivepdf.colors.CMYKColor;
 	import org.alivepdf.colors.GrayColor;
