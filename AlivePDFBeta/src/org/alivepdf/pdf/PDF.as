@@ -3673,9 +3673,10 @@ package org.alivepdf.pdf
 		
 		/**
 		 * The addEPSImage method takes an incoming EPS (.eps) file or Adobe® Illustrator® file (.ai) and render it on the current page.
+		 * Note : Only EPS below or equal to version 8 are handled.
 		 * 
 		 * @param stream
-		 * @param resizeMode
+		 * @param resizeMode 
 		 * @param x
 		 * @param y
 		 * @param width
