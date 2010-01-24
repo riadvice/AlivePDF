@@ -3744,8 +3744,11 @@ package org.alivepdf.pdf
 				source = source.substr(start);
 				
 				var end:int = source.indexOf('%%PageTrailer');
-				if ( end == -1) end = source.indexOf('showpage');
-				if ( end ) source = source.substr(0, end);
+				
+				if ( end == -1) 
+					end = source.indexOf('showpage');
+				if ( end ) 
+					source = source.substr(0, end);
 				
 				write('q');
 				
