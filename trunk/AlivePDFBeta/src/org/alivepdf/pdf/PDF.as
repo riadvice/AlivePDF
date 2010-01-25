@@ -4010,10 +4010,9 @@ package org.alivepdf.pdf
 				resizeMode = new Resize ( Mode.NONE, Position.LEFT );
 			
 			if ( resizeMode.mode == Mode.RESIZE_PAGE )
-			{
 				currentPage.resize( image.width+(leftMargin+rightMargin)*k, image.height+(bottomMargin+topMargin)*k, k );
-				
-			} else if ( resizeMode.mode == Mode.FIT_TO_PAGE )
+			
+			else if ( resizeMode.mode == Mode.FIT_TO_PAGE )
 			{			
 				var ratio:Number = Math.min ( realWidth/image.width, realHeight/image.height );
 				
@@ -4035,9 +4034,9 @@ package org.alivepdf.pdf
 					x = (realWidth - (width*k));
 			}
 			
-			xPos = (x+leftMargin)*k;
+			xPos = (resizeMode.position == Position.LEFT && resizeMode.mode == Mode.NONE) ? (x+leftMargin)*k : x+leftMargin*k;
 			yPos = (resizeMode.position == Position.CENTERED && resizeMode.mode != Mode.RESIZE_PAGE) ? y+(bottomMargin+topMargin)*k : ((currentPage.h-topMargin)-(y+height))*k;
-
+			
 			rotate(rotation);
 			write (sprintf('q %.2f 0 0 %.2f %.2f %.2f cm', width*k, height*k, xPos, yPos));
 			write (sprintf('/I%d Do Q', image.resourceId));
