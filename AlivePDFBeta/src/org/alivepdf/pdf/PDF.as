@@ -342,8 +342,6 @@ package org.alivepdf.pdf
 		protected var fontUnderline:Boolean;
 		protected var jsResource:int;
 		protected var js:String;
-		protected var totalEmbeddedFonts:int;
-		protected var totalCoreFonts:int;
 		protected var widths:*;
 		protected var aligns:Array = new Array();
 		protected var spotColors:Array = new Array();
@@ -782,11 +780,7 @@ package org.alivepdf.pdf
 			
 			if ( currentFont != null ) 
 				setFont ( currentFont, fontSizePt );
-			else 
-			{
-				currentFont = new CoreFont ( FontFamily.HELVETICA );
-				setFont(currentFont, 9);
-			}
+			else setFont(new CoreFont ( FontFamily.HELVETICA ), 9);
 			
 			inHeader = true;
 			header();
@@ -1850,6 +1844,7 @@ package org.alivepdf.pdf
 		
 		/**
 		 * Lets you add a bookmark.
+		 * Note : Multiple calls will create a nice table.
 		 *
 		 * @param text Text appearing in the outline panel
 		 * @param level Specify the bookmark's level
@@ -2003,6 +1998,7 @@ package org.alivepdf.pdf
 		
 		/**
 		 * Lets you control the way the document is to be presented on the screen or in print.
+		 * Note : Very useful to hide any window when the PDF is opened.
 		 *
 		 * @param toolbar Toolbar behavior
 		 * @param menubar Menubar behavior
@@ -2026,6 +2022,7 @@ package org.alivepdf.pdf
 		
 		/**
 		 * Lets you specify which page should be viewed by default when the document is opened.
+		 * Note : This method must be called once all the pages have been created and added through addPage().
 		 *
 		 * @param index Page number
 		 * @example
@@ -2087,9 +2084,6 @@ package org.alivepdf.pdf
 			
 			if ( !fonts.some(filterCallback) ) 
 				fonts.push ( font );
-			if ( font is EmbeddedFont ) 
-				totalEmbeddedFonts++;
-			else totalCoreFonts++;
 			
 			fontFamily = font.name;
 			
@@ -2881,6 +2875,10 @@ package org.alivepdf.pdf
 						cellVO.fontSizePt = fontSizePt;
 						cellVO.color      = fontColor;
 						cellVO.underlined = fontUnderline;
+						
+						//For now, embedded fonts cannot be used with writeFlashHtmlText 
+						if ( currentFont is EmbeddedFont )
+							throw new Error ("Sorry, writeFlashHtmlText does not work for now with embedded fonts.");
 						
 						//Set the font for calculation of character widths
 						var newFont:IFont = new CoreFont ( getFontStyleString(fontBold, fontItalic, fontFamily) );
@@ -3819,12 +3817,13 @@ package org.alivepdf.pdf
 				for ( var i:int=0; i<cnt; i++)
 				{
 					line = lines[i];
-					if (line == '' || line.charAt(0) == '%') continue;
+					if (line == '' || line.charAt(0) == '%') 
+						continue;
 					length = line.length;
 					chunks = line.split(' ');
 					cmd = chunks.pop();
 					
-					if (cmd=='Xa' || cmd=='XA')
+					if (cmd =='Xa' || cmd =='XA')
 					{
 						r = chunks.pop(); 
 						g = chunks.pop();
@@ -4047,7 +4046,7 @@ package org.alivepdf.pdf
 		
 		public function toString ():String
 		{	
-			return "[PDF totalPages="+totalPages+" nbImages="+getTotalProperties(streamDictionary)+" totalFonts="+totalFonts+" coreFonts="+totalCoreFonts+" embeddedFonts="+totalEmbeddedFonts+" PDFVersion="+version+" AlivePDFVersion="+PDF.ALIVEPDF_VERSION+"]";	
+			return "[PDF totalPages="+totalPages+" nbImages="+getTotalProperties(streamDictionary)+" totalFonts="+totalFonts+" PDFVersion="+version+" AlivePDFVersion="+PDF.ALIVEPDF_VERSION+"]";	
 		} 
 		
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

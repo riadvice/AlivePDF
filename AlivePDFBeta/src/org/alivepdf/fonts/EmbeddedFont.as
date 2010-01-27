@@ -140,7 +140,7 @@ package org.alivepdf.fonts
 		
 		public override function toString ():String 
 		{	
-			return "[EmbeddedFont name="+name+" weight="+weight+" type="+type+" description="+description+"]";	
+			return "[EmbeddedFont name="+name+" weight="+weight+" type="+type+"]";	
 		}
 	}
 }

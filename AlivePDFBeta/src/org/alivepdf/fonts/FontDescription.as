@@ -82,5 +82,11 @@ package org.alivepdf.fonts
 		{	
 			return _missingWidth;	
 		}
+		
+		public function toString ():String 
+		{	
+			return "[FontDescription weight="+fontWeight+" width="+averageWidth+" ascent="+ascent+" descent="+descent+" capHeight="+capHeight+" flags="+flags+" boundingBox="+boundingBox+
+					" italicAngle="+italicAngle+" stemV="+stemV+" missingWidth="+missingWidth+"]";	
+		}
 	}
 }
