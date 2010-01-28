@@ -6,6 +6,7 @@ package org.alivepdf.fonts
 	
 	import org.alivepdf.events.CharacterEvent;
 
+	// This class is working but still beta and will be optimized (* types to be removed)
 	public final class AFMParser extends EventDispatcher
 	{
 		protected static var fix:Object = { 'Edot':'Edotaccent','edot':'edotaccent','Idot':'Idotaccent','Zdot':'Zdotaccent','zdot':'zdotaccent',
@@ -166,15 +167,11 @@ package org.alivepdf.fonts
 				if( widthsBuffer['Delta'] == null  && widthsBuffer['increment'] != null )
 					widthsBuffer['Delta'] = widthsBuffer['increment'];
 				
-				for(var i:int =0; i<=0xFF;i++)
+				for(var i:int = 0; i<=0xFF;i++)
 				{
 					if( widthsBuffer[map[i]] == null )
-					{
-						dispatchEvent( new CharacterEvent ( CharacterEvent.CHARACTER_MISSING, "", map[i] ) );
 						widthsBuffer[i] = widthsBuffer['.notdef'];
-					}
-					else
-						widthsBuffer[i] = widthsBuffer[map[i]];
+					else widthsBuffer[i] = widthsBuffer[map[i]];
 				}
 			};
 			return widthsBuffer;

@@ -93,7 +93,7 @@ package org.alivepdf.pdf
 			{
 				if ( font is EmbeddedFont )
 				{
-					if ( font.type == FontType.TRUETYPE )
+					if ( font.type == FontType.TRUE_TYPE )
 					{
 						embeddedFont = font as EmbeddedFont;
 						fontDescription = embeddedFont.description;
@@ -113,7 +113,7 @@ package org.alivepdf.pdf
 				type = font.type;
 				name = font.name;
 				
-				if( type == FontType.CORE )
+				if( type == FontType.TYPE1 )
 				{
 					newObj();
 					write('<</Type /Font');
@@ -123,7 +123,7 @@ package org.alivepdf.pdf
 					write('>>');
 					write('endobj');
 				}
-				else if( type == FontType.TYPE1 || type == FontType.TRUETYPE )
+				else if( type == FontType.TRUE_TYPE )
 				{						
 					newObj();
 					write('<</Type /Font');
@@ -158,7 +158,7 @@ package org.alivepdf.pdf
 					write('/StemV '+fontDescription.stemV);
 					write('/MissingWidth '+fontDescription.missingWidth);
 					write('/CapHeight '+fontDescription.capHeight);
-					write('/FontFile'+(type=='Type1' ? '' : '2')+' '+(embeddedFont.resourceId-1)+' 0 R>>');
+					write('/FontFile'+(type=='Type1' ? '' : '2')+' '+(embeddedFont.id-1)+' 0 R>>');
 					write('endobj');
 					
 				} else if ( type == 'cidfont0' ) 

@@ -7,6 +7,7 @@ package org.alivepdf.fonts
 	
 	import org.alivepdf.events.CharacterEvent;
 	import org.alivepdf.fonts.FontMetrics;
+	import org.alivepdf.fonts.FontType;
 	
 	/**
 	 * This class represents an embedded font.
@@ -28,7 +29,7 @@ package org.alivepdf.fonts
 		
 		/**
 		 * 
-		 * @param stream The font stream - TrueType (.TTF) or OpenType (.OTF)
+		 * @param stream The font stream - TrueType (.TTF) for now
 		 * @param afm Adobe Font Metrics file (.AFM)
 		 * @param codePage The character mapping table - Default CodePage.1252
 		 * 
@@ -36,11 +37,10 @@ package org.alivepdf.fonts
 		public function EmbeddedFont( stream:ByteArray, afm:ByteArray, codePage:Class )
 		{	
 			_afmParser = new AFMParser( stream, afm, codePage );
-			_afmParser.addEventListener( CharacterEvent.CHARACTER_MISSING, characterMissing );
 			_widths = _afmParser.widths;
 			FontMetrics.add ( _afmParser.fontName, _widths );
 			super ( _afmParser.fontName );
-			_type = _afmParser.type;
+			_type = FontType.TRUE_TYPE
 			_encoding = codePage;
 			_description = new FontDescription ( _afmParser.weight, _afmParser.missingWidth, _afmParser.ascender, _afmParser.descender, _afmParser.capHeight, 32, _afmParser.boundingBox, 
 												 _afmParser.italicAngle, _afmParser.stemV,  _afmParser.missingWidth );
