@@ -2085,6 +2085,8 @@ package org.alivepdf.pdf
 			if ( !fonts.some(filterCallback) ) 
 				fonts.push ( font );
 			
+			font.id = fonts.length;
+			
 			fontFamily = font.name;
 			
 			var addedFont:EmbeddedFont;
@@ -2150,7 +2152,7 @@ package org.alivepdf.pdf
 			pushedFontName = font.name;
 			
 			var result:Array = fonts.filter(filterCallback);
-			currentFont = result.length ? result[0] : addFont( font );		
+			currentFont = result.length > 0 ? result[0] : addFont( font );	
 			
 			underline = underlined;
 			fontFamily = currentFont.name;
@@ -2199,7 +2201,7 @@ package org.alivepdf.pdf
 		 */
 		public function removeFont ( font:IFont ):void
 		{
-			if ( font.type == FontType.CORE ) 
+			if ( !(font.type is EmbeddedFont) ) 
 				throw new Error('The font you have passed is a Core font. Core fonts cannot be removed as they are not embedded in the PDF.');
 			var position:int = fonts.indexOf(font);
 			if ( position != -1 ) 
@@ -4421,7 +4423,7 @@ package org.alivepdf.pdf
 			{
 				if ( font is EmbeddedFont )
 				{
-					if ( font.type == FontType.TRUETYPE )
+					if ( font.type == FontType.TRUE_TYPE )
 					{
 						embeddedFont = font as EmbeddedFont;
 						fontDescription = embeddedFont.description;
@@ -4441,7 +4443,7 @@ package org.alivepdf.pdf
 				type = font.type;
 				name = font.name;
 				
-				if( type == FontType.CORE )
+				if( !(font is EmbeddedFont) )
 				{
 					newObj();
 					write('<</Type /Font');
@@ -4452,7 +4454,7 @@ package org.alivepdf.pdf
 					write('>>');
 					write('endobj');
 				}
-				else if( type == FontType.TYPE1 || type == FontType.TRUETYPE || type == FontType.OPENTYPE )
+				else if ( font is EmbeddedFont )
 				{						
 					newObj();
 					write('<</Type /Font');

@@ -12,7 +12,6 @@ package org.alivepdf.fonts
 	 */	
 	public class CoreFont implements IFont
 	{	
-		protected static var idRef:int;
 		protected var _type:String;
 		protected var _name:String;
 		protected var _underlinePosition:int = -100;
@@ -22,13 +21,12 @@ package org.alivepdf.fonts
 		protected var _resourceId:int;
 		protected var _id:int;
 		protected var dispatcher:EventDispatcher;
-
+		
 		public function CoreFont( name:String="Helvetica" )
 		{
 			dispatcher = new EventDispatcher();
 			_name = name;
-			_id = CoreFont.idRef++;
-			_type = FontType.CORE;
+			_type = FontType.TYPE1;
 			var metrics:FontMetrics = new FontMetrics();
 			_charactersWidth = FontMetrics.lookUp(name);	
 		}
@@ -100,7 +98,7 @@ package org.alivepdf.fonts
 		 */		
 		public function get underlineThickness():int
 		{
-			return _underlineThickness;;	
+			return _underlineThickness;
 		}
 		
 		/**
@@ -110,9 +108,7 @@ package org.alivepdf.fonts
 		 */		
 		public function get underlinePosition():int
 		{
-			
 			return _underlinePosition;
-			
 		}
 		
 		/**
