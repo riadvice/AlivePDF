@@ -45,6 +45,9 @@ package org.alivepdf.pdf
 	import flash.utils.Endian;
 	import flash.utils.getTimer;
 	
+	import org.alivepdf.annotations.Annotation;
+	import org.alivepdf.annotations.MovieAnnotation;
+	import org.alivepdf.annotations.TextAnnotation;
 	import org.alivepdf.cells.CellVO;
 	import org.alivepdf.colors.CMYKColor;
 	import org.alivepdf.colors.GrayColor;
@@ -238,7 +241,6 @@ package org.alivepdf.pdf
 		protected var n:int;                 
 		protected var offsets:Array;     
 		protected var state:int;      
-		protected var compress:Boolean;
 		protected var defaultOrientation:String;
 		protected var defaultSize:Size;
 		protected var defaultRotation:int;
@@ -1594,9 +1596,8 @@ package org.alivepdf.pdf
 		public function drawRoundRect ( rect:Rectangle, ellipseWidth:Number ):void
 		{
 			if ( !bitmapFilled )
-			{
 				drawRoundRectComplex ( rect, ellipseWidth, ellipseWidth, ellipseWidth, ellipseWidth );
-			} else
+			else
 			{
 				bitmapFillBuffer.graphics.drawRoundRect( rect.x, rect.y, rect.width, rect.height, ellipseWidth, ellipseWidth );
 				addImage(bitmapFillBuffer, null, rect.x, rect.y);	
@@ -1788,7 +1789,7 @@ package org.alivepdf.pdf
 		/*
 		* AlivePDF Interactive API
 		*
-		* addNote()
+		* addAnnotation()
 		* addTransition()
 		* addBookmark()
 		* addLink()
@@ -1797,49 +1798,31 @@ package org.alivepdf.pdf
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		
 		/**
-		 * Lets you add a text annotation to the current page.
-		 *
-		 * @param x Note X position
-		 * @param y Note Y position
-		 * @param width Note width
-		 * @param height Note height
-		 * @param text Text for the note
-		 * @example
-		 * This example shows how to add a note annotation in the current page :
+		 * Lets you add an annotation to the current page
+		 * @param annotation
+		 * 
+		 * This example shows how to add an annotation for the current page :
 		 * <div class="listing">
 		 * <pre>
-		 *
-		 * myPDF.addNote (100, 75, 50, 50, "A note !");
+		 * 
+		 * var annotation:Annotation = new TextAnnotation ( AnnotationType.TEXT, "This is a text annotation!", 20, 20, 100, 100 );
+		 * myPDF.addAnnotation( annotation );
 		 * </pre>
 		 * </div>
-		 */
-		public function addTextNote ( x:Number, y:Number, width:Number, height:Number, text:String="A note !" ):void
+		 */		
+		public function addAnnotation ( annotation:Annotation ):void
 		{
-			var rectangle:String = x*k + ' ' + (((currentPage.h-y)*k) - (height*k)) + ' ' + ((x*k) + (width*k)) + ' ' + (currentPage.h-y)*k;
-			currentPage.annotations += ( '<</Type /Annot /Name /Help /Border [0 0 1] /Subtype /Text /Rect [ '+rectangle+' ] /Contents ('+text+')>>' );
-		}
-		
-		/**
-		 * Lets you add a stamp annotation to the current page.
-		 *
-		 * @param style Stamp style can be StampStyle.CONFIDENTIAL, StampStyle.FOR_PUBLIC_RELEASE, etc.
-		 * @param x Note X position
-		 * @param y Note Y position
-		 * @param width Note width
-		 * @param height Note height
-		 * @example
-		 * This example shows how to add a stamp annotation in the current page :
-		 * <div class="listing">
-		 * <pre>
-		 *
-		 * myPDF.addStampNote ( StampStyle.CONFIDENTIAL, 15, 15, 50, 50 );
-		 * </pre>
-		 * </div>
-		 */
-		public function addStampNote ( style:String, x:Number, y:Number, width:Number, height:Number ):void
-		{
-			var rectangle:String = x*k + ' ' + (((currentPage.h-y)*k) - (height*k)) + ' ' + ((x*k) + (width*k)) + ' ' + (currentPage.h-y)*k;
-			currentPage.annotations += ( '<</Type /Annot /Name /'+style+' /Subtype /Stamp /Rect [ '+rectangle+' ]>>' );	
+			var rectangle:String = annotation.x*k + ' ' + (((currentPage.h-annotation.y)*k) - (annotation.height*k)) + ' ' + ((annotation.x*k) + (annotation.width*k)) + ' ' + (currentPage.h-annotation.y)*k;
+			
+			if ( annotation is TextAnnotation )
+			{
+				var textAnnotation:TextAnnotation = annotation as TextAnnotation;
+				currentPage.annotations += ( '<</Type /Annot /Border [0 0 1] /Subtype /'+textAnnotation.type+' /Contents '+escapeString(textAnnotation.text)+' /Rect [ '+rectangle+' ]>>' );	
+			} else if ( annotation is MovieAnnotation )
+			{
+				var movieAnnotation:MovieAnnotation = annotation as MovieAnnotation;
+				currentPage.annotations += ( '<</Type /Annot /Border [0 0 1] /Subtype /'+movieAnnotation.type+' /Contents '+escapeString(movieAnnotation.text)+' /Rect [ '+rectangle+' ]>>' );	
+			}
 		}
 		
 		/**
@@ -3208,8 +3191,6 @@ package org.alivepdf.pdf
 		 * This example shows how to add such a grid to the current page :
 		 * <div class="listing">
 		 * <pre>
-		 *
-		 * var grid:Grid = new Grid ( dp.toArray(), 200, 120, new Array (40, 50, 40, 30), new Array ( Align.LEFT, Align.LEFT, Align.LEFT, Align.LEFT ), new RGBColor (0x666666), new RGBColor (0xCCCCCC), new RGBColor (0), true, new RGBColor ( 0x0 ), Joint.MITER );
 		 * 
 		 * // create columns to specify the column order
 		 * var gridColumnAge:GridColumn = new GridColumn("City", "city", 20, Align.LEFT, Align.LEFT);
@@ -3222,10 +3203,8 @@ package org.alivepdf.pdf
 		 * var columns:Array = new Array ( gridColumnAge, gridColumnEmail, gridColumnFirstName, gridColumnLastName );
 		 * 
 		 * // create a Grid object as usual
-		 * var grid:Grid = new Grid( dp.toArray(), 200, 120, new RGBColor ( 0xCCCCCC ), new RGBColor (0xFFFFFF), new RGBColor (0xFFFFFF), false, new RGBColor(0x000000) );				
+		 * var grid:Grid = new Grid( dp.toArray(), 200, 120, new RGBColor ( 0xCCCCCC ), new RGBColor (0xCCCCCC), true, new RGBColor(0x887711), .1, null, columns );
 		 * 
-		 * // pass the columns
-		 * grid.columns = columns;
 		 * p.addGrid( grid );
 		 * </pre>
 		 * </div>
@@ -3272,7 +3251,7 @@ package org.alivepdf.pdf
 			
 			beginFill ( grid.headerColor );
 			setXY ( x+getX(), y+getY() );
-			addRow( columnNames, 0, rect );
+			addRow( columnNames, false, rect );
 			endFill();
 			
 			for (i = 0; i< lng; i++)
@@ -3295,7 +3274,7 @@ package org.alivepdf.pdf
 					if ( repeatHeader ) 
 					{
 						beginFill(grid.headerColor);
-						addRow (columnNames, 0, getRect (columnNames) );
+						addRow (columnNames, false, getRect (columnNames) );
 						endFill();
 						setX ( x + getX() );
 					}
@@ -3303,10 +3282,10 @@ package org.alivepdf.pdf
 				
 				if ( grid.alternateRowColor && Boolean(isEven = i&1) )
 				{
-					beginFill( grid.backgroundColor );
-					addRow( row, 1, rect );
+					beginFill( grid.cellColor );
+					addRow( row, true, rect );
 					endFill();
-				} else addRow( row, 1, rect );
+				} else addRow( row, true, rect );
 			}
 		}
 		
@@ -3317,10 +3296,8 @@ package org.alivepdf.pdf
 			var lng:int = rows.length;
 			
 			for(var i:int=0;i<lng;i++)
-			{
 				if ( (nbL = nbLines(columns[i].width, rows[i])) > nb ) 
 					nb = nbL;
-			}
 			
 			var ph:int = 5;
 			var h:Number = ph*nb;
@@ -3332,7 +3309,7 @@ package org.alivepdf.pdf
 			return new Rectangle(x,y,w,h);
 		}
 		
-		protected function addRow(data:Array, style:int, rect:Rectangle):void
+		protected function addRow(data:Array, style:Boolean, rect:Rectangle):void
 		{		    
 			var a:String;
 			var x:Number = 0;
@@ -3342,13 +3319,15 @@ package org.alivepdf.pdf
 			var h:Number = rect.height;
 			var lng:int = data.length;
 			
-			for(var i:int=0;i<lng;i++)
+			for(var i:int = 0; i<lng; i++)
 			{
 				a = style ? columns[i].cellAlign : columns[i].headerAlign;
 				rect.x = x = getX();
 				rect.y = y = getY();
 				rect.width = w = columns[i].width;
+				lineStyle ( currentGrid.borderColor, 0, 0, currentGrid.borderAlpha );
 				drawRect( rect );
+				setAlpha ( 1 );
 				addMultiCell(w,ph,data[i],0,a);
 				setXY(x+w,y);
 			}
@@ -4263,7 +4242,7 @@ package org.alivepdf.pdf
 				for( n = 0; n<nb; n++ ) 
 					arrayPages[n].content = findAndReplace ( aliasNbPages, ( nb.toString() ), arrayPages[n].content );
 			
-			filter = (compress) ? '/Filter /'+Filter.FLATE_DECODE+' ' : '';
+			filter = new String();
 			
 			offsets[1] = buffer.length;
 			write('1 0 obj');
@@ -4281,32 +4260,19 @@ package org.alivepdf.pdf
 				write('/Parent 1 0 R');
 				write (sprintf ('/MediaBox [0 0 %.2f %.2f]', page.width, page.height) );
 				write ('/Resources 2 0 R');
-				if ( page.annotations != '' ) write ('/Annots [' + page.annotations + ']');
+				if ( page.annotations != '' ) 
+					write ('/Annots [' + page.annotations + ']');
 				write ('/Rotate ' + page.rotation);
-				if ( page.advanceTiming != 0 ) write ('/Dur ' + page.advanceTiming);
-				if ( page.transitions.length ) write ( page.transitions );
+				if ( page.advanceTiming != 0 ) 
+					write ('/Dur ' + page.advanceTiming);
+				if ( page.transitions.length > 0 ) 
+					write ( page.transitions );
 				write ('/Contents '+(n+1)+' 0 R>>');
 				write ('endobj');
-				
-				if ( compress ) 
-				{
-					compressedPages.writeMultiByte( page.content+"\n", "windows-1252" );
-					compressedPages.compress();
-					newObj();
-					write('<<'+filter+'/Length '+compressedPages.length+'>>');
-					write('stream');
-					buffer.writeBytes( compressedPages );
-					buffer.writeUTFBytes("\n");
-					write('endstream');
-					write('endobj');
-					
-				} else 
-				{
-					newObj();
-					write('<<'+filter+'/Length '+page.content.length+'>>');
-					writeStream(page.content.substr(0, page.content.length-1));
-					write('endobj');
-				}
+				newObj();
+				write('<<'+filter+'/Length '+page.content.length+'>>');
+				writeStream(page.content.substr(0, page.content.length-1));
+				write('endobj');
 			}
 		}
 		
@@ -4339,7 +4305,7 @@ package org.alivepdf.pdf
 		
 		protected function insertImages ():void
 		{
-			var filter:String = (compress) ? '/Filter /'+Filter.FLATE_DECODE+' ': '';
+			var filter:String = new String();
 			var stream:ByteArray;
 			
 			for each ( var image:PDFImage in streamDictionary )
@@ -4391,7 +4357,7 @@ package org.alivepdf.pdf
 				if( image.colorSpace == ColorSpace.INDEXED )
 				{
 					newObj();
-					var pal:String = compress ? (image as PNGImage).pal : (image as PNGImage).pal
+					var pal:String = (image as PNGImage).pal;
 					write('<<'+filter+'/Length '+pal.length+'>>');
 					writeStream(pal);
 					write('endobj');
@@ -4649,7 +4615,8 @@ package org.alivepdf.pdf
 			
 			write('/PageLayout /'+layoutMode);
 			
-			if ( viewerPreferences.length ) write ( '/ViewerPreferences '+ viewerPreferences );
+			if ( viewerPreferences.length ) 
+				write ( '/ViewerPreferences '+ viewerPreferences );
 			
 			if ( outlines.length )
 			{

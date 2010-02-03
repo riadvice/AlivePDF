@@ -15,8 +15,8 @@ package org.alivepdf.images
 		
 		protected override function parse():void
 		{
-			width = bitmap.width;
-			height = bitmap.height;
+			_width = bitmap.width;
+			_height = bitmap.height;
 		}
 	}
 }

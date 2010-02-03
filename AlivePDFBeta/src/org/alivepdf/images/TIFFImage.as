@@ -12,8 +12,6 @@ package org.alivepdf.images
 			super(imageStream, colorSpace, id);
 		}
 		
-		protected override function parse ():void
-		{
-		}
+		protected override function parse ():void{};
 	}
 }

@@ -114,10 +114,14 @@ package org.alivepdf.pages
 		
 		public function setUnit ( unit:String ):String
 		{
-			if ( unit == Unit.POINT ) _k = 1;
-			else if ( unit == Unit.MM ) _k = 72/25.4;
-			else if ( unit == Unit.CM ) _k = 72/2.54;
-			else if ( unit == Unit.INCHES ) _k = 72;
+			if ( unit == Unit.POINT ) 
+				_k = 1;
+			else if ( unit == Unit.MM ) 
+				_k = 72/25.4;
+			else if ( unit == Unit.CM ) 
+				_k = 72/2.54;
+			else if ( unit == Unit.INCHES ) 
+				_k = 72;
 			else throw new RangeError ('Incorrect unit: ' + unit);
 			
 			return unit;	

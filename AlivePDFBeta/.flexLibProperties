@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <flexLibProperties includeAllClasses="false" version="1">
   <includeClasses>
-    <classEntry path="org.alivepdf.annotations.AttachFileStyle"/>
-    <classEntry path="org.alivepdf.annotations.StampStyle"/>
     <classEntry path="org.alivepdf.cells.CellVO"/>
     <classEntry path="org.alivepdf.colors.CMYKColor"/>
     <classEntry path="org.alivepdf.colors.GrayColor"/>
@@ -102,6 +100,10 @@
     <classEntry path="org.alivepdf.viewing.ToolBar"/>
     <classEntry path="org.alivepdf.viewing.WindowUI"/>
     <classEntry path="org.alivepdf.visibility.Visibility"/>
+    <classEntry path="org.alivepdf.annotations.Annotation"/>
+    <classEntry path="org.alivepdf.annotations.AnnotationType"/>
+    <classEntry path="org.alivepdf.annotations.TextAnnotation"/>
+    <classEntry path="org.alivepdf.annotations.MovieAnnotation"/>
   </includeClasses>
   <includeResources>
     <resourceEntry destPath="org/alivepdf/fonts/map/koi8-u.map" sourcePath="org/alivepdf/fonts/map/koi8-u.map"/>

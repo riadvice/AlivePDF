@@ -6,9 +6,9 @@ package org.alivepdf.images
 	
 	public class JPEGImage extends PDFImage
 	{
-		private var format:int;
-		private var physicalWidthDpi:int;
-		private var physicalHeightDpi:int;
+		protected var format:int;
+		protected var physicalWidthDpi:int;
+		protected var physicalHeightDpi:int;
 		
 		public static const FORMAT:int = 0;
 		public static const HEADER:int = 0xFFD8;
@@ -16,7 +16,7 @@ package org.alivepdf.images
 		public function JPEGImage( imageStream:ByteArray, colorSpace:String, id:int )
 		{
 			super ( imageStream, colorSpace, id );
-			filter = Filter.DCT_DECODE;
+			_filter = Filter.DCT_DECODE;
 		}
 		
 		protected override function parse ():void
@@ -84,8 +84,8 @@ package org.alivepdf.images
 					bitsPerComponent = (colorSpace != ColorSpace.DEVICE_RGB) ? 8 : ( data[0] & 0xFF ) * ( data[5] & 0xFF ) / 3;
 					progressive = marker == 0xFFC2 || marker == 0xFFC6 || marker == 0xFFCA || marker == 0xFFCE;
 					
-					width = getShortBigEndian(data, 3);
-					height = getShortBigEndian(data, 1);
+					_width = getShortBigEndian(data, 3);
+					_height = getShortBigEndian(data, 1);
 					
 					if ( (data[5] & 0xFF) == 1) 
 						colorSpace = ColorSpace.DEVICE_GRAY;
