@@ -7,8 +7,8 @@ package org.alivepdf.images
 	public class PNGImage extends PDFImage
 	{
 		protected var idataBytes:ByteArray;
-		private var palBytes:ByteArray;
-		private var type:int;
+		protected var palBytes:ByteArray;
+		protected var type:int;
 		
 		public static const HEADER:int = 0x8950;
 		public static const PLTE:int = 0x504C5445;
@@ -26,7 +26,7 @@ package org.alivepdf.images
 		public function PNGImage ( imageStream:ByteArray, colorSpace:String, id:int )
 		{
 			super ( imageStream, colorSpace, id );
-			filter = Filter.FLATE_DECODE;
+			_filter = Filter.FLATE_DECODE;
 		}
 		
 		protected override function parse ():void
@@ -36,8 +36,8 @@ package org.alivepdf.images
 			
 			stream.position = PNGImage.I16;
 			
-			width = stream.readInt();
-			height = stream.readInt();
+			_width = stream.readInt();
+			_height = stream.readInt();
 
 			bitsPerComponent = stream.readByte();
 			
@@ -60,7 +60,7 @@ package org.alivepdf.images
 			
 			stream.position += PNGImage.I4;
 			
-			parameters = '/DecodeParms <</Predictor 15 /Colors '+(ct == PNGImage.I2 ? PNGImage.I3 : PNGImage.I1)+' /BitsPerComponent '+bitsPerComponent+' /Columns '+width+'>>';
+			_parameters = '/DecodeParms <</Predictor 15 /Colors '+(ct == PNGImage.I2 ? PNGImage.I3 : PNGImage.I1)+' /BitsPerComponent '+bitsPerComponent+' /Columns '+width+'>>';
 			
 			var trns:String = '';
 			

@@ -5,7 +5,7 @@ package org.alivepdf.images
 
 	public final class DoPNGImage extends PNGImage
 	{
-		private var bitmap:BitmapData;
+		protected var bitmap:BitmapData;
 		
 		public function DoPNGImage( buffer:BitmapData, imageStream:ByteArray, id:int)
 		{
@@ -16,9 +16,9 @@ package org.alivepdf.images
 		
 		protected override function parse():void
 		{
-			width = bitmap.width;
-			height = bitmap.height;
-			parameters = '/DecodeParms <</Predictor 15 /Colors 3 /BitsPerComponent '+bitsPerComponent+' /Columns '+width+'>>';
+			_width = bitmap.width;
+			_height = bitmap.height;
+			_parameters = '/DecodeParms <</Predictor 15 /Colors 3 /BitsPerComponent '+bitsPerComponent+' /Columns '+width+'>>';
 		}	
 	}
 }

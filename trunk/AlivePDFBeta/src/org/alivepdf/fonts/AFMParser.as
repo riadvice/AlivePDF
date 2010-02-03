@@ -24,8 +24,7 @@ package org.alivepdf.fonts
 		protected static const EURO:String = "Euro";
 		
 		private static const TRUETYPE:int = 0x10000;
-		private static const OPENTYPE:int = 0x4F54544F;
-		private static const TYPE1:int = 0;
+		private static const TYPE1:int = 0x25;
 		
 		protected var _widths:Dictionary;
 		protected var _fontName:String;
@@ -261,23 +260,21 @@ package org.alivepdf.fonts
 			
 			makeFontDescriptor(fm, map.length == 0);
 			
-			if (fontfile)
+			if (fontfile != null)
 			{
 				fontfile.position = 0;
 				var header:uint = fontfile.readUnsignedInt();
 				
 				if( header == AFMParser.TRUETYPE )
-					_type = 'TrueType';
-				else if ( header == AFMParser.OPENTYPE )
-					_type = 'OpenType';
-				else if( header == AFMParser.TYPE1 )
-					_type = 'Type1';
+					_type = FontType.TRUE_TYPE;
+				else if( !(fontfile.position = 0) && fontfile.readByte() == AFMParser.TYPE1 )
+					_type = FontType.TYPE1;
 				else
 					throw new Error('Error: unrecognized font file.');
 			}
 			else
 			{
-				if( type!='TrueType' && type != 'Type1' )
+				if( type != FontType.TRUE_TYPE && type != FontType.TYPE1 )
 					throw new Error('<b>Error:</b> incorrect font type: '+type);
 			}
 			

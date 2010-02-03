@@ -24,7 +24,7 @@ package org.alivepdf.data
 		private var _alternateRowColor:Boolean;
 		private var _serializer:ISerializer;
 		
-		public function Grid( data:Array, width:Number, height:Number, headerColor:IColor, backgroundColor:IColor, cellColor:IColor, alternateRowColor:Boolean, borderColor:IColor, borderAlpha:Number=1,joints:String="0 j")
+		public function Grid( data:Array, width:Number, height:Number, headerColor:IColor, cellColor:IColor, alternateRowColor:Boolean, borderColor:IColor, borderAlpha:Number=1, joints:String="0 j", columns:Array=null)
 		{
 			_data = data;
 			_width = width;
@@ -32,15 +32,17 @@ package org.alivepdf.data
 			_borderColor = borderColor;
 			_borderAlpha = borderAlpha;
 			_joints = joints;
-			_backgroundColor = backgroundColor;
 			_headerColor = headerColor;
 			_cellColor = cellColor;
 			_alternateRowColor = alternateRowColor;	
+			if ( columns != null )
+				this.columns = columns; 
 		}
 		
 		public function export ( type:String="csv" ):ByteArray
 		{
-			if ( type == Export.CSV ) _serializer = new CSVExport(_data, _columns);
+			if ( type == Export.CSV ) 
+				_serializer = new CSVExport(_data, _columns);
 			return _serializer.serialize();
 		}
 		
@@ -89,29 +91,14 @@ package org.alivepdf.data
 			return _borderColor;	
 		}
 		
-		public function set borderColor ( color:IColor ):void
-		{
-			_borderColor = color;	
-		}
-		
 		public function get borderAlpha ():Number
 		{
 			return _borderAlpha;	
 		}
 		
-		public function set borderAlpha ( alpha:Number ):void
-		{
-			_borderAlpha = alpha;	
-		}
-		
 		public function get joints ():String
 		{
 			return _joints;	
-		}
-		
-		public function get backgroundColor ():IColor
-		{
-			return _backgroundColor;	
 		}
 		
 		public function get headerColor ():IColor
