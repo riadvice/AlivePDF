@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <flexLibProperties includeAllClasses="false" version="1">
   <includeClasses>
+    <classEntry path="org.alivepdf.annotations.Annotation"/>
+    <classEntry path="org.alivepdf.annotations.AnnotationType"/>
+    <classEntry path="org.alivepdf.annotations.MovieAnnotation"/>
+    <classEntry path="org.alivepdf.annotations.TextAnnotation"/>
     <classEntry path="org.alivepdf.cells.CellVO"/>
     <classEntry path="org.alivepdf.colors.CMYKColor"/>
     <classEntry path="org.alivepdf.colors.GrayColor"/>
@@ -100,43 +104,9 @@
     <classEntry path="org.alivepdf.viewing.ToolBar"/>
     <classEntry path="org.alivepdf.viewing.WindowUI"/>
     <classEntry path="org.alivepdf.visibility.Visibility"/>
-    <classEntry path="org.alivepdf.annotations.Annotation"/>
-    <classEntry path="org.alivepdf.annotations.AnnotationType"/>
-    <classEntry path="org.alivepdf.annotations.TextAnnotation"/>
-    <classEntry path="org.alivepdf.annotations.MovieAnnotation"/>
+    <classEntry path="org.alivepdf.codabar.CodaBar"/>
+    <classEntry path="org.alivepdf.gradients.ShadingType"/>
   </includeClasses>
-  <includeResources>
-    <resourceEntry destPath="org/alivepdf/fonts/map/koi8-u.map" sourcePath="org/alivepdf/fonts/map/koi8-u.map"/>
-    <resourceEntry destPath="org/alivepdf/fonts/map/iso-8859-1.map" sourcePath="org/alivepdf/fonts/map/iso-8859-1.map"/>
-    <resourceEntry destPath="org/alivepdf/fonts/unicodefonts/uni2cid/uni2cid_ac15" sourcePath="org/alivepdf/fonts/unicodefonts/uni2cid/uni2cid_ac15"/>
-    <resourceEntry destPath="org/alivepdf/fonts/map/iso-8859-5.map" sourcePath="org/alivepdf/fonts/map/iso-8859-5.map"/>
-    <resourceEntry destPath="org/alivepdf/fonts/map/cp1255.map" sourcePath="org/alivepdf/fonts/map/cp1255.map"/>
-    <resourceEntry destPath="org/alivepdf/fonts/map/cp1251.map" sourcePath="org/alivepdf/fonts/map/cp1251.map"/>
-    <resourceEntry destPath="org/alivepdf/fonts/map/cp1254.map" sourcePath="org/alivepdf/fonts/map/cp1254.map"/>
-    <resourceEntry destPath="org/alivepdf/.DS_Store" sourcePath="org/alivepdf/.DS_Store"/>
-    <resourceEntry destPath="org/alivepdf/fonts/map/iso-8859-7.map" sourcePath="org/alivepdf/fonts/map/iso-8859-7.map"/>
-    <resourceEntry destPath="org/alivepdf/fonts/map/cp1250.map" sourcePath="org/alivepdf/fonts/map/cp1250.map"/>
-    <resourceEntry destPath="org/alivepdf/fonts/unicodefonts/arialunicid0_metrics" sourcePath="org/alivepdf/fonts/unicodefonts/arialunicid0_metrics"/>
-    <resourceEntry destPath="org/alivepdf/fonts/map/iso-8859-15.map" sourcePath="org/alivepdf/fonts/map/iso-8859-15.map"/>
-    <resourceEntry destPath="org/alivepdf/fonts/map/cp1258.map" sourcePath="org/alivepdf/fonts/map/cp1258.map"/>
-    <resourceEntry destPath="org/alivepdf/images/.DS_Store" sourcePath="org/alivepdf/images/.DS_Store"/>
-    <resourceEntry destPath="org/alivepdf/fonts/map/iso-8859-11.map" sourcePath="org/alivepdf/fonts/map/iso-8859-11.map"/>
-    <resourceEntry destPath="org/alivepdf/fonts/unicodefonts/uni2cid/uni2cid_ak12" sourcePath="org/alivepdf/fonts/unicodefonts/uni2cid/uni2cid_ak12"/>
-    <resourceEntry destPath="org/alivepdf/fonts/unicodefonts/uni2cid/.DS_Store" sourcePath="org/alivepdf/fonts/unicodefonts/uni2cid/.DS_Store"/>
-    <resourceEntry destPath="org/alivepdf/fonts/map/iso-8859-16.map" sourcePath="org/alivepdf/fonts/map/iso-8859-16.map"/>
-    <resourceEntry destPath="org/alivepdf/fonts/unicodefonts/uni2cid/uni2cid_aj16" sourcePath="org/alivepdf/fonts/unicodefonts/uni2cid/uni2cid_aj16"/>
-    <resourceEntry destPath="org/alivepdf/fonts/map/iso-8859-2.map" sourcePath="org/alivepdf/fonts/map/iso-8859-2.map"/>
-    <resourceEntry destPath="org/alivepdf/fonts/map/cp1252.map" sourcePath="org/alivepdf/fonts/map/cp1252.map"/>
-    <resourceEntry destPath="org/alivepdf/fonts/map/iso-8859-4.map" sourcePath="org/alivepdf/fonts/map/iso-8859-4.map"/>
-    <resourceEntry destPath="org/alivepdf/fonts/map/cp1253.map" sourcePath="org/alivepdf/fonts/map/cp1253.map"/>
-    <resourceEntry destPath="org/alivepdf/fonts/unicodefonts/uni2cid/uni2cid_ag15" sourcePath="org/alivepdf/fonts/unicodefonts/uni2cid/uni2cid_ag15"/>
-    <resourceEntry destPath="org/alivepdf/fonts/map/koi8-r.map" sourcePath="org/alivepdf/fonts/map/koi8-r.map"/>
-    <resourceEntry destPath="org/alivepdf/fonts/map/iso-8859-9.map" sourcePath="org/alivepdf/fonts/map/iso-8859-9.map"/>
-    <resourceEntry destPath="org/alivepdf/fonts/map/cp874.map" sourcePath="org/alivepdf/fonts/map/cp874.map"/>
-    <resourceEntry destPath="org/alivepdf/fonts/map/cp1257.map" sourcePath="org/alivepdf/fonts/map/cp1257.map"/>
-    <resourceEntry destPath="org/alivepdf/fonts/.DS_Store" sourcePath="org/alivepdf/fonts/.DS_Store"/>
-    <resourceEntry destPath="org/alivepdf/fonts/unicodefonts/.DS_Store" sourcePath="org/alivepdf/fonts/unicodefonts/.DS_Store"/>
-    <resourceEntry destPath=".DS_Store" sourcePath=".DS_Store"/>
-  </includeResources>
+  <includeResources/>
   <namespaceManifests/>
 </flexLibProperties>
