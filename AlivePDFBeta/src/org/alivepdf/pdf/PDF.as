@@ -49,6 +49,7 @@ package org.alivepdf.pdf
 	import org.alivepdf.annotations.MovieAnnotation;
 	import org.alivepdf.annotations.TextAnnotation;
 	import org.alivepdf.cells.CellVO;
+	import org.alivepdf.codabar.CodaBar;
 	import org.alivepdf.colors.CMYKColor;
 	import org.alivepdf.colors.GrayColor;
 	import org.alivepdf.colors.IColor;
@@ -75,6 +76,7 @@ package org.alivepdf.pdf
 	import org.alivepdf.fonts.FontMetrics;
 	import org.alivepdf.fonts.FontType;
 	import org.alivepdf.fonts.IFont;
+	import org.alivepdf.gradients.ShadingType;
 	import org.alivepdf.html.HTMLTag;
 	import org.alivepdf.images.ColorSpace;
 	import org.alivepdf.images.DoJPEGImage;
@@ -354,6 +356,7 @@ package org.alivepdf.pdf
 		protected var nOCGPrint:int;
 		protected var nOCGView:int;
 		protected var startingPageIndex:uint;
+		protected var gradients:Array = new Array();
 
 		/**
 		 * The PDF class represents a PDF document.
@@ -1761,6 +1764,170 @@ package org.alivepdf.pdf
 			}
 			
 			end();
+		}
+		
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		/*
+		* AlivePDF Gradient API
+		* linearGradient()
+		* radialGradient()
+		*
+		*/
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		
+		public function linearGradient(x:int, y:int, width:int, height:int, col1:Array, col2:Array,coordinates:Array):void
+		{
+			clip(x,y,width,height);
+			gradient(2,col1,col2,coordinates);
+		}
+		
+		public function radialGradient(x:int, y:int, width:int, height:int, col1:Array, col2:Array, coordinates:Array):void
+		{
+			clip(x,y,width,height);
+			gradient(3,col1,col2,coordinates);
+		}
+		
+		public function clip(x:int,y:int,width:int,height:int):void
+		{
+			var s:String = 'q';
+			s += sprintf(' %.2F %.2F %.2F %.2F re W n', x*k, (currentPage.h-y)*k, width*k, -height*k);
+			s += sprintf(' %.3F 0 0 %.3F %.3F %.3F cm', width*k, height*k, x*k, (currentPage.h-(y+height))*k);
+			write(s);
+		}
+		
+		protected function gradient(gradientType:int, col1:Array, col2:Array, coords:Array):void
+		{
+			var n:int = gradients.length+1;
+			if(col1[1] == null)
+				col1[1] = col1[2] = col1[0];
+			var colBuffer1:String = sprintf('%.3F %.3F %.3F',(col1[0]/255),(col1[1]/255),(col1[2]/255));
+			if(col2[1] == null) 
+				col2[1] = col2[2] = col2[0];
+			var colBuffer2:String = sprintf('%.3F %.3F %.3F',(col2[0]/255),(col2[1]/255),(col2[2]/255));
+			var gradient:ShadingType = gradients[n] = new ShadingType ( gradientType, coords, colBuffer1, colBuffer2 );
+			write('/Sh'+n+' sh');
+			write('Q');
+		}
+		
+		protected function insertShaders():void
+		{
+			var coords:Array;
+			var f1:int;
+			
+			for each (var grad:ShadingType in gradients)
+			{  
+				coords = grad.coords;
+				
+				if(grad.type == ShadingType.TYPE2 || grad.type == ShadingType.TYPE3)
+				{
+					newObj();
+					write('<<');
+					write('/FunctionType 2');
+					write('/Domain [0.0 1.0]');
+					write('/C0 ['+grad.col1+']');
+					write('/C1 ['+grad.col2+']');
+					write('/N 1');
+					write('>>');
+					write('endobj');
+					f1 = n;
+				}
+				
+				newObj();
+				write('<<');
+				write('/ShadingType '+grad.type);
+				write('/ColorSpace /DeviceRGB');
+				
+				if( grad.type == ShadingType.TYPE2)
+				{
+					write(sprintf('/Coords [%.3F %.3F %.3F %.3F]', coords[0], coords[1], coords[2], coords[3]));
+					write('/Function '+f1+' 0 R');
+					write('/Extend [true true] ');
+					write('>>');
+				}
+				else if( grad.type == ShadingType.TYPE3)
+				{
+					write(sprintf('/Coords [%.3F %.3F 0 %.3F %.3F %.3F]', coords[0], coords[1], coords[2], coords[3], coords[4]));
+					write('/Function '+f1+' 0 R');
+					write('/Extend [true true] ');
+					write('>>');
+				}
+				else if( grad.type == ShadingType.TYPE6)
+				{
+					write('/BitsPerCoordinate 16');
+					write('/BitsPerComponent 8');
+					write('/Decode[0 1 0 1 0 1 0 1 0 1]');
+					write('/BitsPerFlag 8');
+					write('/Length '+grad.stream.length);
+					write('>>');
+					buffer.writeBytes(grad.stream);
+				}
+				write('endobj');
+				grad.id = n;
+			}
+		}
+		
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		/*
+		* AlivePDF BarCodde API
+		*
+		* addCodaBar()
+		*
+		*/
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		
+		/**
+		 * Allows you to add a CodaBar (Monarch) to the current page at any position.
+		 * @param codaBar
+		 
+		 * This example shows how to add a CodaBar to the current page at position of 20, 20 :
+		 * <div class="listing">
+		 * <pre>
+		 * 
+		 * var barCode:CodaBar = new CodaBar ( 20, 20, "0123456789" );
+		 * myPDF.addCodaBar( barCode );
+		 * </pre>
+		 * </div>
+		 */		
+		public function addCodaBar( codaBar:CodaBar ):void
+		{	
+			setFont( new CoreFont ( FontFamily.ARIAL ) );
+			addText(codaBar.code, codaBar.x, codaBar.y+codaBar.height + 4);
+			lineStyle ( new RGBColor ( 0x000000), 0, 0, 1 );
+			beginFill( new RGBColor ( 0x000000 ) );
+			
+			var code:String = (codaBar.start+codaBar.code+codaBar.end).toUpperCase();
+			var char:String;
+			var seq:Array;
+			var barChar:Dictionary;
+			var lineWidth:Number = 0;
+			var lng:int = 0x7;
+			var lngCode:int = code.length;
+			var rect:Rectangle = new Rectangle(codaBar.x, codaBar.y, lineWidth, codaBar.height);
+			
+			for(var i:int=0; i<lngCode; i++)
+			{
+				barChar = codaBar.barChar;
+				char = code.charAt(i);
+				
+				if(barChar[char] == null )
+					throw new Error('Invalid character in barcode: '+char);
+				
+				seq = barChar[char];
+				
+				for(var j:int=0; j<lng; j++)
+				{
+					lineWidth = codaBar.baseWidth*seq[j]/6.5;
+					
+					if( (j & 1) == 0 )
+					{
+						rect.width = lineWidth;
+						rect.x = codaBar.x;
+						drawRect( rect );
+					}
+					codaBar.x += lineWidth;
+				}
+				codaBar.x += codaBar.baseWidth*10.4/6.5;
+			}
 		}
 		
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -4301,6 +4468,13 @@ package org.alivepdf.pdf
 				write('/CS'+color.i+' '+color.n+' 0 R');
 			write('>>');
 			write('/Properties <</OC1 '+nOCGPrint+' 0 R /OC2 '+nOCGView+' 0 R>>');
+			write('/Shading <<');
+			for (var $id:* in gradients)
+			{
+				var $grad:* = gradients[$id];
+				write('/Sh'+$id+' '+$grad['id']+' 0 R');
+			}
+			write('>>');
 		}
 		
 		protected function insertImages ():void
@@ -4483,6 +4657,7 @@ package org.alivepdf.pdf
 		
 		protected function writeResources():void
 		{
+			insertShaders();
 			insertOCG();
 			insertSpotColors();
 			insertExtGState();

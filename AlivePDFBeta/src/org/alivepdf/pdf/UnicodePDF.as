@@ -119,7 +119,8 @@ package org.alivepdf.pdf
 					write('<</Type /Font');
 					write('/BaseFont /'+name);
 					write('/Subtype /Type1');
-					if( name != FontFamily.SYMBOL && name != FontFamily.ZAPFDINGBATS ) write ('/Encoding /WinAnsiEncoding');
+					if( name != FontFamily.SYMBOL && name != FontFamily.ZAPFDINGBATS ) 
+						write ('/Encoding /WinAnsiEncoding');
 					write('>>');
 					write('endobj');
 				}
@@ -135,14 +136,16 @@ package org.alivepdf.pdf
 					write('/FontDescriptor '+(n+2)+' 0 R');
 					if( embeddedFont.encoding != null )
 					{
-						if( embeddedFont.differences != null ) this.write ('/Encoding '+(int(nf)+int(embeddedFont.differences))+' 0 R');
+						if( embeddedFont.differences != null ) 
+							this.write ('/Encoding '+(int(nf)+int(embeddedFont.differences))+' 0 R');
 						this.write ('/Encoding /WinAnsiEncoding');
 					}
 					write('>>');
 					write('endobj');
 					newObj();
 					s = '[ ';
-					for(var i:int=0; i<255; i++) s += (embeddedFont.widths[i])+' ';
+					for(var i:int=0; i<255; i++) 
+						s += (embeddedFont.widths[i])+' ';
 					write(s+']');
 					write('endobj');
 					newObj();
