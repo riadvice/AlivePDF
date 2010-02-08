@@ -14,6 +14,7 @@ package org.alivepdf.images
 		protected var _transparency:String;
 		protected var _parameters:String;
 		protected var _pal:String;
+		protected var _masked:Boolean;
 		protected var ct:Number;
 		protected var progressive:Boolean;
 		protected var stream:ByteArray;
@@ -26,6 +27,11 @@ package org.alivepdf.images
 			parse();
 		}
 		
+		public function get masked():Boolean
+		{
+			return _masked;
+		}
+
 		public function get transparency():String
 		{
 			return _transparency;

@@ -79,6 +79,7 @@ package org.alivepdf.images
 				} else if ( type == PNGImage.TRNS )
 				{
 					
+					
 				} else if ( type == PNGImage.IDAT )
 				{	
 					stream.readBytes(idataBytes, idataBytes.length, n);
