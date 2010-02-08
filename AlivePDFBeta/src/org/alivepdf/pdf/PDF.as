@@ -2588,22 +2588,8 @@ package org.alivepdf.pdf
 				
 			} else currentX += width;
 		}
-		
-		/**
-		 * 
-		 * @param width
-		 * @param height
-		 * @param text
-		 * @param border
-		 * @param ln
-		 * @param align
-		 * @param fill
-		 * @param link
-		 * @param scale
-		 * @param force
-		 * 
-		 */		
-		public function addCellFit(width:Number, height:Number=0, text:String='', border:*=0, ln:Number=0, align:String='', fill:Number=0, link:ILink=null, scale:Boolean=false, force:Boolean=true):void
+			
+		protected function addCellFit(width:Number, height:Number=0, text:String='', border:*=0, ln:Number=0, align:String='', fill:Number=0, link:ILink=null, scale:Boolean=false, force:Boolean=true):void
 		{
 			var stringWidth:Number = getStringWidth(text);
 			
@@ -2635,7 +2621,7 @@ package org.alivepdf.pdf
 		}
 		
 		/**
-		 * 
+		 * Adds a cell with horizontal scaling only if necessary
 		 * @param width
 		 * @param height
 		 * @param text
@@ -2652,7 +2638,7 @@ package org.alivepdf.pdf
 		}
 		
 		/**
-		 * 
+		 * Adds a cell with horizontal scaling always
 		 * @param width
 		 * @param height
 		 * @param text
@@ -2669,7 +2655,7 @@ package org.alivepdf.pdf
 		}
 		
 		/**
-		 * 
+		 * Adds a cell with character spacing only if necessary
 		 * @param width
 		 * @param height
 		 * @param text
@@ -2686,7 +2672,7 @@ package org.alivepdf.pdf
 		}
 		
 		/**
-		 * 
+		 * Adds a cell with character spacing always
 		 * @param width
 		 * @param height
 		 * @param text
