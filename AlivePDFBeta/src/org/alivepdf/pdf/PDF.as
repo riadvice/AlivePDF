@@ -1818,7 +1818,7 @@ package org.alivepdf.pdf
 			{  
 				coords = grad.coords;
 				
-				if(grad.type == ShadingType.TYPE2 || grad.type == ShadingType.TYPE3)
+				if (grad.type == ShadingType.TYPE2 || grad.type == ShadingType.TYPE3)
 				{
 					newObj();
 					write('<<');
@@ -1837,21 +1837,21 @@ package org.alivepdf.pdf
 				write('/ShadingType '+grad.type);
 				write('/ColorSpace /DeviceRGB');
 				
-				if( grad.type == ShadingType.TYPE2)
+				if( grad.type == ShadingType.TYPE2 )
 				{
 					write(sprintf('/Coords [%.3F %.3F %.3F %.3F]', coords[0], coords[1], coords[2], coords[3]));
 					write('/Function '+f1+' 0 R');
 					write('/Extend [true true] ');
 					write('>>');
 				}
-				else if( grad.type == ShadingType.TYPE3)
+				else if( grad.type == ShadingType.TYPE3 )
 				{
 					write(sprintf('/Coords [%.3F %.3F 0 %.3F %.3F %.3F]', coords[0], coords[1], coords[2], coords[3], coords[4]));
 					write('/Function '+f1+' 0 R');
 					write('/Extend [true true] ');
 					write('>>');
 				}
-				else if( grad.type == ShadingType.TYPE6)
+				else if( grad.type == ShadingType.TYPE6 )
 				{
 					write('/BitsPerCoordinate 16');
 					write('/BitsPerComponent 8');
@@ -2587,6 +2587,141 @@ package org.alivepdf.pdf
 					currentX = leftMargin;
 				
 			} else currentX += width;
+		}
+		
+		/**
+		 * 
+		 * @param width
+		 * @param height
+		 * @param text
+		 * @param border
+		 * @param ln
+		 * @param align
+		 * @param fill
+		 * @param link
+		 * @param scale
+		 * @param force
+		 * 
+		 */		
+		public function addCellFit(width:Number, height:Number=0, text:String='', border:*=0, ln:Number=0, align:String='', fill:Number=0, link:ILink=null, scale:Boolean=false, force:Boolean=true):void
+		{
+			var stringWidth:Number = getStringWidth(text);
+			
+			if(width==0)
+				width = currentPage.w-rightMargin-currentX;
+			
+			var ratio:Number = (width-currentMargin*2)/stringWidth;
+			var fit:Boolean = (ratio < 1 || (ratio > 1 && force));
+			
+			if (fit)
+			{
+				if (scale)
+				{
+					var $horiz_scale:Number = ratio*100.0;
+					write(sprintf('BT %.2F Tz ET',$horiz_scale));
+				}
+				else
+				{
+					var $char_space:Number = (width-currentMargin*2-stringWidth)/Math.max(getStringLength(text)-1,1)*k
+					write(sprintf('BT %.2F Tc ET',$char_space));
+				}
+				var $align:String = '';
+			}
+			
+			addCell(width,height,text,border,ln,align,fill,link);
+			
+			if (fit)
+				write('BT '+(scale ? '100 Tz' : '0 Tc')+' ET');
+		}
+		
+		/**
+		 * 
+		 * @param width
+		 * @param height
+		 * @param text
+		 * @param border
+		 * @param ln
+		 * @param align
+		 * @param fill
+		 * @param link
+		 * 
+		 */		
+		public function addCellFitScale(width:Number, height:Number=0, text:String='', border:*=0, ln:Number=0, align:String='', fill:Number=0, link:ILink=null):void
+		{
+			addCellFit(width,height,text,border,ln,align,fill,link,true,false);
+		}
+		
+		/**
+		 * 
+		 * @param width
+		 * @param height
+		 * @param text
+		 * @param border
+		 * @param ln
+		 * @param align
+		 * @param fill
+		 * @param link
+		 * 
+		 */		
+		public function addCellFitScaleForce(width:Number, height:Number=0, text:String='', border:*=0, ln:Number=0, align:String='', fill:Number=0, link:ILink=null):void
+		{
+			addCellFit(width,height,text,border,ln,align,fill,link,true,true);
+		}
+		
+		/**
+		 * 
+		 * @param width
+		 * @param height
+		 * @param text
+		 * @param border
+		 * @param ln
+		 * @param align
+		 * @param fill
+		 * @param link
+		 * 
+		 */		
+		public function addCellFitSpace(width:Number, height:Number=0, text:String='', border:*=0, ln:Number=0, align:String='', fill:Number=0, link:ILink=null):void
+		{
+			addCellFit(width,height,text,border,ln,align,fill,link,false,false);
+		}
+		
+		/**
+		 * 
+		 * @param width
+		 * @param height
+		 * @param text
+		 * @param border
+		 * @param ln
+		 * @param align
+		 * @param fill
+		 * @param link
+		 * 
+		 */		
+		public function addCellFitSpaceForce(width:Number, height:Number=0, text:String='', border:*=0, ln:Number=0, align:String='', fill:Number=0, link:ILink=null):void
+		{
+			addCellFit(width,height,text,border,ln,align,fill,link,false,true);
+		}
+		
+		protected function getStringLength($s:String):int
+		{
+			if(currentFont.type == FontType.TYPE0)
+			{
+				var $len:int = 0;
+				var $nbbytes:int = $s.length;
+				for (var $i:int = 0; $i < $nbbytes; $i++)
+				{
+					if ( $s[$i].charCodeAt(0) < 128 )
+						$len++;
+					else
+					{
+						$len++;
+						$i++;
+					}
+				}
+				return $len;
+			}
+			else
+				return $s.length;
 		}
 		
 		/**
@@ -3709,112 +3844,6 @@ package org.alivepdf.pdf
 			js = script;
 		}
 		
-		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		/*
-		* AlivePDF image API
-		*
-		* addImage()
-		* addImageStream()
-		* textStyle()
-		* addCell()
-		* addMultiCell()
-		* writeText()
-		*
-		*/
-		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		
-		/**
-		 * The addImage method takes an incoming DisplayObject. A JPG or PNG (non-transparent) snapshot is done and included in the PDF document.
-		 * 
-		 * @param displayObject The DisplayObject to embed as a bitmap in the PDF
-		 * @param resizeMode A resizing behavior, like : new Resize ( Mode.FIT_TO_PAGE, Position.CENTERED ) to center the image in the page
-		 * @param x The x position
-		 * @param y The y position
-		 * @param width The width of the image
-		 * @param height The height of the image
-		 * @param rotation The rotation of the image
-		 * @param alpha The image alpha
-		 * @param keepTransformation Do you want the image current transformation (scaled, rotated) to be preserved
-		 * @param imageFormat The compression to use for the image (PNG or JPG)
-		 * @param quality The compression quality if JPG is used
-		 * @param blendMode The blend mode to use if multiple images are overlapping
-		 * @param link The link to associate the image with when clicked
-		 * @example
-		 * This example shows how to add a 100% compression quality JPG image centerd on the page :
-		 * <div class="listing">
-		 * <pre>
-		 *
-		 * myPDF.addImage( displayObject, new Resize ( Mode.FIT_TO_PAGE, Position.CENTERED ) );
-		 * </pre>
-		 * </div>
-		 * 
-		 * This example shows how to add a 100% compression quality JPG image with no resizing behavior positioned at 20, 20 on the page:
-		 * <div class="listing">
-		 * <pre>
-		 *
-		 * myPDF.addImage( displayObject, null, 20, 20 );
-		 * </pre>
-		 * </div>
-		 * 
-		 */	 
-		public function addImage ( displayObject:DisplayObject, resizeMode:Resize=null, x:Number=0, y:Number=0, width:Number=0, height:Number=0, rotation:Number=0, alpha:Number=1, keepTransformation:Boolean=true, imageFormat:String="PNG", quality:Number=100, blendMode:String="Normal", link:ILink=null ):void
-		{			
-			if ( streamDictionary[displayObject] == null )
-			{	
-				var bytes:ByteArray;				
-				var bitmapDataBuffer:BitmapData;
-				var transformMatrix:Matrix;
-				
-				displayObjectbounds = displayObject.getBounds( displayObject );
-				
-				if ( keepTransformation )
-				{
-					bitmapDataBuffer = new BitmapData ( displayObject.width, displayObject.height, false );
-					transformMatrix = displayObject.transform.matrix;
-					transformMatrix.tx = transformMatrix.ty = 0;
-					transformMatrix.translate( -(displayObjectbounds.x*displayObject.scaleX), -(displayObjectbounds.y*displayObject.scaleY) );
-					
-				} else 
-				{	
-					bitmapDataBuffer = new BitmapData ( displayObject.width, displayObject.height, false );
-					transformMatrix = new Matrix();
-					transformMatrix.translate( -displayObjectbounds.x, -displayObjectbounds.y );
-				}
-				
-				bitmapDataBuffer.draw ( displayObject, transformMatrix );
-				
-				var id:int = getTotalProperties ( streamDictionary )+1;
-				
-				if ( imageFormat == ImageFormat.JPG ) 
-				{
-					var encoder:JPEGEncoder = new JPEGEncoder ( quality );
-					bytes = encoder.encode ( bitmapDataBuffer );
-					image = new DoJPEGImage ( bitmapDataBuffer, bytes, id );
-					
-				} else if ( imageFormat == ImageFormat.PNG )
-				{
-					bytes = PNGEncoder.encode ( bitmapDataBuffer );
-					image = new DoPNGImage ( bitmapDataBuffer, bytes, id );
-					
-				} else
-				{
-					bytes = TIFFEncoder.encode ( bitmapDataBuffer );
-					image = new DoTIFFImage ( bitmapDataBuffer, bytes, id );
-				}
-				
-				streamDictionary[displayObject] = image;
-				
-			} else image = streamDictionary[displayObject];
-			
-			setAlpha( alpha, blendMode );
-			placeImage( x, y, width, height, rotation, resizeMode, link );
-		}
-		
-		private function addTransparentImage ( displayObject:DisplayObject ):void
-		{
-			// TBD
-		}
-		
 		/**
 		 * The addEPSImage method takes an incoming EPS (.eps) file or Adobe® Illustrator® file (.ai) and render it on the current page.
 		 * Note : Only EPS below or equal to version 8 are handled.
@@ -4063,6 +4092,20 @@ package org.alivepdf.pdf
 			} else throw new Error("No bounding box found in the current EPS file");
 		}
 		
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		/*
+		* AlivePDF image API
+		*
+		* addImage()
+		* addImageStream()
+		* textStyle()
+		* addCell()
+		* addMultiCell()
+		* writeText()
+		*
+		*/
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+				
 		/**
 		 * The addImageStream method takes an incoming image as a ByteArray. This method can be used to embed high-quality images (300 dpi) to the PDF.
 		 * You must specify the image color space, if you don't know, there is a lot of chance the color space will be ColorSpace.DEVICE_RGB.
@@ -4132,6 +4175,98 @@ package org.alivepdf.pdf
 			
 			setAlpha ( alpha, blendMode );
 			placeImage( x, y, width, height, rotation, resizeMode, link );
+		}
+		
+		/**
+		 * The addImage method takes an incoming DisplayObject. A JPG or PNG (non-transparent) snapshot is done and included in the PDF document.
+		 * 
+		 * @param displayObject The DisplayObject to embed as a bitmap in the PDF
+		 * @param resizeMode A resizing behavior, like : new Resize ( Mode.FIT_TO_PAGE, Position.CENTERED ) to center the image in the page
+		 * @param x The x position
+		 * @param y The y position
+		 * @param width The width of the image
+		 * @param height The height of the image
+		 * @param rotation The rotation of the image
+		 * @param alpha The image alpha
+		 * @param keepTransformation Do you want the image current transformation (scaled, rotated) to be preserved
+		 * @param imageFormat The compression to use for the image (PNG or JPG)
+		 * @param quality The compression quality if JPG is used
+		 * @param blendMode The blend mode to use if multiple images are overlapping
+		 * @param link The link to associate the image with when clicked
+		 * @example
+		 * This example shows how to add a 100% compression quality JPG image centerd on the page :
+		 * <div class="listing">
+		 * <pre>
+		 *
+		 * myPDF.addImage( displayObject, new Resize ( Mode.FIT_TO_PAGE, Position.CENTERED ) );
+		 * </pre>
+		 * </div>
+		 * 
+		 * This example shows how to add a 100% compression quality JPG image with no resizing behavior positioned at 20, 20 on the page:
+		 * <div class="listing">
+		 * <pre>
+		 *
+		 * myPDF.addImage( displayObject, null, 20, 20 );
+		 * </pre>
+		 * </div>
+		 * 
+		 */	 
+		public function addImage ( displayObject:DisplayObject, resizeMode:Resize=null, x:Number=0, y:Number=0, width:Number=0, height:Number=0, rotation:Number=0, alpha:Number=1, keepTransformation:Boolean=true, imageFormat:String="PNG", quality:Number=100, blendMode:String="Normal", link:ILink=null ):void
+		{			
+			if ( streamDictionary[displayObject] == null )
+			{	
+				var bytes:ByteArray;				
+				var bitmapDataBuffer:BitmapData;
+				var transformMatrix:Matrix;
+				
+				displayObjectbounds = displayObject.getBounds( displayObject );
+				
+				if ( keepTransformation )
+				{
+					bitmapDataBuffer = new BitmapData ( displayObject.width, displayObject.height, false );
+					transformMatrix = displayObject.transform.matrix;
+					transformMatrix.tx = transformMatrix.ty = 0;
+					transformMatrix.translate( -(displayObjectbounds.x*displayObject.scaleX), -(displayObjectbounds.y*displayObject.scaleY) );
+					
+				} else 
+				{	
+					bitmapDataBuffer = new BitmapData ( displayObject.width, displayObject.height, false );
+					transformMatrix = new Matrix();
+					transformMatrix.translate( -displayObjectbounds.x, -displayObjectbounds.y );
+				}
+				
+				bitmapDataBuffer.draw ( displayObject, transformMatrix );
+				
+				var id:int = getTotalProperties ( streamDictionary )+1;
+				
+				if ( imageFormat == ImageFormat.JPG ) 
+				{
+					var encoder:JPEGEncoder = new JPEGEncoder ( quality );
+					bytes = encoder.encode ( bitmapDataBuffer );
+					image = new DoJPEGImage ( bitmapDataBuffer, bytes, id );
+					
+				} else if ( imageFormat == ImageFormat.PNG )
+				{
+					bytes = PNGEncoder.encode ( bitmapDataBuffer );
+					image = new DoPNGImage ( bitmapDataBuffer, bytes, id );
+					
+				} else
+				{
+					bytes = TIFFEncoder.encode ( bitmapDataBuffer );
+					image = new DoTIFFImage ( bitmapDataBuffer, bytes, id );
+				}
+				
+				streamDictionary[displayObject] = image;
+				
+			} else image = streamDictionary[displayObject];
+			
+			setAlpha( alpha, blendMode );
+			placeImage( x, y, width, height, rotation, resizeMode, link );
+		}
+		
+		private function addTransparentImage ( displayObject:DisplayObject ):void
+		{
+			// TBD
 		}
 		
 		protected function placeImage ( x:Number, y:Number, width:Number, height:Number, rotation:Number, resizeMode:Resize, link:ILink ):void
@@ -4469,11 +4604,8 @@ package org.alivepdf.pdf
 			write('>>');
 			write('/Properties <</OC1 '+nOCGPrint+' 0 R /OC2 '+nOCGView+' 0 R>>');
 			write('/Shading <<');
-			for (var $id:* in gradients)
-			{
-				var $grad:* = gradients[$id];
-				write('/Sh'+$id+' '+$grad['id']+' 0 R');
-			}
+			for (var i:String in gradients)
+				write('/Sh'+i+' '+gradients[i].id+' 0 R');
 			write('>>');
 		}
 		
@@ -4490,6 +4622,9 @@ package org.alivepdf.pdf
 				write('/Subtype /Image');
 				write('/Width '+image.width);
 				write('/Height '+image.height);
+				
+				if ( image.masked )
+					write('/SMask '+(n-1)+' 0 R');
 				
 				if( image.colorSpace == ColorSpace.INDEXED ) 
 					write ('/ColorSpace [/'+ColorSpace.INDEXED+' /'+ColorSpace.DEVICE_RGB+' '+((image as PNGImage).pal.length/3-1)+' '+(n+1)+' 0 R]');
