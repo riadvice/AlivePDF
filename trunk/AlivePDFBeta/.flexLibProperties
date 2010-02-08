@@ -106,6 +106,7 @@
     <classEntry path="org.alivepdf.visibility.Visibility"/>
     <classEntry path="org.alivepdf.codabar.CodaBar"/>
     <classEntry path="org.alivepdf.gradients.ShadingType"/>
+    <classEntry path="org.alivepdf.templates.Invoice"/>
   </includeClasses>
   <includeResources/>
   <namespaceManifests/>
