@@ -105,7 +105,7 @@ package org.alivepdf.pdf
 	import org.alivepdf.saving.Method;
 	import org.alivepdf.tools.sprintf;
 	import org.alivepdf.visibility.Visibility;
-
+	
 	/**
 	 * Dispatched when a page has been added to the PDF. The addPage() method generate this event
 	 *
@@ -357,7 +357,7 @@ package org.alivepdf.pdf
 		protected var nOCGView:int;
 		protected var startingPageIndex:uint;
 		protected var gradients:Array = new Array();
-
+		
 		/**
 		 * The PDF class represents a PDF document.
 		 *
@@ -375,7 +375,7 @@ package org.alivepdf.pdf
 		{
 			init ( orientation, unit, pageSize, rotation );
 		}
-	
+		
 		/**
 		 * Lets you specify the left, top, and right margins.
 		 *
@@ -1775,19 +1775,19 @@ package org.alivepdf.pdf
 		*/
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		
-		public function linearGradient(x:int, y:int, width:int, height:int, col1:Array, col2:Array,coordinates:Array):void
+		public function linearGradient(x:Number, y:Number, width:Number, height:Number, col1:Array, col2:Array,coordinates:Array):void
 		{
 			clip(x,y,width,height);
 			gradient(2,col1,col2,coordinates);
 		}
 		
-		public function radialGradient(x:int, y:int, width:int, height:int, col1:Array, col2:Array, coordinates:Array):void
+		public function radialGradient(x:Number, y:Number, width:Number, height:Number, col1:Array, col2:Array, coordinates:Array):void
 		{
 			clip(x,y,width,height);
 			gradient(3,col1,col2,coordinates);
 		}
 		
-		public function clip(x:int,y:int,width:int,height:int):void
+		public function clip(x:Number,y:Number,width:Number,height:Number):void
 		{
 			var s:String = 'q';
 			s += sprintf(' %.2F %.2F %.2F %.2F re W n', x*k, (currentPage.h-y)*k, width*k, -height*k);
@@ -1864,6 +1864,143 @@ package org.alivepdf.pdf
 				write('endobj');
 				grad.id = n;
 			}
+		}
+		
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		/*
+		* AlivePDF clipping API
+		*
+		* clippingText()
+		* clippingRect()
+		* clippingRoundedRect()
+		* clippingEllipse()
+		* clippingCircle()
+		* clippingPolygon()
+		*
+		*/
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		
+		public function clippingText(x:Number, y:Number, text:String, outline:Boolean=false):void
+		{
+			var op:int = outline ? 5 : 7;
+			write(sprintf('q BT %.2F %.2F Td %d Tr (%s) Tj ET',
+				x*k,
+				(currentPage.h-y)*k,
+				op,
+				escapeIt(text)));
+		}
+		
+		public function clippingRect(x:Number, y:Number, width:Number, height:Number, outline:Boolean=false):void
+		{
+			var op:String = outline ? 'S' : 'n';
+			write(sprintf('q %.2F %.2F %.2F %.2F re W %s',
+				currentX*k,
+				(currentPage.h-y)*k,
+				width*k,-currentPage.h*k,
+				op));
+		}
+		
+		protected function arc(x1:Number, y1:Number, x2:Number, y2:Number, x3:Number, y3:Number):void
+		{
+			var h:Number = currentPage.h;
+			write(sprintf('%.2F %.2F %.2F %.2F %.2F %.2F c ', x1*k, (h-y1)*k,
+				x2*k, (h-y2)*k, x3*k, (h-y3)*k));
+		}
+		
+		public function clippingRoundedRect(x:Number, y:Number, width:Number, height:Number, radius:Number, outline:Boolean=false):void
+		{
+			var hp:Number = currentPage.h;
+			var op:String = outline ? 'S' : 'n';
+			
+			var myArc:Number = 4/3 * (Math.sqrt(2) - 1);
+			
+			write(sprintf('q %.2F %.2F m',(x+radius)*k,(hp-y)*k ));
+			var xc:Number = x+width-radius;
+			var yc:Number = y+radius;
+			write(sprintf('%.2F %.2F l', xc*k,(hp-y)*k ));
+			arc(xc + radius*myArc, yc - radius, xc + radius, yc - radius*myArc, xc + radius, yc);
+			xc = x+width-radius ;
+			yc = y+height-radius;
+			write(sprintf('%.2F %.2F l',(x+width)*k,(hp-yc)*k));
+			arc(xc + radius, yc + radius*myArc, xc + radius*myArc, yc + radius, xc, yc + radius);
+			xc = x+radius ;
+			yc = y+height-radius;
+			write(sprintf('%.2F %.2F l',xc*k,(hp-(y+height))*k));
+			arc(xc - radius*myArc, yc + radius, xc - radius, yc + radius*myArc, xc - radius, yc);
+			xc = x+radius ;
+			yc = y+radius;
+			write(sprintf('%.2F %.2F l',(x)*k,(hp-yc)*k ));
+			arc(xc - radius, yc - radius*myArc, xc - radius*myArc, yc - radius, xc, yc - radius);
+			write(' W '+op);
+		}
+		
+		public function clippingEllipse(x:Number, y:Number, ty:Number, ry:Number, outline:Boolean=false):void
+		{
+			var op:String = outline ? 'S' : 'n';
+			var lx:Number = 4/3*(1.41421356237309504880-1)*ty;
+			var ly:Number = 4/3*(1.41421356237309504880-1)*ry;
+			var k:Number = k;
+			var h:Number = currentPage.h;
+			
+			write(sprintf('q %.2F %.2F m %.2F %.2F %.2F %.2F %.2F %.2F c',
+				(x+ty)*k,(h-y)*k,
+				(x+ty)*k,(h-(y-ly))*k,
+				(x+lx)*k,(h-(y-ry))*k,
+				x*k,(h-(y-ry))*k));
+			write(sprintf('%.2F %.2F %.2F %.2F %.2F %.2F c',
+				(x-lx)*k,(h-(y-ry))*k,
+				(x-ty)*k,(h-(y-ly))*k,
+				(x-ty)*k,(h-y)*k));
+			write(sprintf('%.2F %.2F %.2F %.2F %.2F %.2F c',
+				(x-ty)*k,(h-(y+ly))*k,
+				(x-lx)*k,(h-(y+ry))*k,
+				x*k,(h-(y+ry))*k));
+			write(sprintf('%.2F %.2F %.2F %.2F %.2F %.2F c W %s',
+				(x+lx)*k,(h-(y+ry))*k,
+				(x+ty)*k,(h-(y+ly))*k,
+				(x+ty)*k,(h-y)*k,
+				op));
+		}
+		
+		public function clippingCircle(x:Number, y:Number, radius:Number, outline:Boolean=false):void
+		{
+			clippingEllipse(x, y, radius, radius, outline);
+		}
+		
+		public function clippingPolygon(points:Array, outline:Boolean=false):void
+		{
+			var op:String = outline ? 'S' : 'n';
+			var h:Number = currentPage.h;
+			var k:Number = k;
+			var points_string:String = '';
+			
+			for(var $i:int = 0; $i<points.length; $i+=2)
+			{
+				points_string += sprintf('%.2F %.2F', points[$i]*k, (h-points[int($i+1)])*k);
+				if($i==0)
+					points_string += ' m ';
+				else
+					points_string += ' l ';
+			}
+			
+			write('q '+points_string+'h W '+op);
+		}
+		
+		public function unsetClipping():void
+		{
+			write('Q');
+		}
+		
+		public function clippedCell(width:Number, height:Number=0, text:String='', border:*=0, ln:Number=0, align:String='', fill:Number=0, link:ILink=null):void
+		{
+			if(border || fill || currentY+height>pageBreakTrigger)
+			{
+				addCell(width,height,'',border,0,'',fill);
+				currentX -= width;
+			}
+			clippingRect(currentX,currentY,width,height);
+			addCell(width,height,text,'',ln,align,fill,link);
+			unsetClipping();
 		}
 		
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1946,7 +2083,7 @@ package org.alivepdf.pdf
 			if ( visible == Visibility.PRINT )
 				write('/OC /OC1 BDC');
 			else if( visible == Visibility.SCREEN )
-			write('/OC /OC2 BDC');
+				write('/OC /OC2 BDC');
 			else if ( visible != Visibility.ALL )
 				throw new Error('Incorrect visibility: '+visible);
 			visibility = visible;
@@ -2402,6 +2539,10 @@ package org.alivepdf.pdf
 		* addText()
 		* textStyle()
 		* addCell()
+		* addCellFitScale()
+		* addCellFitScaleForce()
+		* addCellFitSpace()
+		* addCellFitSpaceForce()
 		* addMultiCell()
 		* writeText()
 		*
@@ -2588,7 +2729,7 @@ package org.alivepdf.pdf
 				
 			} else currentX += width;
 		}
-			
+		
 		protected function addCellFit(width:Number, height:Number=0, text:String='', border:*=0, ln:Number=0, align:String='', fill:Number=0, link:ILink=null, scale:Boolean=false, force:Boolean=true):void
 		{
 			var stringWidth:Number = getStringWidth(text);
@@ -3066,7 +3207,7 @@ package org.alivepdf.pdf
 						break;
 					case "<P>":
 						
-					for each ( attr in aTaggedString[k].attr )
+						for each ( attr in aTaggedString[k].attr )
 					{	
 						switch ( String ( attr.name() ).toUpperCase() )
 						{	
@@ -3090,28 +3231,28 @@ package org.alivepdf.pdf
 						break;
 					case "<FONT>":
 						for each ( attr in aTaggedString[k].attr )
-						{
-							switch ( String ( attr.name() ).toUpperCase() )
-							{	
-								case "FACE":
-									// TODO: Add Font Face Support
-									break;
-								case "SIZE":
-									fs = parseInt( String ( attr ) );
-									break;
-								case "COLOR":
-									fontColor = RGBColor.hexStringToRGBColor( String ( attr ) );
-									break;
-								case "LETTERSPACING":
-									cs = parseInt( String ( attr ) );
-									break;
-								case "KERNING":
-									// TODO
-									break;
-								default:
-									break;
-							}
+					{
+						switch ( String ( attr.name() ).toUpperCase() )
+						{	
+							case "FACE":
+								// TODO: Add Font Face Support
+								break;
+							case "SIZE":
+								fs = parseInt( String ( attr ) );
+								break;
+							case "COLOR":
+								fontColor = RGBColor.hexStringToRGBColor( String ( attr ) );
+								break;
+							case "LETTERSPACING":
+								cs = parseInt( String ( attr ) );
+								break;
+							case "KERNING":
+								// TODO
+								break;
+							default:
+								break;
 						}
+					}
 						break;
 					case "</FONT>":
 						fontColor = textColor as RGBColor;
@@ -3394,7 +3535,7 @@ package org.alivepdf.pdf
 			for(i = 0; i < lng; i++)
 			{	
 				cellVO = CellVO ( lineArray[int(i)] );
-
+				
 				currentX = cellVO.x + offsetX;
 				currentY = cellVO.y + offsetY;
 				
@@ -3862,7 +4003,7 @@ package org.alivepdf.pdf
 			if (regs.length > 1)
 			{
 				var version:String = regs[1];
-
+				
 				if ( version.indexOf("Adobe Illustrator") != -1 )
 				{
 					var buffVersion:Array = version.split(" ");
@@ -3874,10 +4015,10 @@ package org.alivepdf.pdf
 			}
 			
 			var start:int = source.indexOf('%!PS-Adobe');
-
+			
 			if (start != -1) 
 				source = source.substr(start);
-
+			
 			regs = source.match(/%%BoundingBox:([^\r\n]+)/);
 			
 			var x1:Number;
@@ -4084,14 +4225,10 @@ package org.alivepdf.pdf
 		*
 		* addImage()
 		* addImageStream()
-		* textStyle()
-		* addCell()
-		* addMultiCell()
-		* writeText()
 		*
 		*/
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-				
+		
 		/**
 		 * The addImageStream method takes an incoming image as a ByteArray. This method can be used to embed high-quality images (300 dpi) to the PDF.
 		 * You must specify the image color space, if you don't know, there is a lot of chance the color space will be ColorSpace.DEVICE_RGB.
@@ -4279,7 +4416,7 @@ package org.alivepdf.pdf
 			
 			if ( resizeMode.mode == Mode.RESIZE_PAGE )
 				currentPage.resize( image.width+(leftMargin+rightMargin)*k, image.height+(bottomMargin+topMargin)*k, k );
-			
+				
 			else if ( resizeMode.mode == Mode.FIT_TO_PAGE )
 			{			
 				var ratio:Number = Math.min ( realWidth/image.width, realHeight/image.height );
@@ -4567,7 +4704,7 @@ package org.alivepdf.pdf
 		protected function writeXObjectDictionary():void
 		{
 			for each ( var image:PDFImage in streamDictionary ) 
-				write('/I'+image.resourceId+' '+image.n+' 0 R');
+			write('/I'+image.resourceId+' '+image.n+' 0 R');
 		}
 		
 		protected function writeResourcesDictionary():void
@@ -4575,7 +4712,7 @@ package org.alivepdf.pdf
 			write('/ProcSet [/PDF /Text /ImageB /ImageC /ImageI]');
 			write('/Font <<');
 			for each( var font:IFont in fonts ) 
-				write('/F'+font.id+' '+font.resourceId+' 0 R');
+			write('/F'+font.id+' '+font.resourceId+' 0 R');
 			write('>>');
 			write('/XObject <<');
 			writeXObjectDictionary();
@@ -4586,7 +4723,7 @@ package org.alivepdf.pdf
 			write('>>');
 			write('/ColorSpace <<');
 			for each( var color:SpotColor in spotColors)
-				write('/CS'+color.i+' '+color.n+' 0 R');
+			write('/CS'+color.i+' '+color.n+' 0 R');
 			write('>>');
 			write('/Properties <</OC1 '+nOCGPrint+' 0 R /OC2 '+nOCGView+' 0 R>>');
 			write('/Shading <<');
