@@ -3662,7 +3662,7 @@ package org.alivepdf.pdf
 				columns = new Array();
 				var fieldsLng:int = fields.length;
 				for (i = 0; i< fieldsLng; i++)
-					columns.push ( new GridColumn ( fields[i], fields[i], currentGrid.width ) );
+					columns.push ( new GridColumn ( fields[i], fields[i], currentGrid.width / fieldsLng ) );
 			}
 			
 			var row:Array;

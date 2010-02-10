@@ -2,11 +2,11 @@ package org.alivepdf.data
 {
 	public final class GridColumn
 	{
-		public var _headerText:String;
-		public var _dataField:String;
-		public var _width:Number;
-		public var _cellAlign:String;
-		public var _headerAlign:String;
+		private var _headerText:String;
+		private var _dataField:String;
+		private var _width:Number;
+		private var _cellAlign:String;
+		private var _headerAlign:String;
 		
 		public function GridColumn( headerText:String, dataField:String, width:Number=30, headerAlign:String="L", cellAlign:String="L" )
 		{
