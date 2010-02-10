@@ -4129,9 +4129,9 @@ package org.alivepdf.pdf
 					
 					if (cmd =='Xa' || cmd =='XA')
 					{
-						r = chunks.pop(); 
+						b = chunks.pop(); 
 						g = chunks.pop();
-						b = chunks.pop();
+						r = chunks.pop();
 						write(r+" "+g+" "+b+ " " + (cmd == 'Xa' ? 'rg' : 'RG'));
 						continue;
 					}
@@ -5201,7 +5201,7 @@ package org.alivepdf.pdf
 				currentPage.content += content+"\n";
 			else 
 			{
-				if ( !isLinux ) 
+				if ( false ) 
 					buffer.writeMultiByte( content+"\n", "windows-1252" );
 				else 
 				{
