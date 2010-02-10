@@ -5201,7 +5201,7 @@ package org.alivepdf.pdf
 				currentPage.content += content+"\n";
 			else 
 			{
-				if ( false ) 
+				if ( !isLinux ) 
 					buffer.writeMultiByte( content+"\n", "windows-1252" );
 				else 
 				{
