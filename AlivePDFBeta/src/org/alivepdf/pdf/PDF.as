@@ -1993,10 +1993,10 @@ package org.alivepdf.pdf
 			var k:Number = k;
 			var points_string:String = '';
 			
-			for(var $i:int = 0; $i<points.length; $i+=2)
+			for(var i:int = 0; i<points.length; i+=2)
 			{
-				points_string += sprintf('%.2F %.2F', points[$i]*k, (h-points[int($i+1)])*k);
-				if($i==0)
+				points_string += sprintf('%.2F %.2F', points[i]*k, (h-points[int(i+1)])*k);
+				if(i==0)
 					points_string += ' m ';
 				else
 					points_string += ' l ';
@@ -2763,15 +2763,15 @@ package org.alivepdf.pdf
 			{
 				if (scale)
 				{
-					var $horiz_scale:Number = ratio*100.0;
-					write(sprintf('BT %.2F Tz ET',$horiz_scale));
+					var horizScale:Number = ratio*100.0;
+					write(sprintf('BT %.2F Tz ET',horizScale));
 				}
 				else
 				{
-					var $char_space:Number = (width-currentMargin*2-stringWidth)/Math.max(getStringLength(text)-1,1)*k
-					write(sprintf('BT %.2F Tc ET',$char_space));
+					var charSpace:Number = (width-currentMargin*2-stringWidth)/Math.max(getStringLength(text)-1,1)*k
+					write(sprintf('BT %.2F Tc ET',charSpace));
 				}
-				var $align:String = '';
+				var align:String = '';
 			}
 			
 			addCell(width,height,text,border,ln,align,fill,link);
@@ -2848,26 +2848,26 @@ package org.alivepdf.pdf
 			addCellFit(width,height,text,border,ln,align,fill,link,false,true);
 		}
 		
-		protected function getStringLength($s:String):int
+		protected function getStringLength(string:String):int
 		{
 			if(currentFont.type == FontType.TYPE0)
 			{
-				var $len:int = 0;
-				var $nbbytes:int = $s.length;
-				for (var $i:int = 0; $i < $nbbytes; $i++)
+				var len:int = 0;
+				var nbbytes:int = string.length;
+				for (var i:int = 0; i < nbbytes; i++)
 				{
-					if ( $s[$i].charCodeAt(0) < 128 )
-						$len++;
+					if ( string[i].charCodeAt(0) < 128 )
+						len++;
 					else
 					{
-						$len++;
-						$i++;
+						len++;
+						i++;
 					}
 				}
-				return $len;
+				return len;
 			}
 			else
-				return $s.length;
+				return string.length;
 		}
 		
 		/**
