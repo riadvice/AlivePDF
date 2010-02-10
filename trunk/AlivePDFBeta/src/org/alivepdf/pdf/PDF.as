@@ -403,6 +403,25 @@ package org.alivepdf.pdf
 		}
 		
 		/**
+		 * Lets you reset the margins dimensions.
+		 *
+		 * @return
+		 * @example
+		 * This example shows how to reset the margins dimensions :
+		 * <div class="listing">
+		 * <pre>
+		 *
+		 * myPDF.resetMargins ();
+		 * </pre>
+		 * </div>
+		 */	
+		public function resetMargins ():void
+		{
+			var margin:Number = 28.35/k;
+			setMargins ( margin, margin );
+		}
+		
+		/**
 		 * Lets you retrieve the margins dimensions.
 		 *
 		 * @return Rectangle
