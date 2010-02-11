@@ -2388,7 +2388,7 @@ package org.alivepdf.pdf
 		{
 			pushedFontName = font.name;
 			
-			if ( !fonts.some(filterCallback) ) 
+			if ( !fonts.some(findFont) ) 
 				fonts.push ( font );
 			
 			font.id = fonts.length;
@@ -2417,7 +2417,7 @@ package org.alivepdf.pdf
 					if( d == -1 )
 					{
 						d = nb;
-						differences[d] = addedFont.differences;
+						differences[d = nb] = addedFont.differences;
 					}
 					
 					fonts[fonts.length-1].differences = d;
@@ -2426,12 +2426,7 @@ package org.alivepdf.pdf
 			return font;
 		}
 		
-		private function characterMissing (e:Event):void
-		{
-			dispatchEvent( e );
-		}
-		
-		private function filterCallback ( element:IFont, index:int, arr:Array ):Boolean
+		protected function findFont ( element:IFont, index:int, arr:Array ):Boolean
 		{	
 			return element.name == pushedFontName;	
 		}
@@ -2457,7 +2452,7 @@ package org.alivepdf.pdf
 		{	
 			pushedFontName = font.name;
 			
-			var result:Array = fonts.filter(filterCallback);
+			var result:Array = fonts.filter(findFont);
 			currentFont = result.length > 0 ? result[0] : addFont( font );	
 			
 			underline = underlined;
@@ -2846,28 +2841,6 @@ package org.alivepdf.pdf
 		public function addCellFitSpaceForce(width:Number, height:Number=0, text:String='', border:*=0, ln:Number=0, align:String='', fill:Number=0, link:ILink=null):void
 		{
 			addCellFit(width,height,text,border,ln,align,fill,link,false,true);
-		}
-		
-		protected function getStringLength(string:String):int
-		{
-			if(currentFont.type == FontType.TYPE0)
-			{
-				var len:int = 0;
-				var nbbytes:int = string.length;
-				for (var i:int = 0; i < nbbytes; i++)
-				{
-					if ( string[i].charCodeAt(0) < 128 )
-						len++;
-					else
-					{
-						len++;
-						i++;
-					}
-				}
-				return len;
-			}
-			else
-				return string.length;
 		}
 		
 		/**
@@ -3680,8 +3653,9 @@ package org.alivepdf.pdf
 				fields.sort();
 				columns = new Array();
 				var fieldsLng:int = fields.length;
+				var columnWidth:Number = currentGrid.width / fieldsLng;
 				for (i = 0; i< fieldsLng; i++)
-					columns.push ( new GridColumn ( fields[i], fields[i], currentGrid.width / fieldsLng ) );
+					columns.push ( new GridColumn ( fields[i], fields[i], columnWidth ) );
 			}
 			
 			var row:Array;
@@ -3749,12 +3723,8 @@ package org.alivepdf.pdf
 			
 			var ph:int = 5;
 			var h:Number = ph*nb;
-			var x:Number = 0;
-			var y:Number = 0;
-			var a:String;
-			var w:Number = 0;
 			
-			return new Rectangle(x,y,w,h);
+			return new Rectangle(0, 0, 0, h);
 		}
 		
 		protected function addRow(data:Array, style:Boolean, rect:Rectangle):void
@@ -4536,6 +4506,28 @@ package org.alivepdf.pdf
 			version = PDF.PDF_VERSION;
 		}
 		
+		protected function getStringLength(string:String):int
+		{
+			if(currentFont.type == FontType.TYPE0)
+			{
+				var len:int = 0;
+				var nbbytes:int = string.length;
+				for (var i:int = 0; i < nbbytes; i++)
+				{
+					if ( string[i].charCodeAt(0) < 128 )
+						len++;
+					else
+					{
+						len++;
+						i++;
+					}
+				}
+				return len;
+			}
+			else
+				return string.length;
+		}
+		
 		protected function transform(tm:Matrix):void
 		{
 			write(sprintf('%.3f %.3f %.3f %.3f %.3f %.3f cm', tm.a, tm.b, tm.c, tm.d, tm.tx, tm.ty));
@@ -4850,7 +4842,7 @@ package org.alivepdf.pdf
 						write ('/Length1 '+embeddedFont.originalSize+'>>');
 						write('stream');
 						buffer.writeBytes (embeddedFont.stream);
-						buffer.writeUTFBytes ("\n");
+						buffer.writeByte(0x0A);
 						write("endstream");
 						write('endobj');	
 					}			
@@ -4955,12 +4947,12 @@ package org.alivepdf.pdf
 		{
 			newObj();
 			nOCGPrint = n;
-			write('<</Type /OCG /Name '+escapeString('print'));
+			write('<</Type /OCG /Name (print)');
 			write('/Usage <</Print <</PrintState /ON>> /View <</ViewState /OFF>>>>>>');
 			write('endobj');
 			newObj();
 			nOCGView = n;
-			write('<</Type /OCG /Name '+escapeString('view'));
+			write('<</Type /OCG /Name (view)');
 			write('/Usage <</Print <</PrintState /OFF>> /View <</ViewState /ON>>>>>>');
 			write('endobj');
 		}
