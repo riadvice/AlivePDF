@@ -10,6 +10,7 @@ package org.alivepdf.pdf
 	import org.alivepdf.fonts.ICidFont;
 	import org.alivepdf.fonts.IFont;
 	import org.alivepdf.layout.Size;
+	import org.alivepdf.links.ILink;
 
 	public class UnicodePDF extends PDF
 	{
@@ -27,10 +28,19 @@ package org.alivepdf.pdf
 			super(orientation, unit, pageSize, rotation);
 		}
 		
+		public override function writeFlashHtmlText ( pHeight:Number, pText:String, pLink:ILink=null ):void
+		{
+			throw new Error("writeFlashHtmlText is not available with the UnicodePDF class.");
+		}
+		
 		protected override function addFont ( font:IFont ):IFont
 		{
-			if ( fonts.indexOf ( font ) == -1 ) fonts.push ( font );
-			else throw new Error ( font.name + " font already added.");
+			pushedFontName = font.name;
+			
+			if ( !fonts.some(findFont) ) 
+				fonts.push ( font );
+			
+			font.id = fonts.length;
 			
 			fontFamily = font.name;
 			
@@ -44,28 +54,28 @@ package org.alivepdf.pdf
 			{
 				addedFont = font as EmbeddedFont;	
 				
-				if ( addedFont.differences )
+				if ( addedFont.differences != null )
 				{
-					d = 0;
+					d = -1;
 					nb = differences.length;
-					for ( var j:int = 1; j <= nb ;j++ )
+					for ( var j:int = 0; j < nb ; j++ )
 					{
 						if(differences[j] == addedFont.differences)
 						{
-							d=j;
+							d = j;
 							break;
 						}
 					}
-					if( d == 0 )
+					
+					if( d == -1 )
 					{
-						d = nb+1;
+						d = nb;
 						differences[d] = addedFont.differences;
 					}
+					
 					fonts[fonts.length-1].differences = d;
-				}
-				
+				}		
 			}
-			
 			return font;
 		}
 		
@@ -103,7 +113,7 @@ package org.alivepdf.pdf
 						write ('/Length1 '+embeddedFont.originalSize+'>>');
 						write('stream');
 						buffer.writeBytes (embeddedFont.stream);
-						buffer.writeUTFBytes ("\n");
+						buffer.writeByte(0x0A);
 						write("endstream");
 						write('endobj');	
 					}			
@@ -184,6 +194,7 @@ package org.alivepdf.pdf
 			write('stream');
 			for (var i:int = 0; i < stream.length; i++)
 				buffer.writeByte(stream.charCodeAt(i));
+			buffer.writeByte(0x0A);
 			write('endstream');
 		}
 		

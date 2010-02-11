@@ -6,6 +6,7 @@
     <classEntry path="org.alivepdf.annotations.MovieAnnotation"/>
     <classEntry path="org.alivepdf.annotations.TextAnnotation"/>
     <classEntry path="org.alivepdf.cells.CellVO"/>
+    <classEntry path="org.alivepdf.codabar.CodaBar"/>
     <classEntry path="org.alivepdf.colors.CMYKColor"/>
     <classEntry path="org.alivepdf.colors.GrayColor"/>
     <classEntry path="org.alivepdf.colors.IColor"/>
@@ -46,6 +47,9 @@
     <classEntry path="org.alivepdf.fonts.ICidFont"/>
     <classEntry path="org.alivepdf.fonts.IFont"/>
     <classEntry path="org.alivepdf.fonts.Style"/>
+    <classEntry path="org.alivepdf.fonts.unicodefonts.ArialUnicodeMS"/>
+    <classEntry path="org.alivepdf.fonts.unicodefonts.CidInfo"/>
+    <classEntry path="org.alivepdf.gradients.ShadingType"/>
     <classEntry path="org.alivepdf.html.HTMLTag"/>
     <classEntry path="org.alivepdf.images.ColorSpace"/>
     <classEntry path="org.alivepdf.images.DoJPEGImage"/>
@@ -90,6 +94,7 @@
     <classEntry path="org.alivepdf.saving.Download"/>
     <classEntry path="org.alivepdf.saving.Method"/>
     <classEntry path="org.alivepdf.serializer.ISerializer"/>
+    <classEntry path="org.alivepdf.templates.Invoice"/>
     <classEntry path="org.alivepdf.text.Cell"/>
     <classEntry path="org.alivepdf.tools.sprintf"/>
     <classEntry path="org.alivepdf.transitions.Dimension"/>
@@ -104,9 +109,6 @@
     <classEntry path="org.alivepdf.viewing.ToolBar"/>
     <classEntry path="org.alivepdf.viewing.WindowUI"/>
     <classEntry path="org.alivepdf.visibility.Visibility"/>
-    <classEntry path="org.alivepdf.codabar.CodaBar"/>
-    <classEntry path="org.alivepdf.gradients.ShadingType"/>
-    <classEntry path="org.alivepdf.templates.Invoice"/>
   </includeClasses>
   <includeResources/>
   <namespaceManifests/>
