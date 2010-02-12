@@ -109,6 +109,7 @@
     <classEntry path="org.alivepdf.viewing.ToolBar"/>
     <classEntry path="org.alivepdf.viewing.WindowUI"/>
     <classEntry path="org.alivepdf.visibility.Visibility"/>
+    <classEntry path="org.alivepdf.drawing.SectorDrawingCommand"/>
   </includeClasses>
   <includeResources/>
   <namespaceManifests/>

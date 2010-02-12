@@ -61,6 +61,7 @@ package org.alivepdf.pdf
 	import org.alivepdf.display.Display;
 	import org.alivepdf.display.PageMode;
 	import org.alivepdf.drawing.DashedLine;
+	import org.alivepdf.drawing.SectorDrawingCommand;
 	import org.alivepdf.drawing.WindingRule;
 	import org.alivepdf.encoding.Base64;
 	import org.alivepdf.encoding.JPEGEncoder;
@@ -1783,6 +1784,147 @@ package org.alivepdf.pdf
 			}
 			
 			end();
+		}
+		
+		/**
+		 * The drawSector method draws a sector, which allows you to draw a pie chart.
+		 * 
+		 * @param xCenter
+		 * @param yCenter
+		 * @param radius
+		 * @param a
+		 * @param b
+		 * @param style
+		 * @param clockWise
+		 * @param angleOrigin
+		 * @example
+		 * This example shows how to create a nice pie chart :
+		 * <div class="listing">
+		 * <pre>
+		 *
+		 * var xc:int = 105;
+		 * var yc:int = 60;
+		 * var radius:int = 40;
+		 * 
+		 * myPDF.lineStyle( new RGBColor ( 0x000000 ), .1 );
+		 * myPDF.beginFill( new RGBColor ( 0x0099CC ) );
+		 * myPDF.drawSector(xc, yc, radius, 20, 120);
+		 * myPDF.beginFill( new RGBColor ( 0x336699 ) );
+		 * myPDF.drawSector(xc, yc, radius, 120, 250);
+		 * myPDF.beginFill( new RGBColor ( 0x6598FF ) );
+		 * myPDF.drawSector(xc, yc, radius, 250, 20);
+		 * </pre>
+		 * </div>
+		 */		
+		public function drawSector(xCenter:Number, yCenter:Number, radius:Number, a:Number, b:Number, style:String='FD', clockWise:Boolean=true, angleOrigin:Number=90):void
+		{
+			var d0:Number = a - b;
+			var d:Number;
+			var b:Number;
+			var a:Number;
+			var op:String;
+			
+			if(clockWise)
+			{
+				d = b;
+				b = angleOrigin - a;
+				a = angleOrigin - d;
+			}else
+			{
+				b += angleOrigin;
+				a += angleOrigin;
+			}
+			
+			while(a<0)
+				a += 360;
+			while(a>360)
+				a -= 360;
+			while(b<0)
+				b += 360;
+			while(b>360)
+				b -= 360;
+			
+			if (a > b)
+				b += 360;
+			
+			b = b/360*2*Math.PI;
+			a = a/360*2*Math.PI;;
+			d = b - a;
+			
+			if (d == 0 && d0 != 0)
+				d = 2*Math.PI;
+			
+			var hp:Number = currentPage.h;
+			var myArc:Number;
+			
+			if (Math.sin(d/2))
+				myArc = 4/3*(1-Math.cos(d/2))/Math.sin(d/2)*radius;
+			else
+				myArc = 0;
+			
+			//first put the center
+			write(sprintf('%.2F %.2F m',(xCenter)*k,(hp-yCenter)*k));
+			//put the first point
+			write(sprintf('%.2F %.2F l',(xCenter+radius*Math.cos(a))*k,((hp-(yCenter-radius*Math.sin(a)))*k)));
+			
+			//draw the arc
+			if (d < Math.PI/2)
+			{
+				arc(xCenter+radius*Math.cos(a)+myArc*Math.cos(Math.PI/2+a),
+					yCenter-radius*Math.sin(a)-myArc*Math.sin(Math.PI/2+a),
+					xCenter+radius*Math.cos(b)+myArc*Math.cos(b-Math.PI/2),
+					yCenter-radius*Math.sin(b)-myArc*Math.sin(b-Math.PI/2),
+					xCenter+radius*Math.cos(b),
+					yCenter-radius*Math.sin(b)
+				);
+			}else
+			{
+				b = a + d/4;
+				myArc = 4/3*(1-Math.cos(d/8))/Math.sin(d/8)*radius;
+				arc(xCenter+radius*Math.cos(a)+myArc*Math.cos(Math.PI/2+a),
+					yCenter-radius*Math.sin(a)-myArc*Math.sin(Math.PI/2+a),
+					xCenter+radius*Math.cos(b)+myArc*Math.cos(b-Math.PI/2),
+					yCenter-radius*Math.sin(b)-myArc*Math.sin(b-Math.PI/2),
+					xCenter+radius*Math.cos(b),
+					yCenter-radius*Math.sin(b)
+				);
+				a = b;
+				b = a + d/4;
+				arc(xCenter+radius*Math.cos(a)+myArc*Math.cos(Math.PI/2+a),
+					yCenter-radius*Math.sin(a)-myArc*Math.sin(Math.PI/2+a),
+					xCenter+radius*Math.cos(b)+myArc*Math.cos(b-Math.PI/2),
+					yCenter-radius*Math.sin(b)-myArc*Math.sin(b-Math.PI/2),
+					xCenter+radius*Math.cos(b),
+					yCenter-radius*Math.sin(b)
+				);
+				a = b;
+				b = a + d/4;
+				arc(xCenter+radius*Math.cos(a)+myArc*Math.cos(Math.PI/2+a),
+					yCenter-radius*Math.sin(a)-myArc*Math.sin(Math.PI/2+a),
+					xCenter+radius*Math.cos(b)+myArc*Math.cos(b-Math.PI/2),
+					yCenter-radius*Math.sin(b)-myArc*Math.sin(b-Math.PI/2),
+					xCenter+radius*Math.cos(b),
+					yCenter-radius*Math.sin(b)
+				);
+				a = b;
+				b = a + d/4;
+				arc(xCenter+radius*Math.cos(a)+myArc*Math.cos(Math.PI/2+a),
+					yCenter-radius*Math.sin(a)-myArc*Math.sin(Math.PI/2+a),
+					xCenter+radius*Math.cos(b)+myArc*Math.cos(b-Math.PI/2),
+					yCenter-radius*Math.sin(b)-myArc*Math.sin(b-Math.PI/2),
+					xCenter+radius*Math.cos(b),
+					yCenter-radius*Math.sin(b)
+				);
+			}
+			
+			//terminate drawing
+			if(style == SectorDrawingCommand.FILL)
+				op = 'f';
+			else if(style == SectorDrawingCommand.FILL_DRAW || style == SectorDrawingCommand.DRAW_FILL)
+				op = 'b';
+			else op = 's';
+			
+			write(op);
 		}
 		
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
