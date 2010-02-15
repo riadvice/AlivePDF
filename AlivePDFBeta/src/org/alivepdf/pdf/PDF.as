@@ -55,8 +55,6 @@ package org.alivepdf.pdf
 	import org.alivepdf.colors.IColor;
 	import org.alivepdf.colors.RGBColor;
 	import org.alivepdf.colors.SpotColor;
-	import org.alivepdf.data.Grid;
-	import org.alivepdf.data.GridColumn;
 	import org.alivepdf.decoding.Filter;
 	import org.alivepdf.display.Display;
 	import org.alivepdf.display.PageMode;
@@ -67,7 +65,6 @@ package org.alivepdf.pdf
 	import org.alivepdf.encoding.JPEGEncoder;
 	import org.alivepdf.encoding.PNGEncoder;
 	import org.alivepdf.encoding.TIFFEncoder;
-	import org.alivepdf.events.CharacterEvent;
 	import org.alivepdf.events.PageEvent;
 	import org.alivepdf.events.ProcessingEvent;
 	import org.alivepdf.fonts.CoreFont;
@@ -78,6 +75,9 @@ package org.alivepdf.pdf
 	import org.alivepdf.fonts.FontType;
 	import org.alivepdf.fonts.IFont;
 	import org.alivepdf.gradients.ShadingType;
+	import org.alivepdf.grid.Grid;
+	import org.alivepdf.grid.GridCell;
+	import org.alivepdf.grid.GridRowKind;
 	import org.alivepdf.html.HTMLTag;
 	import org.alivepdf.images.ColorSpace;
 	import org.alivepdf.images.DoJPEGImage;
@@ -91,6 +91,7 @@ package org.alivepdf.pdf
 	import org.alivepdf.images.TIFFImage;
 	import org.alivepdf.images.gif.player.GIFPlayer;
 	import org.alivepdf.layout.Align;
+	import org.alivepdf.layout.Border;
 	import org.alivepdf.layout.Layout;
 	import org.alivepdf.layout.Mode;
 	import org.alivepdf.layout.Position;
@@ -2837,13 +2838,13 @@ package org.alivepdf.pdf
 			{
 				var borderBuffer:String = String ( border );
 				var currentPageHeight:Number = currentPage.h;
-				if( borderBuffer.indexOf (Align.LEFT) != -1 ) 
+				if( borderBuffer.indexOf (Border.LEFT) != -1 ) 
 					s+=sprintf('%.2f %.2f m %.2f %.2f l S ', currentX*k,(currentPageHeight-currentY)*k,currentX*k,(currentPageHeight-(currentY+height))*k);
-				if( borderBuffer.indexOf (Align.TOP) != -1) 
+				if( borderBuffer.indexOf (Border.TOP) != -1) 
 					s+=sprintf('%.2f %.2f m %.2f %.2f l S ', currentX*k,(currentPageHeight-currentY)*k,(currentX+width)*k,(currentPageHeight-currentY)*k);
-				if( borderBuffer.indexOf (Align.RIGHT) != -1) 
+				if( borderBuffer.indexOf (Border.RIGHT) != -1) 
 					s+=sprintf('%.2f %.2f m %.2f %.2f l S ', (currentX+width)*k,(currentPageHeight-currentY)*k,(currentX+width)*k,(currentPageHeight-(currentY+height))*k);
-				if( borderBuffer.indexOf (Align.BOTTOM) != -1 ) 
+				if( borderBuffer.indexOf (Border.BOTTOM) != -1 ) 
 					s+=sprintf('%.2f %.2f m %.2f %.2f l S ', currentX*k,(currentPageHeight-(currentY+height))*k,(currentX+width)*k,(currentPageHeight-(currentY+height))*k);
 			}
 			
@@ -3034,12 +3035,12 @@ package org.alivepdf.pdf
 				else
 				{
 					b2 = '';
-					if (border.indexOf(Align.LEFT)!= -1) 
-						b2+= Align.LEFT;
-					if (border.indexOf(Align.RIGHT)!= -1) 
-						b2+= Align.RIGHT;
-					b = (border.indexOf(Align.TOP)!= -1) ? 
-						b2+Align.TOP : b2;
+					if (border.indexOf(Border.LEFT)!= -1) 
+						b2+= Border.LEFT;
+					if (border.indexOf(Border.RIGHT)!= -1) 
+						b2+= Border.RIGHT;
+					b = (border.indexOf(Border.TOP)!= -1) ? 
+						b2+Border.TOP : b2;
 				}
 			}
 			
@@ -3780,25 +3781,12 @@ package org.alivepdf.pdf
 			currentGrid = grid;
 			currentGrid.x = x;
 			currentGrid.y = y;
-			columns = currentGrid.columns;
 			var buffer:Array = grid.dataProvider;
 			var i:int = 0;
 			var j:int = 0;
 			
-			if ( columns == null )
-			{
-				var firstItem:* = buffer[0];
-				var fields:Array = new Array();
-				var column:GridColumn;
-				for ( var p:String in firstItem )
-					fields.push ( p );
-				fields.sort();
-				columns = new Array();
-				var fieldsLng:int = fields.length;
-				var columnWidth:Number = currentGrid.width / fieldsLng;
-				for (i = 0; i< fieldsLng; i++)
-					columns.push ( new GridColumn ( fields[i], fields[i], columnWidth ) );
-			}
+			currentGrid.generateColumns(false);
+			columns = currentGrid.columns;
 			
 			var row:Array;
 			columnNames = new Array();
@@ -3807,15 +3795,15 @@ package org.alivepdf.pdf
 			var item:*;
 			
 			for (i = 0; i< lngColumns; i++)
-				columnNames.push ( columns[i].headerText );
+				columnNames.push ( new GridCell(columns[i].headerText, currentGrid.headerColor ) );
 			
-			var rect:Rectangle = getRect ( columnNames );
+			var rect:Rectangle = getRect ( columnNames, currentGrid.headerHeight );
 			if ( checkPageBreak(rect.height) )
 				addPage();
 			
 			beginFill ( grid.headerColor );
 			setXY ( x+getX(), y+getY() );
-			addRow( columnNames, false, rect );
+			addRow( columnNames, GridRowKind.HEADER, rect, false ); // header
 			endFill();
 			
 			for (i = 0; i< lng; i++)
@@ -3824,11 +3812,12 @@ package org.alivepdf.pdf
 				row = new Array();
 				for (j = 0; j< lngColumns; j++)
 				{
-					row.push (item[columns[j].dataField] != null ? item[columns[j].dataField] : "");
+					var cell:GridCell = new GridCell(item[columns[j].dataField]);
+					row.push ( cell );
 					nb = Math.max(nb,nbLines(columns[j].width,row[j]));
 				}
 				
-				rect = getRect ( row );
+				rect = getRect ( row, currentGrid.rowHeight );
 				setX ( x + getX() );
 				
 				if ( checkPageBreak(rect.height) )
@@ -3838,7 +3827,7 @@ package org.alivepdf.pdf
 					if ( repeatHeader ) 
 					{
 						beginFill(grid.headerColor);
-						addRow (columnNames, false, getRect (columnNames) );
+						addRow (columnNames, GridRowKind.HEADER, getRect (columnNames, currentGrid.headerHeight),false ); // header
 						endFill();
 						setX ( x + getX() );
 					}
@@ -3847,13 +3836,15 @@ package org.alivepdf.pdf
 				if ( grid.alternateRowColor && Boolean(isEven = i&1) )
 				{
 					beginFill( grid.cellColor );
-					addRow( row, true, rect );
+					addRow( row, GridRowKind.ALTERNATIVE, rect, true );
 					endFill();
-				} else addRow( row, true, rect );
+				} 
+				else 
+					addRow( row, GridRowKind.NORMAL, rect, grid.alternateRowColor );
 			}
 		}
 		
-		protected function getRect ( rows:Array ):Rectangle
+		protected function getRect ( rows:Array, rowHeight:int=5 ):Rectangle
 		{
 			var nb:int = 0;
 			var nbL:int;
@@ -3864,32 +3855,40 @@ package org.alivepdf.pdf
 					nb = nbL;
 			
 			var ph:int = 5;
-			var h:Number = ph*nb;
+			var h:Number = (ph*nb > rowHeight) ? ph*nb : rowHeight;
 			
 			return new Rectangle(0, 0, 0, h);
 		}
 		
-		protected function addRow(data:Array, style:Boolean, rect:Rectangle):void
+		protected function addRow(data:Array, style:String, rect:Rectangle, useAlternativeColor:Boolean):void
 		{		    
 			var a:String;
 			var x:Number = 0;
 			var y:Number = 0;
 			var w:Number = 0;
-			var ph:int = 5;
+			//var ph:int = 5;
 			var h:Number = rect.height;
 			var lng:int = data.length;
 			
 			for(var i:int = 0; i<lng; i++)
 			{
-				a = style ? columns[i].cellAlign : columns[i].headerAlign;
+				var cell:GridCell = data[i] as GridCell;
+				
+				if ( !useAlternativeColor )
+					beginFill( cell.backgroundColor );
+					
+				a = (style != GridRowKind.HEADER) ? columns[i].cellAlign : columns[i].headerAlign;
 				rect.x = x = getX();
 				rect.y = y = getY();
 				rect.width = w = columns[i].width;
 				lineStyle ( currentGrid.borderColor, 0, 0, currentGrid.borderAlpha );
 				drawRect( rect );
 				setAlpha ( 1 );
-				addMultiCell(w,ph,data[i],0,a);
+				addMultiCell(w,h/*ph*/,cell.text,0,a);
 				setXY(x+w,y);
+				
+				if ( !useAlternativeColor )
+					endFill();
 			}
 			newLine(h);
 		}
