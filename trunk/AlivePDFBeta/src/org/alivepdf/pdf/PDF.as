@@ -372,7 +372,6 @@ package org.alivepdf.pdf
 		 * </pre>
 		 * </div>
 		 */
-		
 		public function PDF ( orientation:String='Portrait', unit:String='Mm', pageSize:Size=null, rotation:int=0 )
 		{
 			init ( orientation, unit, pageSize, rotation );
@@ -3799,10 +3798,8 @@ package org.alivepdf.pdf
 			if ( checkPageBreak(rect.height) )
 				addPage();
 			
-			//beginFill ( grid.headerColor );
 			setXY ( x+getX(), y+getY() );
-			addRow( columnNames, GridRowKind.HEADER, rect ); // header
-			//endFill();
+			addRow( columnNames, GridRowKind.HEADER, rect );
 			
 			if (grid.cells == null)
 				grid.generateCells();
@@ -3813,17 +3810,7 @@ package org.alivepdf.pdf
 
 			for (i = 0; i< lngRows; i++)
 			{
-//				item = buffer[i];
 				row = buffer[i];
-//				row = new Array();
-//				for (j = 0; j< lngColumns; j++)
-//				{
-//					var cell:GridCell = new GridCell(item[columns[j].dataField]);
-//					cell.backgroundColor = (grid.useAlternativeRowColor && Boolean(isEven = i&1)) 
-//												? grid.alternativeCellColor : grid.cellColor;
-//					row.push ( cell );
-//					nb = Math.max(nb,nbLines(columns[j].width,row[j]));
-//				}
 				
 				rect = getRect ( row, currentGrid.rowHeight );
 				setX ( x + getX() );
@@ -3834,21 +3821,14 @@ package org.alivepdf.pdf
 					setXY ( x+getX(), y+getY() );
 					if ( repeatHeader ) 
 					{
-						//beginFill(grid.headerColor);
 						addRow (columnNames, GridRowKind.HEADER, getRect(columnNames, currentGrid.headerHeight) ); // header
-						//endFill();
 						setX ( x + getX() );
 					}
 				}
 				
 				if ( grid.useAlternativeRowColor && Boolean(isEven = i&1) )
-				{
-					//beginFill( grid.alternativeCellColor );
 					addRow( row, GridRowKind.ALTERNATIVE, rect );
-					//endFill();
-				} 
-				else 
-					addRow( row, GridRowKind.NORMAL, rect );
+				else addRow( row, GridRowKind.NORMAL, rect );
 			}
 		}
 		
@@ -3874,7 +3854,6 @@ package org.alivepdf.pdf
 			var x:Number = 0;
 			var y:Number = 0;
 			var w:Number = 0;
-			//var ph:int = 5;
 			var h:Number = rect.height;
 			var lng:int = data.length;
 			
@@ -3891,7 +3870,7 @@ package org.alivepdf.pdf
 				lineStyle ( currentGrid.borderColor, 0, 0, currentGrid.borderAlpha );
 				drawRect( rect );
 				setAlpha ( 1 );
-				addMultiCell(w,h/*ph*/,cell.text,0,a);
+				addMultiCell(w,h,cell.text,0,a);
 				setXY(x+w,y);
 				
 				endFill();

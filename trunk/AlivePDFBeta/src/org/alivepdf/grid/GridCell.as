@@ -13,6 +13,5 @@ package org.alivepdf.grid
 			this.text = (text == null) ? "" : text;
 			this.backgroundColor = bgcolor ? bgcolor : new RGBColor(0xffffff);
 		}
-
 	}
 }
