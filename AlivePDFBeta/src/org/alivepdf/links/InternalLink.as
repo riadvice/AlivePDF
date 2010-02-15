@@ -18,5 +18,10 @@ package org.alivepdf.links
 			this.fit = fit;
 			this.rectangle = rectangle;
 		}
+		
+		public function toString ():String 
+		{	
+			return "[InternalLink page="+page+" y="+y+" fit="+fit+" rectangle="+rectangle+"]";	
+		}
 	}
 }

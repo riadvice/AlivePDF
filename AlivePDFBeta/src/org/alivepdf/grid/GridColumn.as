@@ -6,8 +6,6 @@ package org.alivepdf.grid
 		private var _dataField:String;
 		private var _width:Number;
 		
-		
-		
 		private var _cellAlign:String;
 		private var _headerAlign:String;
 		

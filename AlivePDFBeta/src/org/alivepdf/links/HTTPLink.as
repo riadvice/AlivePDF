@@ -8,5 +8,10 @@ package org.alivepdf.links
 		{
 			this.link = link;
 		}
+		
+		public function toString ():String 
+		{	
+			return "[HTTPLink link="+link+"]";	
+		}
 	}
 }
