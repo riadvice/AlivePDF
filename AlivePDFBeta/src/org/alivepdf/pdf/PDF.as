@@ -3804,7 +3804,6 @@ package org.alivepdf.pdf
 			if (grid.cells == null)
 				grid.generateCells();
 			
-			
 			var buffer:Array = grid.cells;
 			var lngRows:int = buffer.length;
 
