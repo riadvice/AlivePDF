@@ -3781,7 +3781,6 @@ package org.alivepdf.pdf
 			currentGrid = grid;
 			currentGrid.x = x;
 			currentGrid.y = y;
-			var buffer:Array = grid.dataProvider;
 			var i:int = 0;
 			var j:int = 0;
 			
@@ -3790,7 +3789,6 @@ package org.alivepdf.pdf
 			
 			var row:Array;
 			columnNames = new Array();
-			var lng:int = buffer.length;
 			var lngColumns:int = columns.length;	
 			var item:*;
 			
@@ -3801,21 +3799,31 @@ package org.alivepdf.pdf
 			if ( checkPageBreak(rect.height) )
 				addPage();
 			
-			beginFill ( grid.headerColor );
+			//beginFill ( grid.headerColor );
 			setXY ( x+getX(), y+getY() );
-			addRow( columnNames, GridRowKind.HEADER, rect, false ); // header
-			endFill();
+			addRow( columnNames, GridRowKind.HEADER, rect ); // header
+			//endFill();
 			
-			for (i = 0; i< lng; i++)
+			if (grid.cells == null)
+				grid.generateCells();
+			
+			
+			var buffer:Array = grid.cells;
+			var lngRows:int = buffer.length;
+
+			for (i = 0; i< lngRows; i++)
 			{
-				item = buffer[i];
-				row = new Array();
-				for (j = 0; j< lngColumns; j++)
-				{
-					var cell:GridCell = new GridCell(item[columns[j].dataField]);
-					row.push ( cell );
-					nb = Math.max(nb,nbLines(columns[j].width,row[j]));
-				}
+//				item = buffer[i];
+				row = buffer[i];
+//				row = new Array();
+//				for (j = 0; j< lngColumns; j++)
+//				{
+//					var cell:GridCell = new GridCell(item[columns[j].dataField]);
+//					cell.backgroundColor = (grid.useAlternativeRowColor && Boolean(isEven = i&1)) 
+//												? grid.alternativeCellColor : grid.cellColor;
+//					row.push ( cell );
+//					nb = Math.max(nb,nbLines(columns[j].width,row[j]));
+//				}
 				
 				rect = getRect ( row, currentGrid.rowHeight );
 				setX ( x + getX() );
@@ -3826,21 +3834,21 @@ package org.alivepdf.pdf
 					setXY ( x+getX(), y+getY() );
 					if ( repeatHeader ) 
 					{
-						beginFill(grid.headerColor);
-						addRow (columnNames, GridRowKind.HEADER, getRect (columnNames, currentGrid.headerHeight),false ); // header
-						endFill();
+						//beginFill(grid.headerColor);
+						addRow (columnNames, GridRowKind.HEADER, getRect(columnNames, currentGrid.headerHeight) ); // header
+						//endFill();
 						setX ( x + getX() );
 					}
 				}
 				
-				if ( grid.alternateRowColor && Boolean(isEven = i&1) )
+				if ( grid.useAlternativeRowColor && Boolean(isEven = i&1) )
 				{
-					beginFill( grid.cellColor );
-					addRow( row, GridRowKind.ALTERNATIVE, rect, true );
-					endFill();
+					//beginFill( grid.alternativeCellColor );
+					addRow( row, GridRowKind.ALTERNATIVE, rect );
+					//endFill();
 				} 
 				else 
-					addRow( row, GridRowKind.NORMAL, rect, grid.alternateRowColor );
+					addRow( row, GridRowKind.NORMAL, rect );
 			}
 		}
 		
@@ -3860,7 +3868,7 @@ package org.alivepdf.pdf
 			return new Rectangle(0, 0, 0, h);
 		}
 		
-		protected function addRow(data:Array, style:String, rect:Rectangle, useAlternativeColor:Boolean):void
+		protected function addRow(data:Array, style:String, rect:Rectangle):void
 		{		    
 			var a:String;
 			var x:Number = 0;
@@ -3874,8 +3882,7 @@ package org.alivepdf.pdf
 			{
 				var cell:GridCell = data[i] as GridCell;
 				
-				if ( !useAlternativeColor )
-					beginFill( cell.backgroundColor );
+				beginFill( cell.backgroundColor );
 					
 				a = (style != GridRowKind.HEADER) ? columns[i].cellAlign : columns[i].headerAlign;
 				rect.x = x = getX();
@@ -3887,8 +3894,7 @@ package org.alivepdf.pdf
 				addMultiCell(w,h/*ph*/,cell.text,0,a);
 				setXY(x+w,y);
 				
-				if ( !useAlternativeColor )
-					endFill();
+				endFill();
 			}
 			newLine(h);
 		}
