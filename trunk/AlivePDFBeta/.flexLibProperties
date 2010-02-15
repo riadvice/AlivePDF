@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<flexLibProperties includeAllClasses="false" version="1">
+<flexLibProperties version="1">
   <includeClasses>
     <classEntry path="org.alivepdf.annotations.Annotation"/>
     <classEntry path="org.alivepdf.annotations.AnnotationType"/>
@@ -12,8 +12,6 @@
     <classEntry path="org.alivepdf.colors.IColor"/>
     <classEntry path="org.alivepdf.colors.RGBColor"/>
     <classEntry path="org.alivepdf.colors.SpotColor"/>
-    <classEntry path="org.alivepdf.data.Grid"/>
-    <classEntry path="org.alivepdf.data.GridColumn"/>
     <classEntry path="org.alivepdf.decoding.Filter"/>
     <classEntry path="org.alivepdf.display.Display"/>
     <classEntry path="org.alivepdf.display.PageMode"/>
@@ -21,6 +19,7 @@
     <classEntry path="org.alivepdf.drawing.Caps"/>
     <classEntry path="org.alivepdf.drawing.DashedLine"/>
     <classEntry path="org.alivepdf.drawing.Joint"/>
+    <classEntry path="org.alivepdf.drawing.SectorDrawingCommand"/>
     <classEntry path="org.alivepdf.drawing.WindingRule"/>
     <classEntry path="org.alivepdf.encoding.Base64"/>
     <classEntry path="org.alivepdf.encoding.BitString"/>
@@ -50,6 +49,10 @@
     <classEntry path="org.alivepdf.fonts.unicodefonts.ArialUnicodeMS"/>
     <classEntry path="org.alivepdf.fonts.unicodefonts.CidInfo"/>
     <classEntry path="org.alivepdf.gradients.ShadingType"/>
+    <classEntry path="org.alivepdf.grid.Grid"/>
+    <classEntry path="org.alivepdf.grid.GridCell"/>
+    <classEntry path="org.alivepdf.grid.GridColumn"/>
+    <classEntry path="org.alivepdf.grid.GridRowKind"/>
     <classEntry path="org.alivepdf.html.HTMLTag"/>
     <classEntry path="org.alivepdf.images.ColorSpace"/>
     <classEntry path="org.alivepdf.images.DoJPEGImage"/>
@@ -109,7 +112,6 @@
     <classEntry path="org.alivepdf.viewing.ToolBar"/>
     <classEntry path="org.alivepdf.viewing.WindowUI"/>
     <classEntry path="org.alivepdf.visibility.Visibility"/>
-    <classEntry path="org.alivepdf.drawing.SectorDrawingCommand"/>
   </includeClasses>
   <includeResources/>
   <namespaceManifests/>
