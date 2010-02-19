@@ -3666,12 +3666,29 @@ package org.alivepdf.pdf
 				offsetX = availWidth - lineLength;
 			
 			// Loop through the cells in the line and draw
+			var pages:int = 0;
+			var tmpCellY:int;
+			var tmpCellHeight:int;
 			for(i = 0; i < lng; i++)
 			{	
 				cellVO = CellVO ( lineArray[int(i)] );
 				
 				currentX = cellVO.x + offsetX;
-				currentY = cellVO.y + offsetY;
+				
+				if (i == 0)
+				{
+					currentY = cellVO.y + offsetY;
+				}
+				else
+				{
+					if (Math.round(cellVO.y) > Math.round(tmpCellY))
+						currentY += tmpCellHeight;
+					else
+						currentY -= tmpCellHeight;
+				}
+				
+				tmpCellHeight = cellVO.height;
+				tmpCellY = cellVO.y;
 				
 				setFont ( cellVO.font, cellVO.fontSizePt, cellVO.underlined );
 				
