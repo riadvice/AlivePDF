@@ -105,6 +105,7 @@ package org.alivepdf.pdf
 	import org.alivepdf.operators.Drawing;
 	import org.alivepdf.pages.Page;
 	import org.alivepdf.saving.Method;
+	import org.alivepdf.text.Cell;
 	import org.alivepdf.tools.sprintf;
 	import org.alivepdf.visibility.Visibility;
 	
@@ -359,6 +360,12 @@ package org.alivepdf.pdf
 		protected var nOCGView:int;
 		protected var startingPageIndex:uint;
 		protected var gradients:Array = new Array();
+		protected var isWrapRow : Boolean;
+		protected var row : Array;
+		protected var column : Array;
+		protected var rowX : Number;
+		protected var rowY : Number;
+		protected var maxY : Number;
 		
 		/**
 		 * The PDF class represents a PDF document.
@@ -3050,6 +3057,7 @@ package org.alivepdf.pdf
 			var ns:int = 0;
 			var nl:int = 1;
 			var c:String;
+			var cell:Cell;
 			
 			var cwAux:int = 0;
 			
@@ -3104,7 +3112,8 @@ package org.alivepdf.pdf
 							ws=0;
 							write('0 Tw');
 						}
-						addCell(width,height,s.substr(j,i-j),b,2,align,filled);
+						
+						addCell(width,height,s.substr(j,i-j),b,2,align, filled);
 					}
 					else
 					{
@@ -3115,6 +3124,7 @@ package org.alivepdf.pdf
 						}
 						
 						addCell(width,height,s.substr(j,sep-j),b,2,align,filled);
+						
 						i=sep+1;
 					}
 					
@@ -3126,7 +3136,6 @@ package org.alivepdf.pdf
 					
 					if ( border && nl == 2 ) 
 						b = b2;
-					
 				}
 				else i++;
 			}
@@ -3141,6 +3150,7 @@ package org.alivepdf.pdf
 				b += 'B';
 			
 			addCell ( width, height, s.substr(j,i-j), b, 2, align, filled );
+			
 			currentX = leftMargin;
 		}
 		
@@ -3621,12 +3631,20 @@ package org.alivepdf.pdf
 			if ( (position = font.indexOf("-")) != -1 )
 				font = font.substr(0, position);
 			
-			if ( bold && italic ) 
-				font += "-BoldOblique";
-			else if ( bold )
-				font += "-Bold";
-			else if ( italic )
-				font += "-Oblique";
+			if ( bold && italic )
+				if(family == "Times-Roman")
+					font += "-BoldItalic";
+				else
+					font += "-BoldOblique";
+				else if ( bold )
+					font += "-Bold";
+				else if ( italic )
+					if(family == "Times-Roman")
+						font += "-Italic";
+					else
+						font += "-Oblique";
+					else if(font == "Times")
+						font = "Times-Roman";
 			
 			return font;
 		}

@@ -6,6 +6,5 @@ package org.alivepdf.layout
 		public static const RIGHT:String = "R";	
 		public static const CENTER:String = "C";
 		public static const JUSTIFIED:String = "J";
-
 	}
 }
