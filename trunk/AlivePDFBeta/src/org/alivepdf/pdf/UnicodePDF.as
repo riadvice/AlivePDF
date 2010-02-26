@@ -241,8 +241,8 @@ package org.alivepdf.pdf
 		 * @author Nicola Asuni
 		 * @since 1.53.0.TC005 (2005-01-05)
 		 */		 
-		protected function UTF8StringToArray(str:String, strBytes:ByteArray):Array {
-			
+		protected function UTF8StringToArray(str:String, strBytes:ByteArray):Array
+		{	
 			var strArr:Array;
 			var strLen:Number;
 			
@@ -284,7 +284,8 @@ package org.alivepdf.pdf
 			numBytes  = 1; // number of octetc needed to represent the UTF-8 character
 			str += ''; // force $str to be a string
 			//length = str.length;
-			while (strBytes.bytesAvailable > 0) {
+			while (strBytes.bytesAvailable > 0)
+			{
 				char = strBytes.readUnsignedByte();				
 				//for (i = 0; i < length; i++) {
 				//char = str.charCodeAt(i); // get one string character at time
@@ -381,16 +382,16 @@ package org.alivepdf.pdf
 		 * @since 2.1.000 (2008-01-08)
 		 * @see UTF8ToUTF16BE()
 		 */	
-		protected function arrUTF8ToUTF16BE(unicode:Array, setbom:Boolean=false):String {
+		protected function arrUTF8ToUTF16BE(unicode:Array, setbom:Boolean=false):String
+		{
 			var outStr:String = ''; // string to be returned
 			var w1:Number;
 			var w2:Number;	
 			
 			var bytes:Array = new Array;
 			
-			if (setbom) {
+			if (setbom)
 				outStr += "\xFE\xFF"; // Byte Order Mark (BOM)
-			}
 			
 			var char:uint;
 			
@@ -414,8 +415,7 @@ package org.alivepdf.pdf
 					outStr += String.fromCharCode(w2 & 0xFF);
 				}
 			}
-			
-			
+					
 			return outStr;
 		}
 		
@@ -426,7 +426,8 @@ package org.alivepdf.pdf
 		 * @author Andrew Whitehead, Nicola Asuni, Yukihiro Nakadaira
 		 * @since 3.2.000 (2008-06-23)
 		 */
-		protected function putcidfont0( cdiFont:ICidFont ):void {
+		protected function putcidfont0( cdiFont:ICidFont ):void
+		{
 			var cidoffset:int = 31;
 			var cw:Object;
 			var width:String;
@@ -502,7 +503,8 @@ package org.alivepdf.pdf
 		 * @access protected
 		 * @since 4.4.000 (2008-12-07)
 		 */
-		protected function _putfontwidths(cidFont:ICidFont,cidoffset:int=0):void{
+		protected function _putfontwidths(cidFont:ICidFont,cidoffset:int=0):void
+		{
 			var arr:Array = new Array();
 			var cidArr:Array = new Array();
 			for (var tmpCid:Object in cidFont.charactersWidth)

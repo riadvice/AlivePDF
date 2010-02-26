@@ -4,7 +4,6 @@ package org.alivepdf.layout
 	{
 		public static const TOP:String = "T";
 		public static const BOTTOM:String = "B";	
-		public static const MIDDLE:String = "M";	
-
+		public static const MIDDLE:String = "M";
 	}
 }
