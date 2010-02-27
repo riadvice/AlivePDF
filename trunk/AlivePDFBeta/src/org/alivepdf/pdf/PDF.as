@@ -69,11 +69,13 @@ package org.alivepdf.pdf
 	import org.alivepdf.events.ProcessingEvent;
 	import org.alivepdf.fonts.CoreFont;
 	import org.alivepdf.fonts.EmbeddedFont;
+	import org.alivepdf.fonts.FontCollections;
 	import org.alivepdf.fonts.FontDescription;
 	import org.alivepdf.fonts.FontFamily;
 	import org.alivepdf.fonts.FontMetrics;
 	import org.alivepdf.fonts.FontType;
 	import org.alivepdf.fonts.IFont;
+	import org.alivepdf.fonts.Style;
 	import org.alivepdf.gradients.ShadingType;
 	import org.alivepdf.grid.Grid;
 	import org.alivepdf.grid.GridCell;
@@ -3434,12 +3436,30 @@ package org.alivepdf.pdf
 						cellVO.color      = fontColor;
 						cellVO.underlined = fontUnderline;
 						
-						//For now, embedded fonts cannot be used with writeFlashHtmlText 
-						if ( currentFont is EmbeddedFont )
-							throw new Error ("Sorry, writeFlashHtmlText does not work for now with embedded fonts.");
+						var newFont:IFont;
 						
-						//Set the font for calculation of character widths
-						var newFont:IFont = new CoreFont ( getFontStyleString(fontBold, fontItalic, fontFamily) );
+						if ( currentFont is EmbeddedFont )
+						{
+							var style:String = Style.NORMAL;
+							
+							if(fontBold && fontItalic)
+							{
+								style = Style.BOLD_ITALIC;
+							}
+							else if(fontBold)
+							{
+								style = Style.BOLD;
+							}
+							else if(fontItalic)
+							{
+								style = Style.ITALIC;
+							}
+							
+							newFont = FontCollections.lookup(currentFont.name, style);
+						}
+						else 
+							newFont = new CoreFont ( getFontStyleString(fontBold, fontItalic, fontFamily) );
+
 						setFont ( newFont, cellVO.fontSizePt );
 						cellVO.font = newFont;
 						
