@@ -5,6 +5,7 @@ package org.alivepdf.fonts
 	public interface IFont extends IEventDispatcher
 	{
 		function get name():String;
+		function set name(value:String):void;
 		function get id():int;
 		function set id(id:int):void;
 		function get type():String;

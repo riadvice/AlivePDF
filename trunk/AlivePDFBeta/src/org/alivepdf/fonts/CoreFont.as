@@ -2,7 +2,6 @@ package org.alivepdf.fonts
 {	
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
-	import flash.events.IEventDispatcher;
 	
 	/**
 	 * This class represents a core font.
@@ -49,6 +48,13 @@ package org.alivepdf.fonts
 		public function get name():String
 		{	
 			return _name;	
+		}
+		
+		public function set name(value:String):void
+		{
+			_name = value;
+			
+			_charactersWidth = FontMetrics.lookUp(name);	
 		}
 		
 		/**

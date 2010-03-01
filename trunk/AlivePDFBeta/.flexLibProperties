@@ -33,6 +33,7 @@
     <classEntry path="org.alivepdf.images.IImage"/>
     <classEntry path="org.alivepdf.fonts.CoreFont"/>
     <classEntry path="org.alivepdf.images.gif.frames.GIFFrame"/>
+    <classEntry path="org.alivepdf.billing.Currency"/>
     <classEntry path="org.alivepdf.drawing.DashedLine"/>
     <classEntry path="org.alivepdf.viewing.ToolBar"/>
     <classEntry path="org.alivepdf.images.gif.decoder.GIFDecoder"/>
@@ -61,8 +62,10 @@
     <classEntry path="org.alivepdf.images.gif.events.FileTypeEvent"/>
     <classEntry path="org.alivepdf.links.HTTPLink"/>
     <classEntry path="org.alivepdf.layout.Align"/>
+    <classEntry path="org.alivepdf.billing.Invoice"/>
     <classEntry path="org.alivepdf.images.gif.events.TimeoutEvent"/>
     <classEntry path="org.alivepdf.images.DoPNGImage"/>
+    <classEntry path="org.alivepdf.billing.Company"/>
     <classEntry path="org.alivepdf.images.GIFImage"/>
     <classEntry path="org.alivepdf.pages.Page"/>
     <classEntry path="org.alivepdf.drawing.WindingRule"/>

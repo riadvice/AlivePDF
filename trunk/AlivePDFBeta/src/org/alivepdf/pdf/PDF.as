@@ -94,6 +94,7 @@ package org.alivepdf.pdf
 	import org.alivepdf.images.gif.player.GIFPlayer;
 	import org.alivepdf.layout.Align;
 	import org.alivepdf.layout.Border;
+	import org.alivepdf.layout.HorizontalAlign;
 	import org.alivepdf.layout.Layout;
 	import org.alivepdf.layout.Mode;
 	import org.alivepdf.layout.Position;
@@ -1193,6 +1194,7 @@ package org.alivepdf.pdf
 		*
 		* moveTo()
 		* lineTo()
+		* drawLine()
 		* end()
 		* curveTo()
 		* lineStyle()
@@ -1298,6 +1300,16 @@ package org.alivepdf.pdf
 		public function end ():void
 		{
 			write ( !filled ? "s" : windingRule == WindingRule.NON_ZERO ? "b" : "b*" );
+		}
+		
+		/**
+		 * 
+		 * 
+		 * 
+		 */
+		public function drawLine(x1:Number, y1:Number, x2:Number, y2:Number):void
+		{
+			write(sprintf('%.2F %.2F m %.2F %.2F l S',x1*k,(currentPage.h-y1)*k,x2*k,(currentPage.h-y2)*k));
 		}
 		
 		/**
@@ -2860,9 +2872,9 @@ package org.alivepdf.pdf
 			{
 				var dx:Number;
 				
-				if ( align == Align.RIGHT ) 
+				if ( align == HorizontalAlign.RIGHT ) 
 					dx = width-currentMargin-getStringWidth(text);
-				else if ( align == Align.CENTER ) 
+				else if ( align == HorizontalAlign.CENTER ) 
 					dx = (width-getStringWidth(text))*.5;
 				else dx = currentMargin;
 				
