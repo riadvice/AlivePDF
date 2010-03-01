@@ -126,6 +126,11 @@ package org.alivepdf.fonts.unicodefonts
 			return _name;	
 		}
 		
+		public function set name(value:String):void
+		{
+			_name = value;
+		}
+		
 		/**
 		 * 
 		 * @return 
