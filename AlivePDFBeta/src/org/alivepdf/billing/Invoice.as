@@ -4,6 +4,8 @@ package org.alivepdf.billing
 	import org.alivepdf.fonts.CoreFont;
 	import org.alivepdf.fonts.FontFamily;
 	import org.alivepdf.fonts.IFont;
+	import org.alivepdf.grid.Grid;
+	import org.alivepdf.grid.GridColumn;
 	import org.alivepdf.layout.HorizontalAlign;
 	import org.alivepdf.layout.Size;
 	import org.alivepdf.pdf.PDF;
@@ -11,6 +13,16 @@ package org.alivepdf.billing
 
 	public class Invoice extends PDF
 	{
+		public static var dataEx:Array = [
+			{reference:"TEST 1",info:"Carte Mere MSI 6378 Processeur AMD 1Ghz 128Mo SDRAM, 30 Go Disque, Cdrom, Floppy, Carte video" ,quantity:1,price:60,total:60,tva:true},
+			{reference:"TEST 1",info:"blablabla" ,quantity:1,price:60,total:60,tva:true},
+			{reference:"TEST 1",info:"blablabla" ,quantity:1,price:60,total:60,tva:true},
+			{reference:"TEST 1",info:"blablabla" ,quantity:1,price:60,total:60,tva:true},
+			{reference:"TEST 1",info:"blablabla" ,quantity:1,price:60,total:60,tva:true},
+			{reference:"TEST 1",info:"blablabla" ,quantity:1,price:60,total:60,tva:true}
+		];
+		
+		
 		public function Invoice(orientation:String='Portrait', unit:String='Mm', pageSize:Size=null, rotation:int=0)
 		{
 			super(orientation, unit, pageSize, rotation);
@@ -112,7 +124,7 @@ package org.alivepdf.billing
 			addCell(maxWidth, 5, company.address, null, 0, align);
 			setXY(leftMargin,y+10);
 			var cpcity:String = company.postalCode + " " + company.city;
-			addCell(maxWidth, 5, cpcity, null, 0, align);
+			addCell(maxWidth, 5, cpcity, null, 5, align);
 			
 			//addCell(getStringWidth(company.name), 5, company.name);
 			//addCell(getStringWidth(company.name), 5, company.name);
@@ -183,7 +195,7 @@ package org.alivepdf.billing
     		font.name = FontFamily.HELVETICA;
     		this.setFont( font, 10);
     		this.addCell(10,5,mode, 0,0, "C");
-  }
+  		}
 
 		
 		
@@ -198,6 +210,73 @@ package org.alivepdf.billing
 			setXY(leftMargin, y1);
 			addMultiCell(maxWidth(), 5, "Remarque : " + remarque, 1, "J");
 		}
+		
+		
+		
+		public function addCadreTVAs():void
+  		{
+  			var font:IFont = new CoreFont( FontFamily.HELVETICA_BOLD );
+  			this.setFont( font, 8 );
+
+			var r1:Number = 10;
+			var r2:Number = r1 + 120;
+			var y1:Number = maxY - 40;
+			var y2:Number = y1 + 20;
+
+	
+	    	RoundedRect(r1, y1, (r2 - r1), (y2-y1), 2.5, 'D');
+		    drawLine( r1, y1+4, r2, y1+4);
+		    drawLine( r1+5,  y1+4, r1+5, y2); // avant BASES HT
+		    drawLine( r1+27, y1, r1+27, y2);  // avant REMISE
+		    drawLine( r1+43, y1, r1+43, y2);  // avant MT TVA
+		    drawLine( r1+63, y1, r1+63, y2);  // avant % TVA
+		    drawLine( r1+75, y1, r1+75, y2);  // avant PORT
+		    drawLine( r1+91, y1, r1+91, y2);  // avant TOTAUX
+		    setXY( r1+9, y1);
+		    addCell(10,4, "BASES HT");
+		    setX( r1+29 );
+		    addCell(10,4, "REMISE");
+		    setX( r1+48 );
+		    addCell(10,4, "MT TVA");
+		    setX( r1+63 );
+		    addCell(10,4, "% TVA");
+		    setX( r1+78 );
+		    addCell(10,4, "PORT");
+		    setX( r1+100 );
+		    addCell(10,4, "TOTAUX");
+		    setFont( font, 6);
+		    setXY( r1+93, y2 - 3 );
+		    addCell(6,0, "T.V.A.  :");
+		}
+		
+		
+		public function createGrid( data:Array ):void
+		{
+			this.setX( leftMargin );
+			
+			var refCol:GridColumn = new GridColumn("REFERENCE", "reference", 30, HorizontalAlign.CENTER);
+			var infoCol:GridColumn = new GridColumn("DESIGNATION", "info", 70, HorizontalAlign.CENTER);
+			var qtyCol:GridColumn = new GridColumn("QUANTITE", "quantity", 20, HorizontalAlign.CENTER, HorizontalAlign.CENTER);
+			var priceCol:GridColumn = new GridColumn("P.U. HT", "price", 20, HorizontalAlign.CENTER, HorizontalAlign.RIGHT);
+			var totalCol:GridColumn = new GridColumn("MONTANT H.T.", "total", 20, HorizontalAlign.CENTER, HorizontalAlign.RIGHT);
+			var tvaCol:GridColumn = new GridColumn("TVA", "tva", 20, HorizontalAlign.CENTER, HorizontalAlign.CENTER);
+			
+			var columns:Array = [refCol, infoCol, qtyCol, priceCol, totalCol, tvaCol];
+			
+			var grid:Grid = new Grid(data, 180, 100, new RGBColor(0xffffff), new RGBColor(0xffffff), false, null,
+										new RGBColor(0x000000), 1, 5, 5, "O j", columns);
+			
+			
+			
+			var font:IFont = new CoreFont( FontFamily.ARIAL );
+			this.setFont( font, 10 );
+			this.textStyle( new RGBColor(0x000000) );
+			
+			this.addGrid(grid);
+			
+			this.addMultiCell(70, 5, dataEx[0].info, 0, "L", 0);
+			
+		}		
 		
 		
 	}
