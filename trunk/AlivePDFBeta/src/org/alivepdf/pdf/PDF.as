@@ -3903,10 +3903,13 @@ package org.alivepdf.pdf
 			var nb:int = 0;
 			var nbL:int;
 			var lng:int = rows.length;
+			var cell:GridCell;
 			
-			for(var i:int=0;i<lng;i++)
-				if ( (nbL = nbLines(columns[i].width, rows[i])) > nb ) 
+			for(var i:int=0;i<lng;i++){
+				cell = rows[i] as GridCell;
+				if ( (nbL = nbLines(columns[i].width, cell.text)) > nb ) 
 					nb = nbL;
+			}
 			
 			var ph:int = 5;
 			var h:Number = (ph*nb > rowHeight) ? ph*nb : rowHeight;
@@ -3920,7 +3923,7 @@ package org.alivepdf.pdf
 			var x:Number = 0;
 			var y:Number = 0;
 			var w:Number = 0;
-			var h:Number = rect.height;
+			var h:int = rect.height;
 			var lng:int = data.length;
 			
 			for(var i:int = 0; i<lng; i++)
@@ -3936,7 +3939,7 @@ package org.alivepdf.pdf
 				lineStyle ( currentGrid.borderColor, 0, 0, currentGrid.borderAlpha );
 				drawRect( rect );
 				setAlpha ( 1 );
-				addMultiCell(w,h,cell.text,0,a);
+				addMultiCell(w,currentGrid.rowHeight,cell.text,0,a);
 				setXY(x+w,y);
 				
 				endFill();
