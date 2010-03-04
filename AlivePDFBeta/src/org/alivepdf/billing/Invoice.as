@@ -1,5 +1,8 @@
 package org.alivepdf.billing
 {
+	import mx.formatters.DateFormatter;
+	import mx.utils.ObjectUtil;
+	
 	import org.alivepdf.colors.RGBColor;
 	import org.alivepdf.fonts.CoreFont;
 	import org.alivepdf.fonts.FontFamily;
@@ -13,24 +16,33 @@ package org.alivepdf.billing
 
 	public class Invoice extends PDF
 	{
+		private var formatter:DateFormatter = new DateFormatter();
+		
 		public static var dataEx:Array = [
-			{reference:"TEST 1",info:"Carte Mere MSI 6378 Processeur AMD 1Ghz 128Mo SDRAM, 30 Go Disque, Cdrom, Floppy, Carte video" ,quantity:1,price:60,total:60,tva:true},
-			{reference:"TEST 1",info:"blablabla" ,quantity:1,price:60,total:60,tva:true},
-			{reference:"TEST 1",info:"blablabla" ,quantity:1,price:60,total:60,tva:true},
-			{reference:"TEST 1",info:"blablabla" ,quantity:1,price:60,total:60,tva:true},
-			{reference:"TEST 1",info:"blablabla" ,quantity:1,price:60,total:60,tva:true},
-			{reference:"TEST 1",info:"blablabla" ,quantity:1,price:60,total:60,tva:true}
+			{reference:"TEST 1",info:"Carte Mere MSI 6378 Processeur AMD 1Ghz 128Mo SDRAM, 30 Go Disque, Cdrom, Floppy, Carte video" ,quantity:1,price:60,total:60,tva:1},
+			{reference:"TEST 1",info:"blablabla" ,quantity:1,price:60,total:60,tva:1},
+			{reference:"TEST 1",info:"blablabla" ,quantity:1,price:60,total:60,tva:1},
+			{reference:"TEST 1",info:"blablabla" ,quantity:1,price:60,total:60,tva:1},
+			{reference:"TEST 1",info:"blablabla" ,quantity:1,price:60,total:60,tva:1},
+			{reference:"TEST 1",info:"blablabla" ,quantity:1,price:60,total:60,tva:1}
 		];
 		
 		
 		public function Invoice(orientation:String='Portrait', unit:String='Mm', pageSize:Size=null, rotation:int=0)
 		{
 			super(orientation, unit, pageSize, rotation);
+			
+			formatter.formatString = "DD-MM-YYYY";
 		}
 		
 		public function maxWidth():Number
   		{
     		return this.getCurrentPage().w - rightMargin - leftMargin;
+  		}
+  		
+  		public function configureDateFormatter(formatString:String):void
+  		{
+  			formatter.formatString = formatString;
   		}
 
 
@@ -119,12 +131,10 @@ package org.alivepdf.billing
 			
 			var maxWidth:Number = maxWidth();
 			
-			addCell(maxWidth, 5, company.name, null, 0, align);
-			setXY(leftMargin,y+5);
-			addCell(maxWidth, 5, company.address, null, 0, align);
-			setXY(leftMargin,y+10);
+			addCell(maxWidth, 5, company.name, 0, 5, align);
+			addCell(maxWidth, 5, company.address, 0, 5, align);
 			var cpcity:String = company.postalCode + " " + company.city;
-			addCell(maxWidth, 5, cpcity, null, 5, align);
+			addCell(maxWidth, 5, cpcity, 0, 5, align);
 			
 			//addCell(getStringWidth(company.name), 5, company.name);
 			//addCell(getStringWidth(company.name), 5, company.name);
@@ -133,18 +143,6 @@ package org.alivepdf.billing
 		public function addCompany(company:Company):void
 		{
 			addCompanyBox(company, topMargin);
-			
-//			setXY(x1,y1);
-//			var font:IFont = new CoreFont(FontFamily.ARIAL);
-//			setFont( font, 12 );
-//			var nameWidth:int = getStringWidth( name );
-//			addCell(nameWidth, 5, name);
-//			setXY(x1,y1+5);
-//			
-//			var addressWidth:int = getStringWidth( address );
-//			
-//			addMultiCell( addressWidth, 10, address);
-			
 			
 		}
 		
@@ -157,7 +155,7 @@ package org.alivepdf.billing
 			var y2:int  = y1 ;
 			var mid:int = y1 + (y2 / 2);
 			RoundedRect(r1, y1, (r2 - r1), y2, 3.5, 'D');
-		 	lineStyle( new RGBColor ( 0x000000 ), 1, 0 );
+		 	lineStyle( new RGBColor ( 0x000000 ), 0.5, 0 );
 		 	drawLine ( r1, mid, r2, mid );
 			this.setXY( r1 + (r2-r1)/2 - 5, y1+3 );
 			
@@ -167,7 +165,16 @@ package org.alivepdf.billing
 			this.setXY( r1 + (r2-r1)/2 - 5, y1+9 );
 			font.name = FontFamily.HELVETICA;
 			this.setFont( font, 10);
-			this.addCell(10, 5, date.toString(), 0, 0, "C");
+			
+			var strDate:String;
+			if (date is Date){
+				strDate = formatter.format( date ) as String;
+			}
+			else{
+				strDate = ObjectUtil.toString( date );
+			}
+			
+			this.addCell(10, 5, strDate, 0, 0, "C");
 		}
 
 		
@@ -196,6 +203,44 @@ package org.alivepdf.billing
     		this.setFont( font, 10);
     		this.addCell(10,5,mode, 0,0, "C");
   		}
+
+
+
+	  	public function addEcheance( date:Object ):void
+  		{
+    		var r1:int  = 80;
+    		var r2:int  = r1 + 40;
+    		var y1:int  = 80;
+    		var y2:int  = y1+10;
+    		var mid:Number = y1 + ((y2-y1) / 2);
+    		RoundedRect(r1, y1, (r2 - r1), (y2-y1), 2.5, 'D');
+    		drawLine( r1, mid, r2, mid);
+    		setXY( r1 + (r2 - r1)/2 - 5 , y1+1 );
+    		//setFont( "Helvetica", "B", 10);
+    		addCell(10,5, "DATE D'ECHEANCE", 0, 0, "C");
+    		setXY( r1 + (r2-r1)/2 - 5 , y1 + 5 );
+    		//setFont( "Helvetica", "", 10);
+    		addCell(10,5,date.toString(), 0,0, "C");
+  		}
+//
+//  function addNumTVA($tva_fr, $tva_cee)
+//  {
+//    $this->SetFont( "Helvetica", "", 10);
+//    $length = $this->GetStringWidth( "N/ld CEE : " . $tva_fr ) + 4;
+//    $maxX=$this->maxX();
+//    $r1  = $maxX - 80;
+//    $r2  = $r1 + 60;
+//    $y1  = 80;
+//    $y2  = $y1+10;
+//    $mid = $y1 + (($y2-$y1) / 2);
+//    $this->RoundedRect($r1, $y1, ($r2 - $r1), ($y2-$y1), 2.5, 'D');
+//    $this->Line( $r1, $mid, $r2, $mid);
+//    // $this->SetXY( $r1 + ($r2-$r1)/2 -2 , $y1+1 );
+//    $this->SetXY( $r1 + 2, $y1 + 1 );
+//    $this->Cell($length,4, "N/ld CEE : " . $tva_fr);
+//    $this->SetXY( $r1 + 2, $y1 + 6 );
+//    $this->Cell($length,4,"V/ld CEE : " . $tva_cee);
+//  }
 
 		
 		
@@ -248,22 +293,31 @@ package org.alivepdf.billing
 		    setXY( r1+93, y2 - 3 );
 		    addCell(6,0, "T.V.A.  :");
 		}
-		
+
+		private function getWidth(percentWidth:Number):Number
+		{
+			return Math.round(percentWidth/100 * maxWidth());
+			
+			
+		}
 		
 		public function createGrid( data:Array ):void
 		{
-			this.setX( leftMargin );
+			this.setXY( leftMargin, 100 );
 			
-			var refCol:GridColumn = new GridColumn("REFERENCE", "reference", 30, HorizontalAlign.CENTER);
-			var infoCol:GridColumn = new GridColumn("DESIGNATION", "info", 70, HorizontalAlign.CENTER);
-			var qtyCol:GridColumn = new GridColumn("QUANTITE", "quantity", 20, HorizontalAlign.CENTER, HorizontalAlign.CENTER);
-			var priceCol:GridColumn = new GridColumn("P.U. HT", "price", 20, HorizontalAlign.CENTER, HorizontalAlign.RIGHT);
-			var totalCol:GridColumn = new GridColumn("MONTANT H.T.", "total", 20, HorizontalAlign.CENTER, HorizontalAlign.RIGHT);
-			var tvaCol:GridColumn = new GridColumn("TVA", "tva", 20, HorizontalAlign.CENTER, HorizontalAlign.CENTER);
+			var refCol:GridColumn = new GridColumn("REFERENCE", "reference", getWidth(15), HorizontalAlign.CENTER);
+			var infoCol:GridColumn = new GridColumn("DESIGNATION", "info", getWidth(35), HorizontalAlign.CENTER);
+			var qtyCol:GridColumn = new GridColumn("QUANTITE", "quantity", getWidth(15), HorizontalAlign.CENTER, HorizontalAlign.CENTER);
+			var priceCol:GridColumn = new GridColumn("P.U. HT", "price", getWidth(10), HorizontalAlign.CENTER, HorizontalAlign.RIGHT);
+			var totalCol:GridColumn = new GridColumn("MONTANT H.T.", "total", getWidth(15), HorizontalAlign.CENTER, HorizontalAlign.RIGHT);
+			var tvaCol:GridColumn = new GridColumn("TVA", "tva", getWidth(10), HorizontalAlign.CENTER, HorizontalAlign.CENTER);
 			
 			var columns:Array = [refCol, infoCol, qtyCol, priceCol, totalCol, tvaCol];
 			
-			var grid:Grid = new Grid(data, 180, 100, new RGBColor(0xffffff), new RGBColor(0xffffff), false, null,
+			
+			
+			
+			var grid:Grid = new Grid(data, maxWidth(), 0, new RGBColor(0xffffff), new RGBColor(0xffffff), false, null,
 										new RGBColor(0x000000), 1, 5, 5, "O j", columns);
 			
 			
@@ -273,8 +327,6 @@ package org.alivepdf.billing
 			this.textStyle( new RGBColor(0x000000) );
 			
 			this.addGrid(grid);
-			
-			this.addMultiCell(70, 5, dataEx[0].info, 0, "L", 0);
 			
 		}		
 		
