@@ -20,6 +20,5 @@ package org.alivepdf.billing
 			this.postalCode = cp;
 			this.city = city;
 		}
-
 	}
 }

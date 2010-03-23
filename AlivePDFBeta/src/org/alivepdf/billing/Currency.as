@@ -4,6 +4,5 @@ package org.alivepdf.billing
 	{
 		public static const EURO:String = "euro";
 		public static const DOLLARD:String = "dollard";
-		
 	}
 }

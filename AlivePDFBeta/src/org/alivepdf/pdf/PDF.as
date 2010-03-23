@@ -79,7 +79,7 @@ package org.alivepdf.pdf
 	import org.alivepdf.gradients.ShadingType;
 	import org.alivepdf.grid.Grid;
 	import org.alivepdf.grid.GridCell;
-	import org.alivepdf.grid.GridRowKind;
+	import org.alivepdf.grid.GridRowType;
 	import org.alivepdf.html.HTMLTag;
 	import org.alivepdf.images.ColorSpace;
 	import org.alivepdf.images.DoJPEGImage;
@@ -369,6 +369,7 @@ package org.alivepdf.pdf
 		protected var rowX : Number;
 		protected var rowY : Number;
 		protected var maxY : Number;
+		private var stroking:Boolean;
 		
 		/**
 		 * The PDF class represents a PDF document.
@@ -804,11 +805,12 @@ package org.alivepdf.pdf
 			
 			startPage ( page != null ? page.orientation : defaultOrientation );
 			
+			/*
 			if ( strokeColor != null ) 
 				lineStyle ( strokeColor, strokeThickness, strokeFlatness, strokeAlpha, windingRule, strokeBlendMode, strokeDash, strokeCaps, strokeJoints, strokeMiter );
 			
 			if ( fillColor != null ) 
-				beginFill( fillColor );
+				beginFill( fillColor );*/
 			
 			if ( textColor != null ) 
 				textStyle ( textColor, textAlpha, textRendering, textSpace, textSpace, textScale, textLeading );
@@ -1299,7 +1301,14 @@ package org.alivepdf.pdf
 		 */
 		public function end ():void
 		{
-			write ( !filled ? "s" : windingRule == WindingRule.NON_ZERO ? "b" : "b*" );
+			if ( !filled )
+				write ("s");
+			else if ( !stroking )
+				write (windingRule == WindingRule.NON_ZERO ? "f" : "f*");
+			else write (windingRule == WindingRule.NON_ZERO ? "b" : "b*");
+			
+			if ( stroking )
+				stroking = false;
 		}
 		
 		/**
@@ -1390,6 +1399,7 @@ package org.alivepdf.pdf
 		 */	
 		public function lineStyle ( color:IColor, thickness:Number=1, flatness:Number=0, alpha:Number=1, rule:String="NonZeroWinding", blendMode:String="Normal", style:DashedLine=null, caps:String=null, joints:String=null, miterLimit:Number=3 ):void
 		{
+			stroking = true;
 			setStrokeColor ( strokeColor = color );
 			strokeThickness = thickness;
 			strokeAlpha = alpha;
@@ -1612,13 +1622,31 @@ package org.alivepdf.pdf
 		{
 			if ( !bitmapFilled ) 
 			{
-				var style:String = filled ? Drawing.CLOSE_AND_FILL_AND_STROKE : Drawing.STROKE;
+				var style:String = getCurrentStyle(style);
 				write (sprintf('%.2f %.2f %.2f %.2f re %s', (rect.x)*k, (currentPage.h-(rect.y))*k, rect.width*k, -rect.height*k, style));
+				if ( stroking )
+					stroking = false;
 			} else 
 			{
 				bitmapFillBuffer.graphics.drawRect ( rect.x, rect.y, rect.width, rect.height );
 				addImage(bitmapFillBuffer, null, rect.x, rect.y, rect.width, rect.height);
 			}
+		}
+
+		/**
+		 *  Saves the current graphics state to be restored later.
+		 */		
+		public function saveGraphicsState():void
+		{
+			write('q');
+		}
+		
+		/**
+		 * Restores the saved graphics state.
+		 */		
+		public function restoreGraphicsState():void
+		{
+			write('Q');
 		}
 		
 		/**
@@ -1638,10 +1666,13 @@ package org.alivepdf.pdf
 		 * </div>
 		 */
 		public function drawRoundRect ( rect:Rectangle, ellipseWidth:Number ):void
-		{
+		{	
 			if ( !bitmapFilled )
+			{
 				drawRoundRectComplex ( rect, ellipseWidth, ellipseWidth, ellipseWidth, ellipseWidth );
-			else
+				if ( stroking )
+					stroking = false;
+			} else
 			{
 				bitmapFillBuffer.graphics.drawRoundRect( rect.x, rect.y, rect.width, rect.height, ellipseWidth, ellipseWidth );
 				addImage(bitmapFillBuffer, null, rect.x, rect.y);	
@@ -1693,8 +1724,10 @@ package org.alivepdf.pdf
 				yc = rect.y+topLeftEllipseWidth;
 				write(sprintf('%.2f %.2f l',(rect.x)*k,(hp-yc)*k ));
 				curve(xc - topLeftEllipseWidth, yc - topLeftEllipseWidth*MyArc, xc - topLeftEllipseWidth*MyArc, yc - topLeftEllipseWidth, xc, yc - topLeftEllipseWidth);
-				var style:String = filled ? Drawing.CLOSE_AND_FILL_AND_STROKE : Drawing.STROKE;
+				var style:String = getCurrentStyle(style);
 				write(style);
+				if ( stroking )
+					stroking = false;
 			} else 
 			{
 				bitmapFillBuffer.graphics.drawRoundRectComplex( rect.x, rect.y, rect.width, rect.height, topLeftEllipseWidth, topRightEllipseWidth, bottomLeftEllipseWidth, bottomRightEllipseWidth );
@@ -1724,7 +1757,7 @@ package org.alivepdf.pdf
 		{
 			if ( !bitmapFilled )
 			{
-				var style:String = filled ? Drawing.CLOSE_AND_FILL_AND_STROKE : Drawing.STROKE;
+				var style:String = getCurrentStyle(style);
 				
 				var lx:Number = 4/3*(1.41421356237309504880-1)*radiusX;
 				var ly:Number = 4/3*(1.41421356237309504880-1)*radiusY;
@@ -1749,6 +1782,8 @@ package org.alivepdf.pdf
 					(x+radiusX)*k,(h-(y+ly))*k,
 					(x+radiusX)*k,(h-y)*k,
 					style));
+				if ( stroking )
+					stroking = false;
 			} else
 			{
 				bitmapFillBuffer.graphics.drawEllipse( x, y, radiusX, radiusY );
@@ -2728,7 +2763,7 @@ package org.alivepdf.pdf
 		
 		/**
 		 * Lets you set some text to any position on the page.
-		 * Note : addText is a low level method which does not take care of line return and paragraph requirements. Use writeText for that or writeFlashHtmlText if you need HTML on top of that.
+		 * Note : addText is a low level method which does not handle line returns and paragraph requirements. Use writeText for that or writeFlashHtmlText if you need HTML on top of that.
 		 *
 		 * @param text The text to add
 		 * @param x X position
@@ -3866,7 +3901,7 @@ package org.alivepdf.pdf
 				addPage();
 			
 			setXY ( x+getX(), y+getY() );
-			addRow( columnNames, GridRowKind.HEADER, rect );
+			addRow( columnNames, GridRowType.HEADER, rect );
 			
 			if (grid.cells == null)
 				grid.generateCells();
@@ -3887,14 +3922,14 @@ package org.alivepdf.pdf
 					setXY ( x+getX(), y+getY() );
 					if ( repeatHeader ) 
 					{
-						addRow (columnNames, GridRowKind.HEADER, getRect(columnNames, currentGrid.headerHeight) ); // header
+						addRow (columnNames, GridRowType.HEADER, getRect(columnNames, currentGrid.headerHeight) ); // header
 						setX ( x + getX() );
 					}
 				}
 				
 				if ( grid.useAlternativeRowColor && Boolean(isEven = i&1) )
-					addRow( row, GridRowKind.ALTERNATIVE, rect );
-				else addRow( row, GridRowKind.NORMAL, rect );
+					addRow( row, GridRowType.ALTERNATIVE, rect );
+				else addRow( row, GridRowType.NORMAL, rect );
 			}
 		}
 		
@@ -3932,7 +3967,7 @@ package org.alivepdf.pdf
 				
 				beginFill( cell.backgroundColor );
 					
-				a = (style != GridRowKind.HEADER) ? columns[i].cellAlign : columns[i].headerAlign;
+				a = (style != GridRowType.HEADER) ? columns[i].cellAlign : columns[i].headerAlign;
 				rect.x = x = getX();
 				rect.y = y = getY();
 				rect.width = w = columns[i].width;
@@ -4701,6 +4736,21 @@ package org.alivepdf.pdf
 			version = PDF.PDF_VERSION;
 		}
 		
+		protected function getCurrentStyle(style:String):String
+		{			
+			var style:String;
+			
+			if ( filled && stroking )
+				style = Drawing.CLOSE_AND_FILL_AND_STROKE;
+			else if ( filled )
+				style = Drawing.FILL;
+			else if ( stroking )
+				style = Drawing.CLOSE_AND_STROKE;
+			else style = Drawing.CLOSE_AND_STROKE;
+			
+			return style;
+		}
+		
 		protected function getStringLength(string:String):int
 		{
 			if(currentFont.type == FontType.TYPE0)
@@ -4910,7 +4960,7 @@ package org.alivepdf.pdf
 		protected function writeXObjectDictionary():void
 		{
 			for each ( var image:PDFImage in streamDictionary ) 
-			write('/I'+image.resourceId+' '+image.n+' 0 R');
+				write('/I'+image.resourceId+' '+image.n+' 0 R');
 		}
 		
 		protected function writeResourcesDictionary():void
