@@ -40,7 +40,7 @@
     <classEntry path="org.alivepdf.codabar.CodaBar"/>
     <classEntry path="org.alivepdf.images.gif.encoder.NeuQuant"/>
     <classEntry path="org.alivepdf.html.HTMLTag"/>
-    <classEntry path="org.alivepdf.grid.GridRowKind"/>
+    <classEntry path="org.alivepdf.grid.GridRowType"/>
     <classEntry path="org.alivepdf.images.gif.encoder.GIFEncoder"/>
     <classEntry path="org.alivepdf.grid.GridColumn"/>
     <classEntry path="org.alivepdf.transitions.TransitionDirection"/>
