@@ -3681,7 +3681,7 @@ package org.alivepdf.pdf
 			}            
 			
 			//Set current y off the page to force new page.
-			currentY += currentPage.h;    
+			currentY += currentPage.h;
 		}
 		
 		protected function lineBreak ( pHeight : Number ):void
@@ -4920,8 +4920,8 @@ package org.alivepdf.pdf
 			nb = arrayPages.length;
 			
 			if( aliasNbPages != null )
-				for( n = 0; n<nb; n++ ) 
-					arrayPages[n].content = findAndReplace ( aliasNbPages, ( nb.toString() ), arrayPages[n].content );
+				for( var i:int = 0; i<nb; i++ ) 
+					arrayPages[i].content = findAndReplace ( aliasNbPages, ( nb.toString() ), arrayPages[i].content );
 			
 			filter = new String();
 			
