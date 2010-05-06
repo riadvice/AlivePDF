@@ -186,14 +186,37 @@ package org.alivepdf.pdf
 			bytes.writeUTFBytes(content);
 			bytes.position = 0;
 			content = this.arrUTF8ToUTF16BE(UTF8StringToArray(content, bytes));
-			return findAndReplace(')','\\)',findAndReplace('(','\\(',findAndReplace('\\','\\\\',content)));
-		} 
+			return super.escapeIt(content);	
+		}
 		
 		protected override function writeStream(stream:String):void
 		{
 			write('stream');
-			for (var i:int = 0; i < stream.length; i++)
-				buffer.writeByte(stream.charCodeAt(i));
+			
+			if(stream.indexOf("\xFE\xFF") > 0)
+			{
+				var chunks:Array = stream.split("\xFE\xFF");
+				var chunk:String;
+				var j:int;
+				var len:int = chunks.length;
+				
+				for(var i:int=0;i<len;i++)
+				{
+					chunk = chunks[i] as String;
+					
+					for (j = 0; j < chunk.length; j++)
+						buffer.writeByte(chunk.charCodeAt(j));
+					
+					if(i == len-1 && chunk != "") continue;
+					buffer.writeByte(0);
+				}
+				buffer.writeByte(0x0A);
+			}
+			else
+			{
+				for (i = 0; i < stream.length; i++)
+					buffer.writeByte(stream.charCodeAt(i));
+			}
 			buffer.writeByte(0x0A);
 			write('endstream');
 		}
@@ -403,20 +426,32 @@ package org.alivepdf.pdf
 				} else if (char < 0x10000) {
 					bytes.push(char >> 0x08);
 					bytes.push(char & 0xFF);
-					outStr += String.fromCharCode(char >> 0x08);
-					outStr += String.fromCharCode(char & 0xFF);
+					outStr += fromCharCode(char >> 0x08);
+					outStr += fromCharCode(char & 0xFF);
 				} else {
 					char -= 0x10000;
 					w1 = 0xD800 | (char >> 0x10);
 					w2 = 0xDC00 | (char & 0x3FF);	
-					outStr += String.fromCharCode(w1 >> 0x08);
-					outStr += String.fromCharCode(w1 & 0xFF);
-					outStr += String.fromCharCode(w2 >> 0x08);
-					outStr += String.fromCharCode(w2 & 0xFF);
+					outStr += fromCharCode(w1 >> 0x08);
+					outStr += fromCharCode(w1 & 0xFF);
+					outStr += fromCharCode(w2 >> 0x08);
+					outStr += fromCharCode(w2 & 0xFF);
 				}
 			}
 					
 			return outStr;
+		}
+		
+		/**
+		 * 
+		 * @param code
+		 * @return 
+		 * 
+		 */		
+		protected function fromCharCode(code:uint):String
+		{
+			if(code == 0) return "\xFE\xFF"; //return double byte order mark, later to be replaced with 0
+			return String.fromCharCode(code);
 		}
 		
 		/**
