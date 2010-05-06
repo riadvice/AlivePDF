@@ -2916,7 +2916,7 @@ package org.alivepdf.pdf
 				if (colorFlag) 
 					s += 'q '+addTextColor+' ';
 				
-				var txt2:String = findAndReplace(')','\\)',findAndReplace('(','\\(',findAndReplace('\\','\\\\',text)));
+				var txt2:String = escapeIt(text);
 				s += sprintf('BT %.2f %.2f Td (%s) Tj ET',(currentX+dx)*k,(currentPage.h-(currentY+.5*height+.3*fontSize))*k,txt2);
 				
 				if (underline) 
@@ -5439,7 +5439,12 @@ package org.alivepdf.pdf
 		
 		protected function escapeIt(content:String):String
 		{
-			return findAndReplace(')','\\)',findAndReplace('(','\\(',findAndReplace('\\','\\\\',findAndReplace('\r','\\r',content))));
+			content = findAndReplace('\n', "\\n",content);
+			content = findAndReplace('\r', "\\r",content);
+			content = findAndReplace('\t', "\\t",content);
+			content = findAndReplace('\b', "\\b",content);
+			content = findAndReplace('\f', "\\f",content);
+			return findAndReplace(')','\\)',findAndReplace('(','\\(',findAndReplace('\\','\\\\',content)));
 		} 
 		
 		protected function writeStream(stream:String):void
@@ -5457,14 +5462,31 @@ package org.alivepdf.pdf
 				currentPage.content += content+"\n";
 			else 
 			{
-				if ( !isLinux ) 
-					buffer.writeMultiByte( content+"\n", "windows-1252" );
+				if ( !isLinux )
+				{
+					if(content.indexOf("\xFE\xFF") > 0)
+					{
+						var chunks:Array = content.split("\xFE\xFF");
+						var chunk:String;
+						var len:int = chunks.length;
+					
+						for(var i:int =0;i<len;i++)
+						{
+							chunk = chunks[i] as String;
+							buffer.writeMultiByte(chunk, "windows-1252");
+							if(i == len-1 && chunk != "") continue;
+							buffer.writeByte(0);
+						}
+						buffer.writeByte(0x0A);
+					}
+					else buffer.writeMultiByte( content+"\n", "windows-1252" );
+				}
 				else 
 				{
 					var contentTxt:String = content.toString();
 					var lng:int = contentTxt.length;
-					for(var i:int=0; i<lng; ++i)
-						buffer.writeByte(contentTxt.charCodeAt(i));
+					for(i=0; i<lng; ++i)
+							buffer.writeByte(contentTxt.charCodeAt(i));
 					buffer.writeByte(0x0A);
 				}
 			}
