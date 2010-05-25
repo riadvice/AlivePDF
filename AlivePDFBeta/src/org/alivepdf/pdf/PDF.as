@@ -3478,6 +3478,13 @@ package org.alivepdf.pdf
 						// but the parser converts this to a start and end tag
 						lineBreak ( pHeight );
 					case "</BR>":
+						if (currentLine.length > 0 )
+						{
+							renderLine(currentLine,textAlign);
+							currentX  = leftMargin;
+							currentLine = new Array();
+						}
+						break;
 					default:
 						//Process text                    
 						
