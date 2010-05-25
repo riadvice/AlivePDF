@@ -23,9 +23,9 @@ package org.alivepdf.pdf
 		public function get isUnicode():Boolean { return _isUnicode; }
 		public function set isUnicode(value:Boolean):void { _isUnicode = value; }	
 		
-		public function UnicodePDF(orientation:String='Portrait', unit:String='Mm', pageSize:Size=null, rotation:int=0)
+		public function UnicodePDF(orientation:String='Portrait', unit:String='Mm', autoPageBreak:Boolean=true, pageSize:Size=null, rotation:int=0)
 		{
-			super(orientation, unit, pageSize, rotation);
+			super(orientation, unit, autoPageBreak, pageSize, rotation);
 		}
 		
 		public override function writeFlashHtmlText ( pHeight:Number, pText:String, pLink:ILink=null ):void

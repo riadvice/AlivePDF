@@ -383,9 +383,9 @@ package org.alivepdf.pdf
 		 * </pre>
 		 * </div>
 		 */
-		public function PDF ( orientation:String='Portrait', unit:String='Mm', pageSize:Size=null, rotation:int=0 )
+		public function PDF ( orientation:String='Portrait', unit:String='Mm', autoPageBreak:Boolean=true, pageSize:Size=null, rotation:int=0 )
 		{
-			init ( orientation, unit, pageSize, rotation );
+			init ( orientation, unit, autoPageBreak, pageSize, rotation );
 		}
 		
 		/**
@@ -4680,7 +4680,7 @@ package org.alivepdf.pdf
 		*/
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		
-		protected function init ( orientation:String='Portrait', unit:String='Mm', pageSize:Size=null, rotation:int=0 ):void
+		protected function init ( orientation:String='Portrait', unit:String='Mm', autoPageBreak:Boolean=true, pageSize:Size=null, rotation:int=0 ):void
 		{
 			size = ( pageSize != null ) ? Size.getSize(pageSize).clone() : Size.A4.clone();
 			
@@ -4729,7 +4729,7 @@ package org.alivepdf.pdf
 			setMargins ( margin, margin );
 			currentMargin = margin/10;
 			strokeThickness = .567/k;
-			setAutoPageBreak ( true, margin * 2 );			
+			setAutoPageBreak ( autoPageBreak, margin * 2 );			
 			setDisplayMode( Display.FULL_WIDTH );
 			
 			isLinux = Capabilities.version.indexOf ("LNX") != -1;

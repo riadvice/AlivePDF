@@ -28,9 +28,9 @@ package org.alivepdf.billing
 		];
 		
 		
-		public function Invoice(orientation:String='Portrait', unit:String='Mm', pageSize:Size=null, rotation:int=0)
+		public function Invoice(orientation:String='Portrait', unit:String='Mm', autoPageBreak:Boolean=true, pageSize:Size=null, rotation:int=0)
 		{
-			super(orientation, unit, pageSize, rotation);
+			super(orientation, unit, autoPageBreak, pageSize, rotation);
 			
 			formatter.formatString = "DD-MM-YYYY";
 		}
