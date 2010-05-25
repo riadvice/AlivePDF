@@ -1299,10 +1299,15 @@ package org.alivepdf.pdf
 		 * </pre>
 		 * </div>
 		 */
-		public function end ():void
+		public function end (closePath:Boolean=true):void
 		{
 			if ( !filled )
-				write ("s");
+			{
+				if (closePath)
+					write ("s");
+				else write ("S");
+			}
+
 			else if ( !stroking )
 				write (windingRule == WindingRule.NON_ZERO ? "f" : "f*");
 			else write (windingRule == WindingRule.NON_ZERO ? "b" : "b*");
