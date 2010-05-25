@@ -3958,7 +3958,7 @@ package org.alivepdf.pdf
 					nb = nbL;
 			}
 			
-			var ph:int = 5;
+			var ph:int = rowHeight;
 			var h:Number = (ph*nb > rowHeight) ? ph*nb : rowHeight;
 			
 			return new Rectangle(0, 0, 0, h);
