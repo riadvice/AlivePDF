@@ -242,6 +242,8 @@ package org.alivepdf.fonts
 		
 		public function makeFont(fontfile:ByteArray, afmfile:ByteArray, enc:Class):void
 		{
+			fontfile.position = 0;
+			
 			var patch:Array = new Array();
 
 			var map:Array = readMap( new enc() );
