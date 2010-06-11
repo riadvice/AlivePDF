@@ -195,11 +195,6 @@ package org.alivepdf.pdf
 	/**
 	 * The PDF class represents a PDF document.
 	 * 
-	 * Multiple Wiimotes can be handled as well. It is possible to create up to four Wiimote objects.
-	 * If more than four Wiimote objects have been created an error will be thrown. After one Wiimote
-	 * object made a successful connection to the WiiFlash Server all the other Wiimote objects will
-	 * fire the connect event immediately.
-	 * 
 	 * @author Thibault Imbert
 	 * 
 	 * @example
