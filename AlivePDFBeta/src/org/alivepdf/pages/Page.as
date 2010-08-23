@@ -28,8 +28,10 @@ package org.alivepdf.pages
 		private var _k:Number;
 		private var _unit:String;
 		private var _advanceTiming:int;
+		
 	
-		public function Page ( orientation:String, unit:String="Mm", size:Size=null, rotation:Number=0 )
+	
+		public function Page ( orientation:String, unit:String="Mm", size:Size=null, rotation:Number=0)
 		{
 			_orientation = orientation;
 			_rotation = rotation;
@@ -57,6 +59,7 @@ package org.alivepdf.pages
 				h = _fh;
 				_width = wPt;
 				_height = hPt;
+				
 
 			} else if ( _orientation == Orientation.LANDSCAPE )
 			{		

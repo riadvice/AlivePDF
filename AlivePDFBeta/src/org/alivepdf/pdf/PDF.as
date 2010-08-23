@@ -357,6 +357,11 @@ package org.alivepdf.pdf
 		protected var nOCGPrint:int;
 		protected var nOCGView:int;
 		protected var startingPageIndex:uint;
+
+		protected var nextPageY:Number = 10;
+		protected var nextPageX:Number = 10;
+
+
 		protected var gradients:Array = new Array();
 		protected var isWrapRow : Boolean;
 		protected var row : Array;
@@ -749,7 +754,8 @@ package org.alivepdf.pdf
 				arrayPages[int(number-1)].rotate ( rotation );
 			else throw new RangeError ("No page available, please select a page from 1 to " + arrayPages.length);
 		}
-		
+		protected var _footer:String;
+		protected var _header:String;
 		/**
 		 * Lets you add a page to the current PDF.
 		 *  
@@ -776,7 +782,7 @@ package org.alivepdf.pdf
 		 * </div>
 		 * 
 		 */		
-		public function addPage ( page:Page=null ):Page
+		public function addPage (page:Page=null):Page
 		{
 			if ( page == null ) 
 				page = new Page ( defaultOrientation, defaultUnit, defaultSize, defaultRotation );
@@ -1161,27 +1167,49 @@ package org.alivepdf.pdf
 		*/
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		
-		protected function header():void
+		public function header(headerText:String=''):void
 		{
-			/*
-			//to be overriden by subclassing (uncomment for a demo )
+			
+/*			//to be overriden by subclassing (uncomment for a demo )
 			var newFont:CoreFont = new CoreFont ( FontFamily.HELVETICA );
 			this.setFont(newFont, 12);
 			this.textStyle( new RGBColor (0x000000) );
 			this.addCell(80);
-			this.addCell(30,10,'Title',1,0,'C');
+			this.addCell(30,10,headerText,1,0,'C');
 			this.newLine(20);*/
 		}
 		
-		protected function footer():void
+		public  function footer(footerText:String='', showPageNumber:Boolean=false,position:String="left"):void
 		{
-			/*
-			//to be overriden by subclassing (uncomment for a demo )
-			this.setXY (15, -15);
+			var fonte:CoreFont = new CoreFont(FontFamily.ARIAL);
+			this.setXY(50,-15);
+			this.setFont(fonte,9);
+			this.textStyle(new RGBColor(0x000000));
+			this.addCell(0,10,footerText,0,0,Align.CENTER);
+			this.newLine(10);
+			
+/*			//to be overriden by subclassing (uncomment for a demo )
+			
+			switch(position){
+				case "left":
+									this.setXY (15, -15);
+									break;
+				case "center":
+									this.setXY(100,-15);
+									break;
+				case "right":
+									this.setXY(this.getMargins().width * 0.5,-15);
+									break;
+			}
+			//this.setXY (15, -15);
 			var newFont:CoreFont = new CoreFont ( FontFamily.HELVETICA );
 			this.setFont(newFont, 8);
 			this.textStyle( new RGBColor (0x000000) );
-			this.addCell(0,10,'Page '+(totalPages-1),0,0,'C');
+			if(showPageNumber){
+			this.addCell(0,10, footerText+(totalPages-1),0,0,'C');
+			}else{
+				this.addCell(0,10, footerText,0,0,'C');
+			}
 			this.newLine(20);*/
 		}
 		
@@ -3907,8 +3935,14 @@ package org.alivepdf.pdf
 			if ( checkPageBreak(rect.height) )
 				addPage();
 			
+
+			setXY (x +currentGrid.x, y+getY() );
+			addRow( columnNames,'', rect);
+			endFill();
+
 			setXY ( x+getX(), y+getY() );
 			addRow( columnNames, GridRowType.HEADER, rect );
+
 			
 			if (grid.cells == null)
 				grid.generateCells();
@@ -3918,15 +3952,26 @@ package org.alivepdf.pdf
 
 			for (i = 0; i< lngRows; i++)
 			{
+
+				item = buffer[i];
+				row = new Array();
+				for (j = 0; j< lngColumns; j++)
+				{
+					row.push (item[columns[j].dataField] != null ? item[columns[j].dataField] : "");
+					nb = Math.min(nb,nbLines(columns[j].width,row[j]));
+				}
+
 				row = buffer[i];
+
 				
 				rect = getRect ( row, currentGrid.rowHeight );
-				setX ( x + getX() );
+				setX ( x + getX());
 				
 				if ( checkPageBreak(rect.height) )
 				{
 					addPage();
-					setXY ( x+getX(), y+getY() );
+					setXY ( x+getX(),nextPageY );
+					//setXY ( x+getX(),y+getY() ); hacked to allow user to set the next Page Y of Grid
 					if ( repeatHeader ) 
 					{
 						addRow (columnNames, GridRowType.HEADER, getRect(columnNames, currentGrid.headerHeight) ); // header
@@ -3940,7 +3985,47 @@ package org.alivepdf.pdf
 			}
 		}
 		
+
+		/**
+		 * This method is used to add grid when used in auto mode for big chunck of data into other pages.
+		 * This may be helpful when you just want to set x,y of grid.
+		 * You may set using setY after addGrid method, but is 2x slow than this simple method.
+		 * 
+		 * @param x
+		 * @param y
+		 * 
+		 * @return void
+		 * @langversion 3.0
+		 * 
+		 * This example shows how to add such a grid to the current page  :
+		 * <div class="listing">
+		 * <pre>
+		 * 
+		 * // create columns to specify the column order
+		 * var gridColumnAge:GridColumn = new GridColumn("City", "city", 20, Align.LEFT, Align.LEFT);
+		 * var gridColumnEmail:GridColumn = new GridColumn("E-Mail", "email", 20, Align.LEFT, Align.LEFT);
+		 * var gridColumnFirstName:GridColumn = new GridColumn("First Name", "firstName", 40, Align.LEFT, Align.LEFT);
+		 * var gridColumnLastName:GridColumn = new GridColumn("Last Name", "lastName", 45, Align.LEFT, Align.LEFT);
+		 * 
+		 * // create a columns Array
+		 * // it determines the order shown in the PDF
+		 * var columns:Array = new Array ( gridColumnAge, gridColumnEmail, gridColumnFirstName, gridColumnLastName );
+		 * 
+		 * // create a Grid object as usual
+		 * var grid:Grid = new Grid( dp.toArray(), 200, 120, new RGBColor ( 0xCCCCCC ), new RGBColor (0xCCCCCC), true, new RGBColor(0x887711), .1, null, columns );
+		 * 
+		 * p.addGrid( grid );
+		 * p.setsetGridPositionOnNextPages(); // default values are 10,10
+		 * </pre>
+		 * */
+		public function setGridPositionOnNextPages(xvalue:Number=10,yvalue:Number=10):void{
+			nextPageX = yvalue;
+			nextPageY = xvalue;
+			
+		}
+
 		protected function getRect ( rows:Array, rowHeight:int=5 ):Rectangle
+
 		{
 			var nb:int = 0;
 			var nbL:int;
@@ -5159,7 +5244,10 @@ package org.alivepdf.pdf
 				} else throw new Error("Unsupported font type: " + type + "\nMake sure you used the UnicodePDF class if you used the ArialUnicodeMS font class" );
 			}
 		}
-		
+		protected function insertSWF():void
+		{
+				/// TO BE DONE on next release	
+		}
 		protected function insertJS():void
 		{
 			newObj();
@@ -5367,6 +5455,7 @@ package org.alivepdf.pdf
 			write('>>');
 			write('endobj');
 			//Catalog
+			insertSWF();
 			newObj();
 			write('<<');
 			createCatalog();
