@@ -357,11 +357,8 @@ package org.alivepdf.pdf
 		protected var nOCGPrint:int;
 		protected var nOCGView:int;
 		protected var startingPageIndex:uint;
-
 		protected var nextPageY:Number = 10;
 		protected var nextPageX:Number = 10;
-
-
 		protected var gradients:Array = new Array();
 		protected var isWrapRow : Boolean;
 		protected var row : Array;
@@ -3943,7 +3940,6 @@ package org.alivepdf.pdf
 			setXY ( x+getX(), y+getY() );
 			addRow( columnNames, GridRowType.HEADER, rect );
 
-			
 			if (grid.cells == null)
 				grid.generateCells();
 			
@@ -4925,13 +4921,16 @@ package org.alivepdf.pdf
 			var l:int = content.length;
 			
 			var cwAux:int = 0;
+			var cw:int = 0;
 			
 			while (l--) 
 			{	
-				cwAux += charactersWidth[content.charAt(l)] as int;
+				cw = charactersWidth[content.charAt(l)] as int;
 				
-				if ( cwAux == 0 ) 
-					cwAux = FontMetrics.DEFAULT_WIDTH;
+				if ( cw == 0 ) 
+					cw = FontMetrics.DEFAULT_WIDTH;
+				
+				cwAux += cw;
 			}
 			
 			w = cwAux;
