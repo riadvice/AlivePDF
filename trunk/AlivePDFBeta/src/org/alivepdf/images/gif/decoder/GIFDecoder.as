@@ -1,7 +1,7 @@
 /**
 * This class lets you decode animated GIF files, and show animated GIF's in the Flash player
 * Base Class : http://www.java2s.com/Code/Java/2D-Graphics-GUI/GiffileEncoder.htm
-* @author Kevin Weiner (original Java version - kweiner@fmsware.com)
+* @author Kevin Weiner (original Java version - kweiner(at)fmsware.com)
 * @author Thibault Imbert (AS3 version - bytearray.org)
 * @version 0.1 AS3 implementation
 */

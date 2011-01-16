@@ -21,7 +21,7 @@
  
 /*
 * This class handles Neural-Net quantization algorithm
-* @author Kevin Weiner (original Java version - kweiner@fmsware.com)
+* @author Kevin Weiner (original Java version - kweiner(at)fmsware.com)
 * @author Thibault Imbert (AS3 version - bytearray.org)
 * @version 0.1 AS3 implementation
 */

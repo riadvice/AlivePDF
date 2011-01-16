@@ -377,7 +377,7 @@ package org.alivepdf.pdf
 		 *    UTF-16 proceeds as follows. Let U be the character number, no greater
 		 *    than 0x10FFFF.
 		 * 
-		 *    1) If U < 0x10000, encode U as a 16-bit unsigned integer and
+		 *    1) If U is less than 0x10000, encode U as a 16-bit unsigned integer and
 		 *       terminate.
 		 * 
 		 *    2) Let U' = U - 0x10000. Because U is less than or equal to 0x10FFFF,
