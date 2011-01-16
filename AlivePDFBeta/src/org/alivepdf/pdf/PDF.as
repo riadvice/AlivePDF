@@ -367,6 +367,8 @@ package org.alivepdf.pdf
 		protected var rowY : Number;
 		protected var maxY : Number;
 		protected var angle:Number = 0;
+		protected var _footer:String;
+		protected var _header:String;
 		private var stroking:Boolean;
 		
 		/**
@@ -561,6 +563,7 @@ package org.alivepdf.pdf
 		 * 
 		 * myPDF.setDisplayMode( Display.FULL_PAGE, Layout.SINGLE_PAGE, PageMode.FULLSCREEN );
 		 * </pre>
+		 * </div>
 		 * 
 		 * To create a PDF which will open with a 150% zoom, you would write :
 		 * <div class="listing">
@@ -589,6 +592,7 @@ package org.alivepdf.pdf
 		 *
 		 * myPDF.setAdvanceTiming ( 5 );
 		 * </pre>
+		 * </div>
 		 * 
 		 * You can also specify this on the Page object :
 		 * <div class="listing">
@@ -737,6 +741,7 @@ package org.alivepdf.pdf
 		 * myPDF.rotatePage ( 1, 90 );
 		 * </pre>
 		 * </div>
+		 * 
 		 * This example shows how to rotate the first page 90 counter clock wise :
 		 * <div class="listing">
 		 * <pre>
@@ -744,7 +749,6 @@ package org.alivepdf.pdf
 		 * myPDF.rotatePage ( 1, -90 );
 		 * </pre>
 		 * </div>
-		 * 
 		 */
 		public function rotatePage ( number:int, rotation:Number ):void
 		{
@@ -752,8 +756,7 @@ package org.alivepdf.pdf
 				arrayPages[int(number-1)].rotate ( rotation );
 			else throw new RangeError ("No page available, please select a page from 1 to " + arrayPages.length);
 		}
-		protected var _footer:String;
-		protected var _header:String;
+
 		/**
 		 * Lets you add a page to the current PDF.
 		 *  
@@ -912,7 +915,10 @@ package org.alivepdf.pdf
 		 * <pre>
 		 * myPDF.removePage ( 1 );
 		 * </pre>
-		 * If you want to remove pages each by each, you can combine removePage with getPageCount
+		 * </div>
+		 * 
+		 * If you want to remove pages each by each, you can combine removePage with getPageCount:
+		 * <div class="listing">
 		 * <pre>
 		 * myPDF.removePage ( myPDFEncoder.getPageCount() );
 		 * </pre>
@@ -2883,6 +2889,7 @@ package org.alivepdf.pdf
 		 * myPDF.addCell(50, 10, 'Some text into a cell !', 1, 1);
 		 * </pre>
 		 * </div>
+		 * 
 		 * This example shows how to write some clickable text within a cell :
 		 * <div class="listing">
 		 * <pre>
@@ -2891,6 +2898,7 @@ package org.alivepdf.pdf
 		 * myPDF.setFont( font );
 		 * myPDF.textStyle ( new RGBColor ( 0x990000 ) );
 		 * myPDF.addCell(50, 10, 'A clickable cell !', 1, 1, null, 0, new HTTPLink ("http://www.alivepdf.org") );
+		 * </pre>
 		 * </div>
 		 */
 		public function addCell ( width:Number=0, height:Number=0, text:String='', border:*=0, ln:Number=0, align:String='', fill:Number=0, link:ILink=null ):void
@@ -4027,6 +4035,7 @@ package org.alivepdf.pdf
 		 * p.addGrid( grid );
 		 * p.setsetGridPositionOnNextPages(); // default values are 10,10
 		 * </pre>
+		 * </div>
 		 * */
 		public function setGridPositionOnNextPages(xvalue:Number=10,yvalue:Number=10):void{
 			nextPageX = yvalue;
@@ -4573,6 +4582,8 @@ package org.alivepdf.pdf
 		 *
 		 * myPDF.addImageStream( bytes, ColorSpace.DEVICE_RGB );
 		 * </pre>
+		 * </div>
+		 * 
 		 * This example shows how to add a CMYK image as a ByteArray into the current page, the image will take the whole page :
 		 * <div class="listing">
 		 * <pre>
@@ -4580,6 +4591,7 @@ package org.alivepdf.pdf
 		 * myPDF.addImageStream( bytes, ColorSpace.DEVICE_RGB, resize );
 		 * </pre>
 		 * </div>
+		 * 
 		 * This example shows how to add a CMYK image as a ByteArray into the current page, the image will take the whole page but white margins will be preserved :
 		 * <div class="listing">
 		 * <pre>
