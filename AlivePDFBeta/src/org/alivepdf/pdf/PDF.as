@@ -366,6 +366,7 @@ package org.alivepdf.pdf
 		protected var rowX : Number;
 		protected var rowY : Number;
 		protected var maxY : Number;
+		protected var angle:Number = 0;
 		private var stroking:Boolean;
 		
 		/**
@@ -1137,7 +1138,36 @@ package org.alivepdf.pdf
 		 * @param x X position
 		 * @param y Y position
 		 * 
-		 */		
+		 */	
+		/*
+		public function rotate(angle:Number, x:Number=-1, y:Number=-1, relative:Boolean=true):void
+		{
+			if(x == -1)
+				x = getX();
+			
+			if(y == -1)
+				y = getY();
+			
+			if ( this.angle != 0 )
+				write('Q');
+			
+			this.angle = angle;
+			
+			if ( this.angle != 0 )
+			{
+				angle *= Math.PI / 180;
+				x *= k;
+				y = (currentPage.h - y) * k;
+				matrix.identity();
+				matrix.rotate(-angle);
+				getMatrixTransformPoint(x, y);
+				transform(matrix);
+			}
+			
+			if (!relative)
+				write('Q');
+		}*/
+		
 		public function rotate(angle:Number, x:Number=-1, y:Number=-1):void
 		{
 			if(x == -1)
@@ -1656,22 +1686,6 @@ package org.alivepdf.pdf
 				bitmapFillBuffer.graphics.drawRect ( rect.x, rect.y, rect.width, rect.height );
 				addImage(bitmapFillBuffer, null, rect.x, rect.y, rect.width, rect.height);
 			}
-		}
-
-		/**
-		 *  Saves the current graphics state to be restored later.
-		 */		
-		public function saveGraphicsState():void
-		{
-			write('q');
-		}
-		
-		/**
-		 * Restores the saved graphics state.
-		 */		
-		public function restoreGraphicsState():void
-		{
-			write('Q');
 		}
 		
 		/**
@@ -4749,7 +4763,8 @@ package org.alivepdf.pdf
 			xPos = (resizeMode.position == Position.LEFT && resizeMode.mode == Mode.NONE) ? (x+leftMargin)*k : x+leftMargin*k;
 			yPos = (resizeMode.position == Position.CENTERED && resizeMode.mode != Mode.RESIZE_PAGE) ? y+(bottomMargin+topMargin)*k : ((currentPage.h-topMargin)-(y+height))*k;
 			
-			rotate(rotation);
+			if ( rotation != 0)
+				rotate(rotation);
 			write (sprintf('q %.2f 0 0 %.2f %.2f %.2f cm', width*k, height*k, xPos, yPos));
 			write (sprintf('/I%d Do Q', image.resourceId));
 			
@@ -4863,6 +4878,7 @@ package org.alivepdf.pdf
 		
 		protected function transform(tm:Matrix):void
 		{
+			
 			write(sprintf('%.3f %.3f %.3f %.3f %.3f %.3f cm', tm.a, tm.b, tm.c, tm.d, tm.tx, tm.ty));
 		}
 		
@@ -4957,6 +4973,16 @@ package org.alivepdf.pdf
 		{
 			graphicStates.push ( graphicState );
 			return graphicStates.length-1;
+		}
+	
+		protected function saveGraphicsState():void
+		{
+			write('q');
+		}
+		
+		protected function restoreGraphicsState():void
+		{
+			write('Q');
 		}
 		
 		protected function setExtGState( graphicState:int ):void
@@ -5247,6 +5273,7 @@ package org.alivepdf.pdf
 		{
 				/// TO BE DONE on next release	
 		}
+		
 		protected function insertJS():void
 		{
 			newObj();
