@@ -77,22 +77,25 @@
 		private static var CourierOblique:Object = FontMetrics.Courier;
 		private static var CourierBoldOblique:Object = FontMetrics.Courier;
 		
+    // static initialization
+    FontMetrics.lookupTables.push ( { alias : FontFamily.HELVETICA, metrics : FontMetrics.Helvetica },
+      { alias : FontFamily.HELVETICA_BOLD, metrics : FontMetrics.HelveticaBold },
+      { alias : FontFamily.HELVETICA_OBLIQUE, metrics : FontMetrics.HelveticaOblique },
+      { alias : FontFamily.HELVETICA_BOLDOBLIQUE, metrics : FontMetrics.HelveticaBoldOblique },
+      { alias : FontFamily.COURIER, metrics : FontMetrics.Courier },
+      { alias : FontFamily.COURIER_BOLD, metrics : FontMetrics.CourierBold },
+      { alias : FontFamily.COURIER_OBLIQUE, metrics : FontMetrics.CourierOblique },
+      { alias : FontFamily.COURIER_BOLDOBLIQUE, metrics : FontMetrics.CourierBoldOblique },
+      { alias : FontFamily.TIMES, metrics : FontMetrics.Times },
+      { alias : FontFamily.TIMES_BOLD, metrics : FontMetrics.TimesBold },
+      { alias : FontFamily.TIMES_ITALIC, metrics : FontMetrics.TimesItalic },
+      { alias : FontFamily.TIMES_BOLDITALIC, metrics : FontMetrics.TimesBoldItalic },
+      { alias : FontFamily.SYMBOL, metrics : FontMetrics.Symbol },
+      { alias : FontFamily.ZAPFDINGBATS, metrics : FontMetrics.ZapfDingbats } );
+    
 		public function FontMetrics ()
 		{
-			FontMetrics.lookupTables.push ( { alias : FontFamily.HELVETICA, metrics : FontMetrics.Helvetica },
-												{ alias : FontFamily.HELVETICA_BOLD, metrics : FontMetrics.HelveticaBold },
-												{ alias : FontFamily.HELVETICA_OBLIQUE, metrics : FontMetrics.HelveticaOblique },
-												{ alias : FontFamily.HELVETICA_BOLDOBLIQUE, metrics : FontMetrics.HelveticaBoldOblique },
-												{ alias : FontFamily.COURIER, metrics : FontMetrics.Courier },
-												{ alias : FontFamily.COURIER_BOLD, metrics : FontMetrics.CourierBold },
-												{ alias : FontFamily.COURIER_OBLIQUE, metrics : FontMetrics.CourierOblique },
-												{ alias : FontFamily.COURIER_BOLDOBLIQUE, metrics : FontMetrics.CourierBoldOblique },
-												{ alias : FontFamily.TIMES, metrics : FontMetrics.Times },
-												{ alias : FontFamily.TIMES_BOLD, metrics : FontMetrics.TimesBold },
-												{ alias : FontFamily.TIMES_ITALIC, metrics : FontMetrics.TimesItalic },
-												{ alias : FontFamily.TIMES_BOLDITALIC, metrics : FontMetrics.TimesBoldItalic },
-												{ alias : FontFamily.SYMBOL, metrics : FontMetrics.Symbol },
-												{ alias : FontFamily.ZAPFDINGBATS, metrics : FontMetrics.ZapfDingbats } );
+
 		}
 	
 		private static function generate ():Object
