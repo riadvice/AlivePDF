@@ -6,7 +6,7 @@ package org.alivepdf
 	{
 		public function AllTests(param:Object=null)
 		{
-			addTestSuite( TestHtml );
+			//addTestSuite( TestHtml );
 		}
 	}
 }
