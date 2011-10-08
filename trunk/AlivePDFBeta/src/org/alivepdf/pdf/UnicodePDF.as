@@ -28,7 +28,7 @@ package org.alivepdf.pdf
 			super(orientation, unit, autoPageBreak, pageSize, rotation);
 		}
 		
-		public override function writeFlashHtmlText ( pHeight:Number, pText:String, pLink:ILink=null ):void
+		public override function writeFlashHtmlText ( pHeight:Number, pText:String, pLink:ILink=null, pHeightInFontSizePercentage:Number=NaN ):void
 		{
 			throw new Error("writeFlashHtmlText is not available with the UnicodePDF class.");
 		}

@@ -2,7 +2,10 @@ package org.alivepdf.colors
 {
 	public final class RGBColor implements IColor	
 	{	
-		public var r:Number;
+		
+    public static const BLACK:RGBColor = new RGBColor(0x000000);
+    
+    public var r:Number;
 		public var g:Number;
 		public var b:Number;
 		

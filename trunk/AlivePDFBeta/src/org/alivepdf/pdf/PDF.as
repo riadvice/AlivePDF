@@ -54,6 +54,7 @@ package org.alivepdf.pdf
 	import org.alivepdf.colors.GrayColor;
 	import org.alivepdf.colors.IColor;
 	import org.alivepdf.colors.RGBColor;
+	import org.alivepdf.colors.RGBColorCache;
 	import org.alivepdf.colors.SpotColor;
 	import org.alivepdf.decoding.Filter;
 	import org.alivepdf.display.Display;
@@ -68,6 +69,7 @@ package org.alivepdf.pdf
 	import org.alivepdf.events.PageEvent;
 	import org.alivepdf.events.ProcessingEvent;
 	import org.alivepdf.fonts.CoreFont;
+	import org.alivepdf.fonts.CoreFontCache;
 	import org.alivepdf.fonts.EmbeddedFont;
 	import org.alivepdf.fonts.FontCollections;
 	import org.alivepdf.fonts.FontDescription;
@@ -80,6 +82,7 @@ package org.alivepdf.pdf
 	import org.alivepdf.grid.Grid;
 	import org.alivepdf.grid.GridCell;
 	import org.alivepdf.grid.GridRowType;
+	import org.alivepdf.html.FONTTagAttributes;
 	import org.alivepdf.html.HTMLTag;
 	import org.alivepdf.images.ColorSpace;
 	import org.alivepdf.images.DoJPEGImage;
@@ -819,7 +822,7 @@ package org.alivepdf.pdf
 			
 			if ( currentFont != null ) 
 				setFont ( currentFont, fontSizePt );
-			else setFont(new CoreFont ( FontFamily.HELVETICA ), 9);
+			else setFont( CoreFontCache.getFont ( FontFamily.HELVETICA ), 9);
 			
 			inHeader = true;
 			header();
@@ -1204,7 +1207,7 @@ package org.alivepdf.pdf
 		{
 			
 /*			//to be overriden by subclassing (uncomment for a demo )
-			var newFont:CoreFont = new CoreFont ( FontFamily.HELVETICA );
+			var newFont:CoreFont = CoreFontCache.getFont ( FontFamily.HELVETICA );
 			this.setFont(newFont, 12);
 			this.textStyle( new RGBColor (0x000000) );
 			this.addCell(80);
@@ -1214,10 +1217,10 @@ package org.alivepdf.pdf
 		
 		public  function footer(footerText:String='', showPageNumber:Boolean=false,position:String="left"):void
 		{
-			var fonte:CoreFont = new CoreFont(FontFamily.ARIAL);
+			var fonte:CoreFont = CoreFontCache.getFont(FontFamily.ARIAL);
 			this.setXY(50,-15);
 			this.setFont(fonte,9);
-			this.textStyle(new RGBColor(0x000000));
+			this.textStyle( RGBColorCache.getColor ( "0x000000" ));
 			this.addCell(0,10,footerText,0,0,Align.CENTER);
 			this.newLine(10);
 			
@@ -1235,7 +1238,7 @@ package org.alivepdf.pdf
 									break;
 			}
 			//this.setXY (15, -15);
-			var newFont:CoreFont = new CoreFont ( FontFamily.HELVETICA );
+			var newFont:CoreFont = CoreFontCache.getFont ( FontFamily.HELVETICA );
 			this.setFont(newFont, 8);
 			this.textStyle( new RGBColor (0x000000) );
 			if(showPageNumber){
@@ -2289,10 +2292,10 @@ package org.alivepdf.pdf
 		 */		
 		public function addCodaBar( codaBar:CodaBar ):void
 		{	
-			setFont( new CoreFont ( FontFamily.ARIAL ) );
+			setFont( CoreFontCache.getFont ( FontFamily.ARIAL ) );
 			addText(codaBar.code, codaBar.x, codaBar.y+codaBar.height + 4);
-			lineStyle ( new RGBColor ( 0x000000), 0, 0, 1 );
-			beginFill( new RGBColor ( 0x000000 ) );
+			lineStyle ( RGBColorCache.getColor ( "0x000000"), 0, 0, 1 );
+			beginFill( RGBColorCache.getColor ( "0x000000" ) );
 			
 			var code:String = (codaBar.start+codaBar.code+codaBar.end).toUpperCase();
 			var char:String;
@@ -2431,7 +2434,7 @@ package org.alivepdf.pdf
 		public function addBookmark ( text:String, level:int=0, y:Number=-1, color:RGBColor=null ):void
 		{
 			if ( color == null ) 
-				color = new RGBColor ( 0x000000 );
+				color = RGBColorCache.getColor ( "0x000000" );
 			if( y == -1 ) 
 				y = getY();
 			outlines.push ( new Outline ( text, level, nbPages, y, color.r, color.g, color.b ) );
@@ -2686,7 +2689,7 @@ package org.alivepdf.pdf
 		 * <div class="listing">
 		 * <pre>
 		 *
-		 * var font:CoreFont = new CoreFont ( FontFamily.HELVETICA_BOLD );
+		 * var font:CoreFont = CoreFontCache.getFont ( FontFamily.HELVETICA_BOLD );
 		 * myPDF.setFont( font );
 		 * </pre>
 		 * </div>
@@ -2883,7 +2886,7 @@ package org.alivepdf.pdf
 		 * <div class="listing">
 		 * <pre>
 		 *
-		 * var font:CoreFont = new CoreFont ( FontFamily.HELVETICA_BOLD );
+		 * var font:CoreFont = CoreFontCache.getFont ( FontFamily.HELVETICA_BOLD );
 		 * myPDF.setFont( font );
 		 * myPDF.textStyle ( new RGBColor ( 0x990000 ) );
 		 * myPDF.addCell(50, 10, 'Some text into a cell !', 1, 1);
@@ -2894,7 +2897,7 @@ package org.alivepdf.pdf
 		 * <div class="listing">
 		 * <pre>
 		 *
-		 * var font:CoreFont = new CoreFont ( FontFamily.HELVETICA_BOLD );
+		 * var font:CoreFont = CoreFontCache.getFont ( FontFamily.HELVETICA_BOLD );
 		 * myPDF.setFont( font );
 		 * myPDF.textStyle ( new RGBColor ( 0x990000 ) );
 		 * myPDF.addCell(50, 10, 'A clickable cell !', 1, 1, null, 0, new HTTPLink ("http://www.alivepdf.org") );
@@ -3368,6 +3371,7 @@ package org.alivepdf.pdf
 		 * @param pHeight Line height, lets you specify height between each lines
 		 * @param pText Text to write, to put a line break just add a \n in the text string
 		 * @param pLink Any link, like http://www.mylink.com, will open te browser when clicked
+     * @param pHeightInFontSizePercentage If not NaN, override the pHeight with the given per FontSize percentage
 		 * @example
 		 * 
 		 * Only a limited subset of tags are currently supported
@@ -3382,6 +3386,7 @@ package org.alivepdf.pdf
 		 * myPDF.writeFlashHtmlText ( 5, "Lorem ipsum <b>dolor</b> sit amet, consectetuer<br /> adipiscing elit.");
 		 * </pre>
 		 * </div>
+     * 
 		 * This example shows how to add some text with a clickable link :
 		 * <div class="listing">
 		 * <pre>
@@ -3389,10 +3394,18 @@ package org.alivepdf.pdf
 		 * myPDF.writeFlashHtmlText ( 5, "Lorem ipsum dolor sit amet, consectetuer adipiscing elit.", "http://www.google.com");
 		 * </pre>
 		 * </div>
+     * 
+     * This example shows how to add some text using a pHeight of 120% of the fontSize :
+		 * <div class="listing">
+		 * <pre>
+		 *
+		 * myPDF.writeFlashHtmlText ( 5, "Lorem ipsum dolor sit amet, consectetuer adipiscing elit.", null, 120);
+		 * </pre>
+		 * </div>
 		 */
-		public function writeFlashHtmlText ( pHeight:Number, pText:String, pLink:ILink=null ):void
+		public function writeFlashHtmlText ( pHeight:Number, pText:String, pLink:ILink=null, pHeightInFontSizePercentage:Number=NaN ):void
 		{
-			//Output text in flowing mode
+      //Output text in flowing mode
 			var cw    : Object     = currentFont.charactersWidth;
 			var w     : Number     = currentPage.w-rightMargin-currentX;
 			var wmax  : Number     = (w-2*currentMargin)*I1000/fontSize;
@@ -3408,12 +3421,49 @@ package org.alivepdf.pdf
 			var j       : int = 0;    // Counter which is updated with character count to be actually output (taking auto line breaking into account)
 			var l       : int = 0;    // Length of the the current character string
 			var k       : int = 0;    // Counter for looping through each item in the parsed XML array  
-			var ns      : int = 0;
+			var ns      : int = 0;    // number of space character
 			
 			//XML whitespace is important for this text parsing - so save prev value so we can restore it.
 			var prevWhiteSpace    : Boolean = XML.ignoreWhitespace;
 			XML.ignoreWhitespace = false;
-			var aTaggedString     : Array = parseTags ( new XML( "<html>"+s+"</html>" ) );
+			
+      
+      var aTaggedString     : Vector.<HTMLTag>;
+      
+      // We want to now if the HTML is comming from a conversion from
+      // some TLF format.
+      // This could be done with
+      // String(TextConverter.export(this.richEditableText.textFlow, TextConverter.TEXT_FIELD_HTML_FORMAT, ConversionType.STRING_TYPE));
+      // And the result will looks like:
+      // <HTML><BODY><TEXTFORMAT><P> ..</P><P> ..</P></TEXTFORMAT></BODY></HTML>
+      //
+      // Or 
+      //
+      // if the string comming from the htmlText property of some MX component
+      // For example this.richTextEditor.htmlText
+      // The result will looks like:
+      // <TEXTFORMAT><P> ..</P></TEXTFORMAT><TEXTFORMAT><P> ..</P></TEXTFORMAT>
+      //
+      // This flag is mainly use to change the behavior depending of the HTML
+      // source.
+      // For example when comingFromTLF == true, the lists are as follow:
+      // <UL><LI><TEXFORMAT><P><FONT>first</FONT></P></TEXFORMAT></LI><LI><TEXFORMAT><P><FONT>second</FONT></P></TEXFORMAT></LI></UL>
+      //
+      // when comingFromTLF == true, the lists are as follow:
+      // <TEXFORMAT><LI><FONT>first</FONT></LI></TEXFORMAT><TEXFORMAT><LI><FONT>second</FONT></LI></TEXFORMAT>
+      
+      var comingFromTLF:Boolean;
+      var insideULList:Boolean;
+      
+      // If comming from TLF there is already an <HTML> tag
+      if ( s.substr(0, 6) == "<HTML>" ) {
+        comingFromTLF = true;
+        aTaggedString = parseTags ( new XML ( s ) );
+      } else {
+        comingFromTLF = false;
+        aTaggedString = parseTags ( new XML( "<HTML>"+s+"</HTML>" ) );
+      }
+      
 			XML.ignoreWhitespace = prevWhiteSpace;
 			
 			//Stores the cell snippets for the current line
@@ -3421,16 +3471,33 @@ package org.alivepdf.pdf
 			var cellVO           : CellVO;
 			
 			//Variables to track the state of the current text
+      var newFont          : IFont;
+      var fontTagAttr      : FONTTagAttributes; // hold the value of the last <FONT> tag attributes
 			var fontBold         : Boolean = false; 
 			var fontItalic       : Boolean = false;
 			fontUnderline     = false;
-			var textAlign        : String = '';  // '' 'C' or 'R'  ??Does 'J' work??
+      
+			var textAlign        : String = '';  // '' or 'C' or 'R' or 'J' 
 			var attr             : XML;
-			
+      
 			var cwAux            : int;
-			var fs               : int;      // Font size
-			var fontColor        : RGBColor; // font color;
-			var cs               : int;      // character space ( not implemented yet )
+      
+      // Sometime <FONT> nodes are nested such as in
+      // <FONT><FONT>foo</FONT>bar</FONT>
+      // this looks to be related to colors (not sure)
+      // So we need to have a stack of FontParams to handle the above situation
+      var fontTagAttrStack:Vector.<FONTTagAttributes> = new Vector.<FONTTagAttributes>();
+      
+      // begin with default font attributes
+      fontTagAttr = new FONTTagAttributes();
+      setFontSize( fontTagAttr.size );
+      if ( ! isNaN(pHeightInFontSizePercentage) )
+        pHeight = pHeightInFontSizePercentage/100*fontTagAttr.size/this.k;
+      
+      var listLevelDepth:int;
+      
+      var lastParagraphX:Number;
+      var lastParagraphY:Number;
 			
 			// total number of HTML tags
 			var lng:int = aTaggedString.length;
@@ -3443,60 +3510,125 @@ package org.alivepdf.pdf
 				{	
 					//Process Tags
 					case "<TEXTFORMAT>":
+            break;
 					case "</TEXTFORMAT>":
 						break;
 					case "<P>":
-						
+            lastParagraphX = currentX;
+            lastParagraphY = currentY;
+            
 						for each ( attr in aTaggedString[k].attr )
-					{	
-						switch ( String ( attr.name() ).toUpperCase() )
-						{	
-							case "ALIGN": 
-								textAlign = String ( attr ).charAt(0);
-								break;
-							default:
-								break;
-						}
-					}
+  					{	
+  						switch ( String ( attr.name() ).toUpperCase() )
+  						{	
+  							case "ALIGN": 
+  								textAlign = String ( attr ).toUpperCase().charAt(0);
+  								break;
+  							default:
+  								break;
+  						}
+  					}
 						break;
 					case "</P>":
 						
-						renderLine(currentLine,textAlign);
-						currentLine     = new Array();
-						currentX   		= leftMargin;
-						textAlign       = '';
-						ns              = 0;
-						lineBreak ( pHeight );
+            if ( ! insideULList ) {
+              
+              renderLine(currentLine,textAlign);
+              currentLine     = new Array();
+              currentX   		  = leftMargin;
+              textAlign       = '';
+              ns              = 0;
+              
+              if ( currentX == lastParagraphX && currentY == lastParagraphY ) {
+                // means we write nothing in that P tag
+                // we interpret that as a line break
+                lineBreak( pHeight );
+              }
+              
+            }
 						
 						break;
 					case "<FONT>":
+            
+            // A <FONT> could override only some attributes, so we default
+            // all the attributes with the actual fontParams
+            if ( fontTagAttr ) {
+              fontTagAttr = fontTagAttr.clone();
+            } else {
+              // we use the default attribute if not specified just after
+              fontTagAttr = new FONTTagAttributes(); 
+            }           
+            
 						for each ( attr in aTaggedString[k].attr )
-					{
-						switch ( String ( attr.name() ).toUpperCase() )
-						{	
-							case "FACE":
-								// TODO: Add Font Face Support
-								break;
-							case "SIZE":
-								fs = parseInt( String ( attr ) );
-								break;
-							case "COLOR":
-								fontColor = RGBColor.hexStringToRGBColor( String ( attr ) );
-								break;
-							case "LETTERSPACING":
-								cs = parseInt( String ( attr ) );
-								break;
-							case "KERNING":
-								// TODO
-								break;
-							default:
-								break;
-						}
-					}
+  					{
+  						switch ( String ( attr.name() ).toUpperCase() )
+  						{	
+  							case "FACE":
+  								// TODO: Add Font Face Support
+                  fontTagAttr.face = String ( attr );
+  								break;
+  							case "SIZE":
+                  fontTagAttr.size = parseInt( String ( attr ) );
+                  setFontSize( fontTagAttr.size );
+                  if ( ! isNaN(pHeightInFontSizePercentage) )
+                    pHeight = pHeightInFontSizePercentage/100*fontTagAttr.size/this.k;
+  								break;
+  							case "COLOR":
+                  fontTagAttr.color = RGBColorCache.getColor( String ( attr ) );
+  								break;
+  							case "LETTERSPACING":
+                  fontTagAttr.letterspacing = parseInt( String ( attr ) );
+  								break;
+  							case "KERNING":
+  								// TODO
+                  fontTagAttr.kerning = parseInt( String ( attr ) );
+  								break;
+  							default:
+  								break;
+  						}
+  					}
+            
+            fontTagAttrStack.push(fontTagAttr);
+            
 						break;
 					case "</FONT>":
-						fontColor = textColor as RGBColor;
+            
+            fontTagAttrStack.pop();
+            
+            if ( fontTagAttrStack.length > 0 ) {
+              fontTagAttr = fontTagAttrStack[fontTagAttrStack.length - 1];
+            } else {
+              // get the default
+              fontTagAttr = new FONTTagAttributes();
+              
+              if ( textColor is RGBColor ) {
+                fontTagAttr.color = RGBColor(textColor);
+              }
+              
+            }
+            
+            setFontSize( fontTagAttr.size );
+            if ( ! isNaN(pHeightInFontSizePercentage) )
+              pHeight = pHeightInFontSizePercentage/100*fontTagAttr.size/this.k;
+            
 						break;
+          case "<A>":
+            for each ( attr in aTaggedString[k].attr )
+            {
+            switch ( String ( attr.name() ).toUpperCase() )
+              {	
+              case "HREF":
+                pLink = new HTTPLink( String ( attr ) );
+                break;
+              default:
+                break;
+              }
+            }
+            
+            break;
+          case "</A>":
+            pLink = null;
+            break;
 					case "<B>":
 						fontBold = true;
 						break;
@@ -3515,6 +3647,16 @@ package org.alivepdf.pdf
 					case "</U>":
 						fontUnderline = false;
 						break;
+          break;
+          case "<UL>":
+            listLevelDepth++;
+            insideULList = true;
+            break;
+          case "</UL>":
+            listLevelDepth--;
+            if ( listLevelDepth == 0 )
+              insideULList = false;
+            break;
 					case "<BR>":
 						// Both cases will set line break to true.  It is typically entered as <br /> 
 						// but the parser converts this to a start and end tag
@@ -3527,17 +3669,68 @@ package org.alivepdf.pdf
 							currentLine = new Array();
 						}
 						break;
-					default:
+          case "<LI>":
+            
+            if ( ! comingFromTLF ) {
+              // MX flash html does not use <UL> tag so we assume a depth of 1
+              listLevelDepth = 1;
+              insideULList = true;
+            }
+            
+            //Create an CellVO to make the indentation
+            cellVO            = new CellVO();
+            cellVO.text       = "";
+            
+            // indentation
+            for (var listPrefixCounter:int = 0; listPrefixCounter < listLevelDepth; listPrefixCounter++){
+              cellVO.text += "    ";
+            }
+            
+            cellVO.text       += "\u2022 "; // bullet char
+            cellVO.x          = currentX;
+            cellVO.y          = currentY;
+            cellVO.width      = getStringWidth(cellVO.text);
+            cellVO.height     = pHeight;
+            cellVO.fontSizePt = fontSizePt;
+            cellVO.color      = RGBColorCache.getColor( "0x000000" );
+            cellVO.underlined = fontUnderline;
+            
+            //Set the font for calculation of character widths
+            newFont = CoreFontCache.getFont ( getFontStyleString(fontBold, fontItalic, fontFamily) );
+            setFont ( newFont, cellVO.fontSizePt );
+            cellVO.font = newFont;
+            
+            currentLine.push ( cellVO );
+            currentX += cellVO.width;
+            
+            break;
+          case "</LI>":
+            
+            if ( ! comingFromTLF ) {
+              // MX flash html does not use <UL> tag so we must clean up things
+              listLevelDepth = 0;
+              insideULList = false;
+            }
+            
+            // new line
+            renderLine(currentLine,textAlign);
+            currentLine     = new Array();
+            currentX        = leftMargin;
+            ns              = 0;
+            
+            break;
+          default:
+            // do nothing for unsuported nodes ...
+            break;
+          case "NONE":
 						//Process text                    
 						
 						//Create a blank CellVO for this part
 						cellVO            = new CellVO();	
 						cellVO.link       = pLink;
 						cellVO.fontSizePt = fontSizePt;
-						cellVO.color      = fontColor;
+						cellVO.color      = fontTagAttr.color;
 						cellVO.underlined = fontUnderline;
-						
-						var newFont:IFont;
 						
 						if ( currentFont is EmbeddedFont )
 						{
@@ -3559,7 +3752,7 @@ package org.alivepdf.pdf
 							newFont = FontCollections.lookup(currentFont.name, style);
 						}
 						else 
-							newFont = new CoreFont ( getFontStyleString(fontBold, fontItalic, fontFamily) );
+							newFont = CoreFontCache.getFont ( getFontStyleString(fontBold, fontItalic, fontFamily) );
 
 						setFont ( newFont, cellVO.fontSizePt );
 						cellVO.font = newFont;
@@ -3662,7 +3855,9 @@ package org.alivepdf.pdf
 									if ( textAlign == Align.JUSTIFIED )
 									{
 										ws = (ns>1) ? (wmax-lenAtSep)/I1000*fontSize/(ns-1) : 0;
-										write(sprintf('%.3f Tw',ws*k));
+                    
+                    // the "this." is important to no use the "k" loop counter (this one was tricky ... :-)
+										write(sprintf('%.3f Tw',ws*this.k));
 									}
 									
 									//Just done a line break so render the line
@@ -3688,7 +3883,7 @@ package org.alivepdf.pdf
 								
 							} else 
 								i++;
-						}
+						} // while( i < nb )
 						
 						//Last chunk 
 						if ( i != j )
@@ -3713,9 +3908,11 @@ package org.alivepdf.pdf
 							//Update X positions
 							currentX += cellVO.width;
 						} 
-						break;        
-				}        
-				
+            
+						break;  
+          
+				} // switch on tag
+        
 				//Is there a finished line     
 				// or last line and there is something to display
 				if ( k == aTaggedString.length && currentLine.length > 0 )
@@ -3724,7 +3921,7 @@ package org.alivepdf.pdf
 					lineBreak(pHeight);
 					currentLine = new Array();
 				}	
-			}
+			} // loop k
 			
 			//Is there anything left to render before we exit?
 			if ( currentLine.length > 0 ) 
@@ -3783,6 +3980,11 @@ package org.alivepdf.pdf
 			
 			if ( firstCell == null )
 				return;
+      
+      // Since we later set the font for drawing each cell, save the current
+      var savedFont:IFont = currentFont;
+      var savedFontSizePt:Number = fontSizePt;
+      var savedUnderline:Boolean = underline;
 			
 			//Check if we need a new page for this line
 			if ( firstCell.y + firstCell.height > pageBreakTrigger )
@@ -3806,8 +4008,8 @@ package org.alivepdf.pdf
 			
 			// Loop through the cells in the line and draw
 			var pages:int = 0;
-			var tmpCellY:int;
-			var tmpCellHeight:int;
+			var tmpCellY:Number;
+			var tmpCellHeight:Number;
 			for(i = 0; i < lng; i++)
 			{	
 				cellVO = CellVO ( lineArray[int(i)] );
@@ -3838,13 +4040,16 @@ package org.alivepdf.pdf
 				
 				addCell ( cellVO.width, cellVO.height, cellVO.text, cellVO.border, 2, null, cellVO.fill, cellVO.link );
 			}
+      
+      // finally we restore the "old" curent font
+      setFont(savedFont, savedFontSizePt, savedUnderline);
 		}
 		
-		protected function parseTags ( myXML:XML ):Array
+		protected function parseTags ( myXML:XML ):Vector.<HTMLTag>
 		{	
-			var aTags:Array = new Array();
+			var aTags:Vector.<HTMLTag> = new Vector.<HTMLTag>;
 			var children:XMLList = myXML.children();
-			var returnedTags:Array;
+			var returnedTags:Vector.<HTMLTag>;
 			var lng:int = children.length();
 			var subLng:int;
 			
@@ -4359,7 +4564,7 @@ package org.alivepdf.pdf
 			
 			if (regs.length > 1)
 			{
-				buffer = regs[1].substr(1).split(" ");
+				buffer = String(regs[1]).substr(1).split(" ");
 				
 				x1 = buffer[0];
 				y1 = buffer[1];
