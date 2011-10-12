@@ -5230,16 +5230,46 @@ package org.alivepdf.pdf
 			var b:Number = (color & 0x0000FF);
 			return (r / 0xFF) + " " + (g / 0xFF) + " " + (b / 0xFF);
 		}
+    
+    private function leftPad(stringToPad:String, desiredLength:int = 2, paddingChar:String = " "):String
+    {
+      if ( stringToPad == null )
+        return null;
+      
+      if ( stringToPad.length >= desiredLength )
+        return stringToPad;
+      
+      var paddedString:String = stringToPad;
+      while ( paddedString.length < desiredLength ){
+        paddedString = paddingChar + paddedString;
+      }
+      
+      return paddedString;
+    }
 		
-		protected function getCurrentDate ():String
+		protected function formatDate (myDate:Date):String
 		{
-			var myDate:Date = new Date();
-			var year:Number = myDate.getFullYear();
-			var month:* = myDate.getMonth() < 10 ? "0"+Number(myDate.getMonth()+1) : myDate.getMonth()+1;
-			var day:Number = myDate.getDate();
-			var hours:* = myDate.getHours() < 10 ? "0"+Number(myDate.getHours()) : myDate.getHours();
-			var currentDate:String = myDate.getFullYear()+''+month+''+day+''+hours+''+myDate.getMinutes();
-			return currentDate;
+			var year:String = String(myDate.fullYear);
+			var month:String = leftPad(String(myDate.month+1), 2, "0");
+			var day:String = leftPad(String(myDate.date), 2, "0");
+			var hours:String = leftPad(String(myDate.hours), 2, "0");
+      var min:String = leftPad(String(myDate.minutes), 2, "0");
+      var sec:String = leftPad(String(myDate.seconds), 2, "0");
+      
+      var offSet:String = "";
+      if ( myDate.timezoneOffset > 0 ) {
+        offSet += "-";
+      } else {
+        offSet += "+";
+      }
+      // hours
+      offSet += leftPad(String(int(Math.abs(myDate.timezoneOffset)/60)), 2, "0")+"'";
+      //minutes
+      offSet += leftPad(String(Math.abs(myDate.timezoneOffset)%60), 2, "0")+"'";
+      
+			var formatedDate:String = year+''+month+''+day+''+hours+''+min+''+sec+''+offSet;
+      
+			return formatedDate;
 		}
 		
 		protected function findAndReplace ( search:String, replace:String, source:String ):String
@@ -5621,7 +5651,8 @@ package org.alivepdf.pdf
 				write('/Keywords '+escapeString(documentKeywords));
 			if ((documentCreator != null)) 
 				write('/Creator '+escapeString(documentCreator));
-			write('/CreationDate '+escapeString('D:'+getCurrentDate()));
+			write('/CreationDate '+escapeString('D:'+ formatDate(new Date()) ));
+      write('/ModDate '+escapeString('D:'+ formatDate(new Date()) ));
 		}
 		
 		protected function createCatalog ():void
