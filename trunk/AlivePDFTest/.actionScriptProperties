@@ -12,6 +12,7 @@
   <applications>
     <application path="AlivePDFTestWriteFlashHtml.mxml"/>
     <application path="AlivePDFTest.mxml"/>
+    <application path="AlivePDFTestAddImage.mxml"/>
   </applications>
   <modules/>
   <buildCSSFiles/>

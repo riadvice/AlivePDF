@@ -4943,8 +4943,16 @@ package org.alivepdf.pdf
 			if ( height == 0 ) 
 				height = width*image.height/image.width;
 			
-			var realWidth:Number = currentPage.width-(leftMargin+rightMargin)*k;
-			var realHeight:Number = currentPage.height-(bottomMargin+topMargin)*k;
+      
+      // In Unit
+      var realWidthUnit:Number = currentPage.width-(leftMargin+rightMargin);
+      var realHeightUnit:Number = currentPage.height-(bottomMargin+topMargin);
+      var xUnit:Number = 0;
+      var yUnit:Number = 0;
+      
+      // In pt
+			var realWidth:Number = realWidthUnit*k;
+			var realHeight:Number = realHeightUnit*k;
 			
 			var xPos:Number = 0;
 			var yPos:Number = 0;
@@ -4970,23 +4978,26 @@ package org.alivepdf.pdf
 			{		
 				if ( resizeMode.position == Position.CENTERED )
 				{	
-					x = (realWidth - (width*k))*.5;
-					y = (realHeight - (height*k))*.5;
+					x = (realWidthUnit - (width*k))*.5;
+					y = (realHeightUnit - (height*k))*.5;
 					
 				} else if ( resizeMode.position == Position.RIGHT )
-					x = (realWidth - (width*k));
+					x = (realWidthUnit - (width*k));
 			}
 			
-			xPos = (resizeMode.position == Position.LEFT && resizeMode.mode == Mode.NONE) ? (x+leftMargin)*k : x+leftMargin*k;
-			yPos = (resizeMode.position == Position.CENTERED && resizeMode.mode != Mode.RESIZE_PAGE) ? y+(bottomMargin+topMargin)*k : ((currentPage.h-topMargin)-(y+height))*k;
-			
+      xUnit = (resizeMode.position == Position.LEFT ) ? x+leftMargin: x;
+      xPos = xUnit*k;
+      
+      yUnit = (resizeMode.position == Position.CENTERED ) ? y : y+topMargin;
+      yPos = yUnit*k;
+      
 			if ( rotation != 0)
 				rotate(rotation);
-			write (sprintf('q %.2f 0 0 %.2f %.2f %.2f cm', width*k, height*k, xPos, yPos));
+			write (sprintf('q %.2f 0 0 %.2f %.2f %.2f cm', width*k, height*k, xPos, currentPage.h - yPos - height*k));
 			write (sprintf('/I%d Do Q', image.resourceId));
 			
 			if ( link != null ) 
-				addLink( xPos, yPos, width*k, height*k, link );
+        addLink( xUnit, yUnit, width, height, link );
 		}
 		
 		public function toString ():String

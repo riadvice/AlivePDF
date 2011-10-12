@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" 
+               xmlns:s="library://ns.adobe.com/flex/spark" 
+               xmlns:mx="library://ns.adobe.com/flex/mx" 
+               minWidth="955" 
+               minHeight="600"
+               >
+  
+  <fx:Script>
+    <![CDATA[
+      import flashx.textLayout.conversion.ConversionType;
+      import flashx.textLayout.conversion.TextConverter;
+      
+      import mx.events.FlexEvent;
+      
+      import org.alivepdf.display.Display;
+      import org.alivepdf.images.ColorSpace;
+      import org.alivepdf.layout.Layout;
+      import org.alivepdf.layout.Orientation;
+      import org.alivepdf.layout.Size;
+      import org.alivepdf.layout.Unit;
+      import org.alivepdf.links.HTTPLink;
+      import org.alivepdf.pages.Page;
+      import org.alivepdf.pdf.PDF;
+      import org.alivepdf.saving.Method;
+      
+      [Embed(source="logo.jpg", mimeType="application/octet-stream")]
+      public var logoCls:Class;
+      
+      private function createPDF(fileName:String):void {
+        
+        var pdf:PDF = new PDF(Orientation.PORTRAIT, Unit.POINT, true, Size.A4);
+        pdf.setDisplayMode(Display.FULL_PAGE, Layout.SINGLE_PAGE);
+        var newPage:Page;
+        
+        newPage = new Page(Orientation.LANDSCAPE, Unit.POINT, Size.A4);
+        pdf.addPage(newPage);
+        
+        var imgByteArray:ByteArray = new this.logoCls();
+        
+        pdf.addImageStream(imgByteArray, ColorSpace.DEVICE_RGB, null, 10, 300, 0, 0, 0, 1, "Normal", new HTTPLink("http://alivepdf.bytearray.org/"));
+        pdf.addImageStream(imgByteArray, ColorSpace.DEVICE_RGB, null, 400, 10, 0, 0, 0, 1, "Normal", new HTTPLink("http://alivepdf.bytearray.org/"));
+        
+        var ba:ByteArray = pdf.save(Method.LOCAL);
+        
+        var fileReference:FileReference = new FileReference();
+        fileReference.save(ba, fileName);
+      }
+      
+      private function generateBtn_clickHandler(event:MouseEvent):void {
+        this.createPDF("alivePDFTestAddImage.pdf");
+      }
+      
+    ]]>
+  </fx:Script>
+  
+  <s:layout>
+    <s:HorizontalLayout />
+  </s:layout>
+
+  <s:Button id="generateBtn" label="Click Me" click="generateBtn_clickHandler(event)" />
+  
+</s:Application>
