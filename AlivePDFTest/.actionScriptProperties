@@ -14,6 +14,7 @@
     <application path="AlivePDFTest.mxml"/>
     <application path="AlivePDFTestAddImage.mxml"/>
     <application path="AlivePDFTestWriteFlashHtmlOnMultiplePagesWithHeaderAndFooter.mxml"/>
+    <application path="AlivePDFTestIssue338.mxml"/>
   </applications>
   <modules/>
   <buildCSSFiles/>
