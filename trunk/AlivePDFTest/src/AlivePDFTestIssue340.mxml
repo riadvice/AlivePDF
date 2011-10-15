@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" 
+               xmlns:s="library://ns.adobe.com/flex/spark" 
+               xmlns:mx="library://ns.adobe.com/flex/mx" 
+               minWidth="955" 
+               minHeight="600"
+               >
+  
+  <fx:Script>
+    <![CDATA[
+      import org.alivepdf.display.Display;
+      import org.alivepdf.drawing.Blend;
+      import org.alivepdf.images.ColorSpace;
+      import org.alivepdf.layout.Layout;
+      import org.alivepdf.layout.Mode;
+      import org.alivepdf.layout.Orientation;
+      import org.alivepdf.layout.Position;
+      import org.alivepdf.layout.Resize;
+      import org.alivepdf.layout.Size;
+      import org.alivepdf.layout.Unit;
+      import org.alivepdf.links.HTTPLink;
+      import org.alivepdf.pages.Page;
+      import org.alivepdf.pdf.PDF;
+      import org.alivepdf.saving.Method;
+      
+      [Embed(source="logo.jpg", mimeType="application/octet-stream")]
+      public static const LOGO_CLS:Class;
+      
+      private static const IMG_BA:ByteArray = new LOGO_CLS();
+      
+      private function createPDF(fileName:String):void {
+        
+        var baLink:HTTPLink = new HTTPLink("http://alivepdf.bytearray.org/");
+        
+        // PDF created in POINT
+        var pdf:PDF = new PDF(Orientation.PORTRAIT, Unit.POINT, true, Size.A4);
+        pdf.setDisplayMode(Display.FULL_PAGE, Layout.SINGLE_PAGE);
+        var newPage:Page;
+        
+        // Page in POINT
+        newPage = new Page(Orientation.LANDSCAPE, Unit.POINT, Size.A4);
+        pdf.addPage(newPage);
+        
+        pdf.addImageStream(IMG_BA, ColorSpace.DEVICE_RGB, null, 0, 0, 0, 0, 0, 1, Blend.NORMAL, baLink);
+        pdf.addImageStream(IMG_BA, ColorSpace.DEVICE_RGB, null, 300, 50, 0, 0, 0, 1, Blend.NORMAL, baLink);
+        
+        // None LEFT
+        pdf.addImageStream(IMG_BA, ColorSpace.DEVICE_RGB, new Resize(Mode.NONE, Position.LEFT) , 0, 150, 0, 0, 0, 1, Blend.NORMAL, baLink);
+        // None CENTERED
+        pdf.addImageStream(IMG_BA, ColorSpace.DEVICE_RGB, new Resize(Mode.NONE, Position.CENTERED) , 0, 200, 0, 0, 0, 1, Blend.NORMAL, baLink);
+        // None RIGHT
+        pdf.addImageStream(IMG_BA, ColorSpace.DEVICE_RGB, new Resize(Mode.NONE, Position.RIGHT) , 0, 250, 0, 0, 0, 1, Blend.NORMAL, baLink);
+        
+        // None LEFT
+        pdf.addImageStream(IMG_BA, ColorSpace.DEVICE_RGB, new Resize(Mode.NONE, Position.LEFT) , 100, 350, 0, 0, 0, 1, Blend.NORMAL, baLink);
+        // None CENTERED
+        pdf.addImageStream(IMG_BA, ColorSpace.DEVICE_RGB, new Resize(Mode.NONE, Position.CENTERED) , 200, 400, 0, 0, 0, 1, Blend.NORMAL, baLink);
+        // None RIGHT
+        pdf.addImageStream(IMG_BA, ColorSpace.DEVICE_RGB, new Resize(Mode.NONE, Position.RIGHT) , 300, 450, 0, 0, 0, 1, Blend.NORMAL, baLink);
+        
+        
+        // Page in MM
+        newPage = new Page(Orientation.LANDSCAPE, Unit.MM, Size.A4);
+        pdf.addPage(newPage);
+        
+        pdf.addImageStream(IMG_BA, ColorSpace.DEVICE_RGB, null, 0, 0, 0, 0, 0, 1, Blend.NORMAL, baLink);
+        pdf.addImageStream(IMG_BA, ColorSpace.DEVICE_RGB, null, convertPixelToMM(300), convertPixelToMM(50), 0, 0, 0, 1, Blend.NORMAL, baLink);
+        
+        // None LEFT
+        pdf.addImageStream(IMG_BA, ColorSpace.DEVICE_RGB, new Resize(Mode.NONE, Position.LEFT) , 0, convertPixelToMM(150), 0, 0, 0, 1, Blend.NORMAL, baLink);
+        // None CENTERED
+        pdf.addImageStream(IMG_BA, ColorSpace.DEVICE_RGB, new Resize(Mode.NONE, Position.CENTERED) , 0, convertPixelToMM(200), 0, 0, 0, 1, Blend.NORMAL, baLink);
+        // None RIGHT
+        pdf.addImageStream(IMG_BA, ColorSpace.DEVICE_RGB, new Resize(Mode.NONE, Position.RIGHT) , 0, convertPixelToMM(250), 0, 0, 0, 1, Blend.NORMAL, baLink);
+        
+        // None LEFT
+        pdf.addImageStream(IMG_BA, ColorSpace.DEVICE_RGB, new Resize(Mode.NONE, Position.LEFT) , convertPixelToMM(100), convertPixelToMM(350), 0, 0, 0, 1, Blend.NORMAL, baLink);
+        // None CENTERED
+        pdf.addImageStream(IMG_BA, ColorSpace.DEVICE_RGB, new Resize(Mode.NONE, Position.CENTERED) , convertPixelToMM(200), convertPixelToMM(400), 0, 0, 0, 1, Blend.NORMAL, baLink);
+        // None RIGHT
+        pdf.addImageStream(IMG_BA, ColorSpace.DEVICE_RGB, new Resize(Mode.NONE, Position.RIGHT) , convertPixelToMM(300), convertPixelToMM(450), 0, 0, 0, 1, Blend.NORMAL, baLink);
+        
+        
+        var ba:ByteArray = pdf.save(Method.LOCAL);
+        
+        var fileReference:FileReference = new FileReference();
+        fileReference.save(ba, fileName);
+      }
+      
+      private function convertPixelToMM(pixel:Number):Number{
+        //  conversion is based on 595 pixels = 210 MM
+        return 210*pixel/595;
+      }
+      
+      private function generateBtn_clickHandler(event:MouseEvent):void {
+        this.createPDF("AlivePDFTestIssue340.pdf");
+      }
+      
+    ]]>
+  </fx:Script>
+  
+  <s:layout>
+    <s:HorizontalLayout />
+  </s:layout>
+  
+  <s:Button id="generateBtn" label="Click Me" click="generateBtn_clickHandler(event)" />
+  
+</s:Application>
