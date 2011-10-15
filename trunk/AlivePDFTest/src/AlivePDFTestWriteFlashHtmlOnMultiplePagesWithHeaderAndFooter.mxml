@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" 
+               xmlns:s="library://ns.adobe.com/flex/spark" 
+               xmlns:mx="library://ns.adobe.com/flex/mx" 
+               minWidth="955" 
+               minHeight="600"
+               initialize="initializeHandler(event)"
+               >
+  
+  <fx:Script>
+    <![CDATA[
+      import flashx.textLayout.conversion.ConversionType;
+      import flashx.textLayout.conversion.TextConverter;
+      
+      import mx.events.FlexEvent;
+      
+      import org.alivepdf.display.Display;
+      import org.alivepdf.layout.Layout;
+      import org.alivepdf.layout.Orientation;
+      import org.alivepdf.layout.Size;
+      import org.alivepdf.layout.Unit;
+      import org.alivepdf.pages.Page;
+      import org.alivepdf.pdf.PDF;
+      import org.alivepdf.saving.Method;
+      import org.alivepdf.tests.TestPDFHeaderFooter;
+      
+      import spark.components.RichEditableText;
+      
+      private var initialTLFString:String = '<TextFlow listStyleType="square" whiteSpaceCollapse="preserve" version="2.0.0" xmlns="http://ns.adobe.com/textLayout/2008"><listMarkerFormat><ListMarkerFormat fontSize="12" paragraphEndIndent="14" textDecoration="none"/></listMarkerFormat><p color="#000000" fontFamily="Arial" fontSize="12" kerning="auto" leadingModel="approximateTextField" lineHeight="2" textAlign="left" trackingRight="0"><span fontSize="22">Other font size test</span></p><p color="#000000" fontFamily="Arial" fontSize="12" kerning="auto" leadingModel="approximateTextField" lineHeight="2" textAlign="left" trackingRight="0"><span fontSize="22">Test </span><a href="http://www.melyos.com" target="_blank"><span fontSize="22">link</span></a></p><p color="#000000" fontFamily="Arial" fontSize="12" kerning="auto" leadingModel="approximateTextField" lineHeight="2" textAlign="left" trackingRight="0"><span fontWeight="bold">bold</span></p><p color="#000000" fontFamily="Arial" fontSize="12" kerning="auto" leadingModel="approximateTextField" lineHeight="2" textAlign="left" trackingRight="0"><span fontWeight="bold"></span></p><p color="#000000" fontFamily="Arial" fontSize="12" kerning="auto" leadingModel="approximateTextField" lineHeight="2" textAlign="left" trackingRight="0"><span fontStyle="italic">italic</span></p><p color="#000000" fontFamily="Arial" fontSize="12" kerning="auto" leadingModel="approximateTextField" lineHeight="2" textAlign="left" trackingRight="0"><span fontStyle="italic"></span></p><p color="#000000" fontFamily="Arial" fontSize="12" kerning="auto" leadingModel="approximateTextField" lineHeight="2" textAlign="justify" trackingRight="0"><span textDecoration="underline">underlined</span></p><p color="#000000" fontFamily="Arial" fontSize="12" kerning="auto" leadingModel="approximateTextField" lineHeight="2" textAlign="justify" trackingRight="0"><span fontSize="22" fontStyle="italic" fontWeight="bold">bold &amp; italic  this is a very long sentence that is so coooolll !!! And also because I want to see what happens when there is more than one line of text. And also because I want to see what happens when there is more than one line of text. </span></p><p color="#000000" fontFamily="Arial" fontSize="12" kerning="auto" leadingModel="approximateTextField" lineHeight="2" textAlign="left" trackingRight="0"><span fontWeight="bold" textDecoration="underline">bold &amp; underlined</span></p><p color="#000000" fontFamily="Arial" fontSize="12" kerning="auto" leadingModel="approximateTextField" lineHeight="2" textAlign="justify" trackingRight="0"><span fontStyle="italic" textDecoration="underline">italic &amp; underlined</span></p><p color="#000000" fontFamily="Arial" fontSize="12" kerning="auto" leadingModel="approximateTextField" lineHeight="2" textAlign="left" trackingRight="0"><span fontStyle="italic" fontWeight="bold" textDecoration="underline">bold &amp; italic &amp; underlined</span></p><p color="#000000" fontFamily="Arial" fontSize="12" kerning="auto" leadingModel="approximateTextField" lineHeight="2" textAlign="left" trackingRight="0"><span fontSize="22">test with </span><span fontSize="22" fontStyle="italic" fontWeight="bold" textDecoration="underline">special format</span><span fontSize="22"> and font size</span></p><p color="#000000" fontFamily="Arial" fontSize="12" kerning="auto" leadingModel="approximateTextField" lineHeight="2" textAlign="end" trackingRight="0"><span>Right aligned test:</span></p><list><li><p color="#000000" fontFamily="Arial" fontSize="12" kerning="auto" leadingModel="approximateTextField" lineHeight="2" textAlign="left" trackingRight="0"><span fontWeight="bold">bold</span></p></li><li><p color="#000000" fontFamily="Arial" fontSize="12" kerning="auto" leadingModel="approximateTextField" lineHeight="2" textAlign="left" trackingRight="0"><span fontStyle="italic">italic</span></p></li><li><p color="#000000" fontFamily="Arial" fontSize="12" kerning="auto" leadingModel="approximateTextField" lineHeight="2" textAlign="justify" trackingRight="0"><span textDecoration="underline">underlined  this is a very long sentence because that is so coooolll !!! And also because I want to see what happens when there is more than one line of text. And also because I want to see what happens when there is more than one line of text.</span></p></li><li><p color="#000000" fontFamily="Arial" fontSize="12" kerning="auto" leadingModel="approximateTextField" lineHeight="2" textAlign="justify" trackingRight="0"><span fontStyle="italic" fontWeight="bold">bold &amp; italic</span></p></li><list><li><p color="#000000" fontFamily="Arial" fontSize="12" kerning="auto" leadingModel="approximateTextField" lineHeight="2" textAlign="justify" trackingRight="0"><span fontWeight="bold" textDecoration="underline">bold &amp; underlined</span></p></li><li><p color="#000000" fontFamily="Arial" fontSize="12" kerning="auto" leadingModel="approximateTextField" lineHeight="2" textAlign="justify" trackingRight="0"><span fontStyle="italic" textDecoration="underline">italic &amp; underlined</span></p></li></list><li><p color="#000000" fontFamily="Arial" fontSize="12" kerning="auto" leadingModel="approximateTextField" lineHeight="2" textAlign="justify" trackingRight="0"><span fontStyle="italic" fontWeight="bold" textDecoration="underline">bold &amp; italic &amp; underlined</span></p></li><li><p color="#000000" fontFamily="Arial" fontSize="12" kerning="auto" leadingModel="approximateTextField" lineHeight="2" textAlign="justify" trackingRight="0"><span fontSize="22" fontStyle="italic" fontWeight="bold" textDecoration="underline">bold &amp; italic &amp; underlined</span></p></li><li><p color="#000000" fontFamily="Arial" fontSize="12" kerning="auto" leadingModel="approximateTextField" lineHeight="2" textAlign="justify" trackingRight="0"><span>very long sentence formated as a list, this is a very long sentence because that is so coooolll !!! And also because I want to see what happens when there is more than one line of text. And also because I want to see what happens when there is more than one line of text.</span></p></li></list><p color="#000000" fontFamily="Arial" fontSize="12" kerning="auto" leadingModel="approximateTextField" lineHeight="2" textAlign="left" trackingRight="0"><span>back right aligned </span></p><p color="#000000" fontFamily="Arial" fontSize="12" kerning="auto" leadingModel="approximateTextField" lineHeight="2" textAlign="center" trackingRight="0"><span>Center aligned test</span></p><p color="#000000" fontFamily="Arial" fontSize="12" kerning="auto" leadingModel="approximateTextField" lineHeight="2" textAlign="left" trackingRight="0"><span color="#ff0000">Color</span><span> test</span></p><p color="#000000" fontFamily="Arial" fontSize="12" kerning="auto" leadingModel="approximateTextField" lineHeight="2" textAlign="left" trackingRight="0"><span color="#ff0000" fontWeight="bold">Color &amp; bold</span><span color="#ff0000">.</span></p><p color="#000000" fontFamily="Arial" fontSize="12" kerning="auto" leadingModel="approximateTextField" lineHeight="2" textAlign="left" trackingRight="0"><span color="#00ff00">Other</span><span color="#ff0000"> color</span><span>.</span></p><p color="#000000" fontFamily="Arial" fontSize="12" kerning="auto" leadingModel="approximateTextField" lineHeight="2" textAlign="left" trackingRight="0"><span>Back to black.</span></p><p color="#000000" fontFamily="Arial" fontSize="12" kerning="auto" leadingModel="approximateTextField" lineHeight="2" textAlign="justify" trackingRight="0"><span fontSize="22" fontStyle="italic" fontWeight="bold">And also because I want to see what happens when there is more than one line of text. And also because I want to see what happens when there is more than one line of text. </span></p><p color="#000000" fontFamily="Arial" fontSize="12" kerning="auto" leadingModel="approximateTextField" lineHeight="2" textAlign="justify" trackingRight="0"><span fontSize="22" fontStyle="italic" fontWeight="bold">And also because I want to see what happens when there is more than one line of text. And also because I want to see what happens when there is more than one line of text. </span></p><p color="#000000" fontFamily="Arial" fontSize="12" kerning="auto" leadingModel="approximateTextField" lineHeight="2" textAlign="justify" trackingRight="0"><span fontSize="22" fontStyle="italic" fontWeight="bold">And also because I want to see what happens when there is more than one line of text. And also because I want to see what happens when there is more than one line of text. </span></p></TextFlow>';
+
+      private function initializeHandler(event:FlexEvent):void {
+        
+        this.sparkTextEditor.textFlow = TextConverter.importToFlow(initialTLFString, TextConverter.TEXT_LAYOUT_FORMAT);
+        
+        var flashHtml:String = String(TextConverter.export(this.sparkTextEditor.textFlow, TextConverter.TEXT_FIELD_HTML_FORMAT, ConversionType.STRING_TYPE));
+      }
+      
+      private function sparkBtn_clickHandler(event:MouseEvent):void {
+        
+        trace("Click Spark");
+        
+        var tlfString:String = String(TextConverter.export(this.sparkTextEditor.textFlow, TextConverter.TEXT_LAYOUT_FORMAT, ConversionType.STRING_TYPE));
+        trace("tlfString: "+tlfString);
+        
+        var flashHtml:String  = String(TextConverter.export(this.sparkTextEditor.textFlow, TextConverter.TEXT_FIELD_HTML_FORMAT, ConversionType.STRING_TYPE));
+        trace("flashHtml: "+flashHtml);
+        
+        this.createPDF(flashHtml, "AlivePDFTestWriteFlashHtmlOnMultiplePagesWithHeaderAndFooter.pdf");
+        
+      }
+      
+      private function createPDF(flashHtml:String, fileName:String = "alivePDFTest.pdf"):void {
+        
+        var pdf:PDF = new TestPDFHeaderFooter(Orientation.PORTRAIT, Unit.MM, true, Size.A4);
+        pdf.setDisplayMode(Display.FULL_PAGE, Layout.SINGLE_PAGE);
+        var newPage:Page;
+        
+        var maxLoop:Number = 1;
+        
+        var startTime:Number = new Date().time;
+        bechmarkLoop:
+        for (var i:int = 0; i < maxLoop; i++){
+          newPage = new Page(Orientation.PORTRAIT, Unit.MM, Size.A4);
+          pdf.addPage(newPage);
+          pdf.writeFlashHtmlText(6, flashHtml , null, 120);
+        }
+        var endTime:Number = new Date().time;
+        
+        trace("elapsed (maxLoop: "+i+"): "+(endTime - startTime)+" ms.");
+        
+        var ba:ByteArray = pdf.save(Method.LOCAL);
+        
+        var fileReference:FileReference = new FileReference();
+        fileReference.save(ba, fileName);
+      }
+      
+    ]]>
+  </fx:Script>
+  
+  <s:layout>
+    <s:HorizontalLayout />
+  </s:layout>
+  
+  <s:VGroup id="sparkGroup" horizontalAlign="center" >
+    <s:Button id="sparkBtn" label="Create PDF from Spark (TLF) HTML" click="sparkBtn_clickHandler(event)"/>
+    <s:RichEditableText id="sparkTextEditor" 
+                        height="842"
+                        width="595"
+                        />
+  </s:VGroup>
+  
+</s:Application>
