@@ -793,7 +793,7 @@ package org.alivepdf.pdf
 			
 			pagesReferences.push ( (3+(arrayPages.length<<1))+' 0 R' );
 			
-			arrayPages.push ( currentPage = page );
+			arrayPages.push ( page );
 			
 			page.number = pagesReferences.length;
 			
@@ -807,6 +807,8 @@ package org.alivepdf.pdf
 				inFooter = false;
 				finishPage();
 			}
+      
+      currentPage = page;
 			
 			startPage ( page != null ? page.orientation : defaultOrientation );
 			
@@ -1211,18 +1213,12 @@ package org.alivepdf.pdf
 			this.setFont(newFont, 12);
 			this.textStyle( new RGBColor (0x000000) );
 			this.addCell(80);
-			this.addCell(30,10,headerText,1,0,'C');
+			this.addCell(30,10,headerText,1,0, Align.CENTER);
 			this.newLine(20);*/
 		}
 		
 		public  function footer(footerText:String='', showPageNumber:Boolean=false,position:String="left"):void
 		{
-			var fonte:CoreFont = CoreFontCache.getFont(FontFamily.ARIAL);
-			this.setXY(50,-15);
-			this.setFont(fonte,9);
-			this.textStyle( RGBColorCache.getColor ( "0x000000" ));
-			this.addCell(0,10,footerText,0,0,Align.CENTER);
-			this.newLine(10);
 			
 /*			//to be overriden by subclassing (uncomment for a demo )
 			
@@ -1244,7 +1240,7 @@ package org.alivepdf.pdf
 			if(showPageNumber){
 			this.addCell(0,10, footerText+(totalPages-1),0,0,'C');
 			}else{
-				this.addCell(0,10, footerText,0,0,'C');
+				this.addCell(0,10, footerText,0,0, Align.CENTER);
 			}
 			this.newLine(20);*/
 		}
