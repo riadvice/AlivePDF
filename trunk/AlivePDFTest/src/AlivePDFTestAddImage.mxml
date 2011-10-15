@@ -48,7 +48,7 @@
       }
       
       private function generateBtn_clickHandler(event:MouseEvent):void {
-        this.createPDF("alivePDFTestAddImage.pdf");
+        this.createPDF("AlivePDFTestAddImage.pdf");
       }
       
     ]]>

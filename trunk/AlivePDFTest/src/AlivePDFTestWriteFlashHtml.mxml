@@ -43,7 +43,7 @@
         var flashHtml:String  = this.mxTextEditor.htmlText;
         trace("flashHtml: "+flashHtml);
         
-        this.createPDF(flashHtml, "alivePDFTestFromMX.pdf");
+        this.createPDF(flashHtml, "AlivePDFTestWriteFlashHtmlFromMX.pdf");
       }
       
       private function sparkBtn_clickHandler(event:MouseEvent):void {
@@ -56,7 +56,7 @@
         var flashHtml:String  = String(TextConverter.export(this.sparkTextEditor.textFlow, TextConverter.TEXT_FIELD_HTML_FORMAT, ConversionType.STRING_TYPE));
         trace("flashHtml: "+flashHtml);
         
-        this.createPDF(flashHtml, "alivePDFTestFromSpark.pdf");
+        this.createPDF(flashHtml, "AlivePDFTestWriteFlashHtmlFromSpark.pdf");
         
       }
       
@@ -93,20 +93,20 @@
   </s:layout>
 
   <s:VGroup id="mxGroup" horizontalAlign="center" >
+    <s:Button id="mxBtn" label="Create PDF from MX HTML" click="mxBtn_clickHandler(event)"/>
     <mx:RichTextEditor id="mxTextEditor"
                        height="842"
                        width="595"
                        />
-    <s:Button id="mxBtn" label="Create PDF from MX HTML" click="mxBtn_clickHandler(event)"/>
   </s:VGroup>
   
   
   <s:VGroup id="sparkGroup" horizontalAlign="center" >
+    <s:Button id="sparkBtn" label="Create PDF from Spark (TLF) HTML" click="sparkBtn_clickHandler(event)"/>
     <s:RichEditableText id="sparkTextEditor" 
                         height="842"
                         width="595"
                         />
-    <s:Button id="sparkBtn" label="Create PDF from Spark (TLF) HTML" click="sparkBtn_clickHandler(event)"/>
   </s:VGroup>
   
 </s:Application>
