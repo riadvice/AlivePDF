@@ -270,10 +270,14 @@ package org.alivepdf.pdf
 		protected var textSpace:Number;
 		protected var textWordSpace:Number;
 		protected var k:Number;             
-		protected var leftMargin:Number;        
-		protected var topMargin:Number;    
-		protected var rightMargin:Number;        
-		protected var bottomMargin:Number;    
+		protected var leftMargin:Number;
+    protected var leftMarginPt:Number;
+		protected var topMargin:Number;
+    protected var topMarginPt:Number;
+		protected var rightMargin:Number;
+    protected var rightMarginPt:Number;
+		protected var bottomMargin:Number;
+    protected var bottomMarginPt:Number;
 		protected var currentMargin:Number;            
 		protected var currentX:Number;
 		protected var currentY:Number;
@@ -410,11 +414,19 @@ package org.alivepdf.pdf
 		public function setMargins ( left:Number, top:Number, right:Number=-1, bottom:Number=20 ):void
 		{
 			leftMargin = left;
+      leftMarginPt = leftMargin*k;
+      
 			topMargin = top;
-			if( right == -1 ) 
-				right = left;
+      topMarginPt = topMargin*k;
+      
 			bottomMargin = bottom;
+      bottomMarginPt = bottomMargin*k;
+      
+      if( right == -1 ) 
+        right = left;
+      
 			rightMargin = right;
+      rightMarginPt = rightMargin*k;
 		}
 		
 		/**
@@ -472,6 +484,8 @@ package org.alivepdf.pdf
 		public function setLeftMargin (margin:Number):void
 		{
 			leftMargin = margin;
+      leftMarginPt = leftMargin*k;
+      
 			if( nbPages > 0 && currentX < margin ) 
 				currentX = margin;
 		}
@@ -492,6 +506,7 @@ package org.alivepdf.pdf
 		public function setTopMargin (margin:Number):void
 		{
 			topMargin = margin;
+      topMarginPt = topMargin*k;
 		}
 		
 		/**
@@ -510,6 +525,7 @@ package org.alivepdf.pdf
 		public function setBottomMargin (margin:Number):void
 		{
 			bottomMargin = margin;
+      bottomMarginPt = bottomMargin*k;
 		}
 		
 		/**
@@ -528,6 +544,7 @@ package org.alivepdf.pdf
 		public function setRightMargin (margin:Number):void
 		{
 			rightMargin = margin;
+      rightMarginPt  = rightMargin*k;
 		}
 		
 		/**
@@ -809,6 +826,8 @@ package org.alivepdf.pdf
 			}
       
       currentPage = page;
+      
+      setUnit(currentPage.unit);
 			
 			startPage ( page != null ? page.orientation : defaultOrientation );
 			
@@ -4940,28 +4959,22 @@ package org.alivepdf.pdf
 				height = width*image.height/image.width;
 			
       
-      // In Unit
-      var realWidthUnit:Number = currentPage.width-(leftMargin+rightMargin);
-      var realHeightUnit:Number = currentPage.height-(bottomMargin+topMargin);
-      var xUnit:Number = 0;
-      var yUnit:Number = 0;
-      
-      // In pt
-			var realWidth:Number = realWidthUnit*k;
-			var realHeight:Number = realHeightUnit*k;
-			
-			var xPos:Number = 0;
-			var yPos:Number = 0;
+      var availableWidth:Number = currentPage.w-(leftMargin+rightMargin);
+      var availableHeight:Number = currentPage.h-(bottomMargin+topMargin);
 			
 			if ( resizeMode == null )
 				resizeMode = new Resize ( Mode.NONE, Position.LEFT );
 			
 			if ( resizeMode.mode == Mode.RESIZE_PAGE )
+      {
 				currentPage.resize( image.width+(leftMargin+rightMargin)*k, image.height+(bottomMargin+topMargin)*k, k );
-				
-			else if ( resizeMode.mode == Mode.FIT_TO_PAGE )
+        
+        availableWidth = currentPage.w-(leftMargin+rightMargin);
+        availableHeight = currentPage.h-(bottomMargin+topMargin);
+        
+      } else if ( resizeMode.mode == Mode.FIT_TO_PAGE )
 			{			
-				var ratio:Number = Math.min ( realWidth/image.width, realHeight/image.height );
+				var ratio:Number = Math.min ( availableWidth*k/image.width, availableHeight*k/image.height );
 				
 				if ( ratio < 1 )
 				{
@@ -4969,31 +4982,32 @@ package org.alivepdf.pdf
 					height *= ratio;
 				}
 			}
-			
-			if ( resizeMode.mode != Mode.RESIZE_PAGE )
-			{		
-				if ( resizeMode.position == Position.CENTERED )
-				{	
-					x = (realWidthUnit - (width*k))*.5;
-					y = (realHeightUnit - (height*k))*.5;
-					
-				} else if ( resizeMode.position == Position.RIGHT )
-					x = (realWidthUnit - (width*k));
-			}
-			
-      xUnit = (resizeMode.position == Position.LEFT ) ? x+leftMargin: x;
-      xPos = xUnit*k;
-      
-      yUnit = (resizeMode.position == Position.CENTERED ) ? y : y+topMargin;
-      yPos = yUnit*k;
+				
+			if ( resizeMode.position == Position.CENTERED )
+			{	
+				x = (availableWidth - width)*.5;
+				y = (availableHeight - height)*.5;
+        
+        x += leftMargin;
+        y += topMargin; 
+        
+			} else if ( resizeMode.position == Position.RIGHT )
+      {
+				x = availableWidth - width;
+        y += topMargin;
+      } else if ( resizeMode.position == Position.LEFT )
+      {
+			  x += leftMargin;
+        y += topMargin; 
+      }
       
 			if ( rotation != 0)
 				rotate(rotation);
-			write (sprintf('q %.2f 0 0 %.2f %.2f %.2f cm', width*k, height*k, xPos, currentPage.h - yPos - height*k));
+			write (sprintf('q %.2f 0 0 %.2f %.2f %.2f cm', width*k, height*k, x*k, (currentPage.h - y - height)*k));
 			write (sprintf('/I%d Do Q', image.resourceId));
 			
 			if ( link != null ) 
-        addLink( xUnit, yUnit, width, height, link );
+        addLink( x, y, width, height, link );
 		}
 		
 		public function toString ():String
@@ -5140,6 +5154,13 @@ package org.alivepdf.pdf
 			else if ( unit == Unit.INCHES ) 
 				k = 72;
 			else throw new RangeError ('Incorrect unit: ' + unit);
+      
+      // We recompute the size for the current unit of all unit dependent stuff
+      leftMargin = leftMarginPt/k;
+      topMargin = topMarginPt/k;
+      bottomMargin = bottomMarginPt/k;
+      rightMargin = rightMarginPt/k;
+      
 			return unit;	
 		}
 		

@@ -37,7 +37,7 @@
         pdf.setDisplayMode(Display.FULL_PAGE, Layout.SINGLE_PAGE);
         var newPage:Page;
         
-        // Page in POINT
+        // Page 1  in POINT
         newPage = new Page(Orientation.LANDSCAPE, Unit.POINT, Size.A4);
         pdf.addPage(newPage);
         
@@ -46,6 +46,7 @@
         
         // None LEFT
         pdf.addImageStream(IMG_BA, ColorSpace.DEVICE_RGB, new Resize(Mode.NONE, Position.LEFT) , 0, 150, 0, 0, 0, 1, Blend.NORMAL, baLink);
+        
         // None CENTERED
         pdf.addImageStream(IMG_BA, ColorSpace.DEVICE_RGB, new Resize(Mode.NONE, Position.CENTERED) , 0, 200, 0, 0, 0, 1, Blend.NORMAL, baLink);
         // None RIGHT
@@ -59,7 +60,7 @@
         pdf.addImageStream(IMG_BA, ColorSpace.DEVICE_RGB, new Resize(Mode.NONE, Position.RIGHT) , 300, 450, 0, 0, 0, 1, Blend.NORMAL, baLink);
         
         
-        // Page in MM
+        // Page 2 in MM
         newPage = new Page(Orientation.LANDSCAPE, Unit.MM, Size.A4);
         pdf.addPage(newPage);
         
@@ -80,6 +81,52 @@
         // None RIGHT
         pdf.addImageStream(IMG_BA, ColorSpace.DEVICE_RGB, new Resize(Mode.NONE, Position.RIGHT) , convertPixelToMM(300), convertPixelToMM(450), 0, 0, 0, 1, Blend.NORMAL, baLink);
         
+        // Page 3 in POINT FIT_TO_PAGE
+        newPage = new Page(Orientation.LANDSCAPE, Unit.POINT, Size.A4);
+        pdf.addPage(newPage);
+        
+        pdf.addImageStream(IMG_BA, ColorSpace.DEVICE_RGB, new Resize(Mode.FIT_TO_PAGE, Position.LEFT) , 0, 0, 0, 0, 0, 1, Blend.NORMAL, baLink);
+        pdf.addImageStream(IMG_BA, ColorSpace.DEVICE_RGB, new Resize(Mode.FIT_TO_PAGE, Position.CENTERED) , 0, 200, 0, 0, 0, 1, Blend.NORMAL, baLink);
+        pdf.addImageStream(IMG_BA, ColorSpace.DEVICE_RGB, new Resize(Mode.FIT_TO_PAGE, Position.RIGHT) , 0, 400, 0, 0, 0, 1, Blend.NORMAL, baLink);
+        
+        // Page 4 in MM FIT_TO_PAGE
+        newPage = new Page(Orientation.LANDSCAPE, Unit.MM, Size.A4);
+        pdf.addPage(newPage);
+        
+        pdf.addImageStream(IMG_BA, ColorSpace.DEVICE_RGB, new Resize(Mode.FIT_TO_PAGE, Position.LEFT) , 0, 0, 0, 0, 0, 1, Blend.NORMAL, baLink);
+        pdf.addImageStream(IMG_BA, ColorSpace.DEVICE_RGB, new Resize(Mode.FIT_TO_PAGE, Position.CENTERED) , 0, convertPixelToMM(200), 0, 0, 0, 1, Blend.NORMAL, baLink);
+        pdf.addImageStream(IMG_BA, ColorSpace.DEVICE_RGB, new Resize(Mode.FIT_TO_PAGE, Position.RIGHT) , 0, convertPixelToMM(400), 0, 0, 0, 1, Blend.NORMAL, baLink);
+        
+        // Page 5 in POINT RESIZE_PAGE LEFT
+        newPage = new Page(Orientation.LANDSCAPE, Unit.POINT, Size.A4);
+        pdf.addPage(newPage);
+        pdf.addImageStream(IMG_BA, ColorSpace.DEVICE_RGB, new Resize(Mode.RESIZE_PAGE, Position.LEFT) , 0, 0, 0, 0, 0, 1, Blend.NORMAL, baLink);
+
+        // Page 6 in MM RESIZE_PAGE LEFT
+        newPage = new Page(Orientation.LANDSCAPE, Unit.MM, Size.A4);
+        pdf.addPage(newPage);
+        pdf.addImageStream(IMG_BA, ColorSpace.DEVICE_RGB, new Resize(Mode.RESIZE_PAGE, Position.LEFT) , 0, 0, 0, 0, 0, 1, Blend.NORMAL, baLink);
+        
+        // Page 7 in POINT RESIZE_PAGE CENTER
+        newPage = new Page(Orientation.LANDSCAPE, Unit.POINT, Size.A4);
+        pdf.addPage(newPage);
+        pdf.addImageStream(IMG_BA, ColorSpace.DEVICE_RGB, new Resize(Mode.RESIZE_PAGE, Position.CENTERED) , 0, 0, 0, 0, 0, 1, Blend.NORMAL, baLink);
+        
+        // Page 8 in MM RESIZE_PAGE CENTER
+        newPage = new Page(Orientation.LANDSCAPE, Unit.MM, Size.A4);
+        pdf.addPage(newPage);
+        pdf.addImageStream(IMG_BA, ColorSpace.DEVICE_RGB, new Resize(Mode.RESIZE_PAGE, Position.CENTERED) , 0, 0, 0, 0, 0, 1, Blend.NORMAL, baLink);
+        
+        // Page 9 in POINT RESIZE_PAGE LEFT
+        newPage = new Page(Orientation.LANDSCAPE, Unit.POINT, Size.A4);
+        pdf.addPage(newPage);
+        pdf.addImageStream(IMG_BA, ColorSpace.DEVICE_RGB, new Resize(Mode.RESIZE_PAGE, Position.LEFT) , 0, 0, 0, 0, 0, 1, Blend.NORMAL, baLink);
+        
+        // Page 10 in MM RESIZE_PAGE LEFT
+        newPage = new Page(Orientation.LANDSCAPE, Unit.MM, Size.A4);
+        pdf.addPage(newPage);
+        pdf.addImageStream(IMG_BA, ColorSpace.DEVICE_RGB, new Resize(Mode.RESIZE_PAGE, Position.LEFT) , 0, 0, 0, 0, 0, 1, Blend.NORMAL, baLink);
+        
         
         var ba:ByteArray = pdf.save(Method.LOCAL);
         
@@ -88,8 +135,10 @@
       }
       
       private function convertPixelToMM(pixel:Number):Number{
-        //  conversion is based on 595 pixels = 210 MM
-        return 210*pixel/595;
+        //  conversion is based on a density of 72 dpi
+        var ratio:Number = 25.4/72;
+        
+        return pixel*ratio;
       }
       
       private function generateBtn_clickHandler(event:MouseEvent):void {

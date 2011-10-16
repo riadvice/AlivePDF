@@ -129,6 +129,11 @@ package org.alivepdf.pages
 			
 			return unit;	
 		}
+    
+    public function get unit ( ):String
+    {
+      return _unit;
+    }
 	
 		public function rotate ( rotation:Number ):void
 		{
