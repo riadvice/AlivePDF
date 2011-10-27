@@ -10,12 +10,13 @@
     <sourceAttachmentPath/>
   </compiler>
   <applications>
-    <application path="AlivePDFTestWriteFlashHtml.mxml"/>
-    <application path="AlivePDFTest.mxml"/>
-    <application path="AlivePDFTestAddImage.mxml"/>
     <application path="AlivePDFTestWriteFlashHtmlOnMultiplePagesWithHeaderAndFooter.mxml"/>
-    <application path="AlivePDFTestIssue338.mxml"/>
     <application path="AlivePDFTestIssue340.mxml"/>
+    <application path="AlivePDFTestWriteFlashHtml.mxml"/>
+    <application path="AlivePDFTestAddImage.mxml"/>
+    <application path="AlivePDFTestIssue338_2.mxml"/>
+    <application path="AlivePDFTestIssue338.mxml"/>
+    <application path="AlivePDFTest.mxml"/>
   </applications>
   <modules/>
   <buildCSSFiles/>
