@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" 
+               xmlns:s="library://ns.adobe.com/flex/spark" 
+               xmlns:mx="library://ns.adobe.com/flex/mx" 
+               minWidth="955" 
+               minHeight="600"
+               >
+  
+  <fx:Script>
+    <![CDATA[
+      import flashx.textLayout.conversion.ConversionType;
+      import flashx.textLayout.conversion.TextConverter;
+      
+      import mx.events.FlexEvent;
+      
+      import org.alivepdf.colors.RGBColor;
+      import org.alivepdf.display.Display;
+      import org.alivepdf.fonts.CoreFont;
+      import org.alivepdf.fonts.CoreFontCache;
+      import org.alivepdf.fonts.FontFamily;
+      import org.alivepdf.layout.Align;
+      import org.alivepdf.layout.Layout;
+      import org.alivepdf.layout.Orientation;
+      import org.alivepdf.layout.Size;
+      import org.alivepdf.layout.Unit;
+      import org.alivepdf.pages.Page;
+      import org.alivepdf.pdf.PDF;
+      import org.alivepdf.saving.Method;
+      
+      private var pdf:PDF;
+      public var helvBold:CoreFont = new CoreFont ( FontFamily.HELVETICA_BOLD );
+      public var helvBoldItalic:CoreFont = new CoreFont ( FontFamily.HELVETICA_BOLDOBLIQUE);
+      public var helv:CoreFont = new CoreFont ( FontFamily.HELVETICA);
+      
+      private function createPDF(fileName:String = "alivePDFTest.pdf"):void {
+        
+        pdf = new PDF(Orientation.PORTRAIT, Unit.MM, true, Size.LETTER);                                              
+        
+        
+        pdf.addPage();
+        pdf.setDisplayMode (Display.FULL_PAGE, Layout.SINGLE_PAGE);
+        pdf.setAuthor("Some Author");
+        pdf.setCreator("Some creator");
+        pdf.setTitle(fileName); 
+        pdf.setMargins(10,40,10,10);                            
+        
+        var reallyLongText:String = "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?";
+        
+        for (var i:int = 0;i < 5;i++) {
+          pdf.setLeftMargin(20);
+          
+          pdf.textStyle(new RGBColor(0x000000),1);
+          pdf.setFont(helvBold, 18);
+          pdf.addMultiCell(180,10,"Title " + i,0,"L");            
+          pdf.textStyle(new RGBColor(0x000000),1);
+          
+          pdf.setFont(helvBoldItalic,11);
+          
+          var text:String = "Subheader " + i;
+          pdf.addMultiCell(180,10,text,0,"L");
+          
+          //Add a "spacer"
+          pdf.addMultiCell(160,5,'');                     
+          
+          //Add Description
+          pdf.setFont(helv,12);
+          pdf.setLeftMargin(10);
+          pdf.addMultiCell(170, 6, reallyLongText,0,"L");
+          
+          //Add a "spacer" inbetween groups of text
+          pdf.addMultiCell(160,10,''); 
+          
+        }
+        
+        pdf.end();
+        var ba:ByteArray = pdf.save(Method.LOCAL);
+        
+        var fileReference:FileReference = new FileReference();
+        fileReference.save(ba, fileName);
+
+      }
+      
+      private function sparkBtn_clickHandler(event:MouseEvent):void {
+        this.createPDF("AlivePDFTestIssue338_2.pdf");
+      }
+      
+    ]]>
+  </fx:Script>
+  
+  <s:layout>
+    <s:HorizontalLayout />
+  </s:layout>
+  
+  <s:VGroup id="sparkGroup" horizontalAlign="center" >
+    <s:Button id="sparkBtn" label="Create PDF using addMultiCell" click="sparkBtn_clickHandler(event)"/>
+  </s:VGroup>
+  
+</s:Application>
