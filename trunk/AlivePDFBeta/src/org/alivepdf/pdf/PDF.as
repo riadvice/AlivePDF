@@ -557,7 +557,7 @@ package org.alivepdf.pdf
 		public function setAutoPageBreak ( auto:Boolean, margin:Number ):void
 		{
 			autoPageBreak = auto;
-			bottomMargin = margin;
+			setBottomMargin(margin);
 			if ( currentPage != null ) 
 				pageBreakTrigger = currentPage.h-margin;
 		}
