@@ -4173,11 +4173,6 @@ package org.alivepdf.pdf
 			var rect:Rectangle = getRect ( columnNames, currentGrid.headerHeight );
 			if ( checkPageBreak(rect.height) )
 				addPage();
-			
-
-			setXY (x +currentGrid.x, y+getY() );
-			addRow( columnNames,'', rect);
-			endFill();
 
 			setXY ( x+getX(), y+getY() );
 			addRow( columnNames, GridRowType.HEADER, rect );
