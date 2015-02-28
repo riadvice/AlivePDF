@@ -71,10 +71,13 @@ package org.alivepdf.images
 				
 				if ( type == PNGImage.PLTE )
 				{
-					stream.readBytes(palBytes, stream.position, n);
+          var str:String = "";
+          for (var i:int = 0; i < n; i++) {
+            str += String.fromCharCode(stream.readUnsignedByte());
+          }
+          pal = str;
+          
 					stream.readUnsignedInt();
-					palBytes.position = PNGImage.IO;
-					pal = palBytes.readUTFBytes(palBytes.bytesAvailable);
 					
 				} else if ( type == PNGImage.TRNS )
 				{
