@@ -4461,9 +4461,11 @@ package org.alivepdf.pdf
 					break;
 				
 				case Method.REMOTE :
-					var header:URLRequestHeader = new URLRequestHeader ("Content-type","application/octet-stream");
+          // Since FP 13.0.0.214, octet-stream header can not be used, will cause security error.
+          // On server side, replace $GLOBALS["HTTP_RAW_POST_DATA"] by: file_get_contents('php://input');
+					//var header:URLRequestHeader = new URLRequestHeader ("Content-type","application/octet-stream");
 					var myRequest:URLRequest = new URLRequest (url+'?name='+fileName+'&method='+downloadMethod );
-					myRequest.requestHeaders.push (header);
+					//myRequest.requestHeaders.push (header);
 					myRequest.method = URLRequestMethod.POST;
 					myRequest.data = buffer;
 					navigateToURL ( myRequest, frame );
