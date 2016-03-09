@@ -5137,7 +5137,9 @@ package org.alivepdf.pdf
 		
 		protected function finish():void
 		{
-			close();
+			if (state != PDF.STATE_3) {
+				close();
+			}
 		}
 		
 		protected function setUnit ( unit:String ):String
