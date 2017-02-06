@@ -81,7 +81,7 @@ package org.alivepdf.images
 					
 				} else if ( type == PNGImage.TRNS )
 				{
-					
+					throw new Error("PNG simple transparency mode is not supported");
 					
 				} else if ( type == PNGImage.IDAT )
 				{	
