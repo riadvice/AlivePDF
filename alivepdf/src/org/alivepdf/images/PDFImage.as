@@ -1,120 +1,123 @@
 package org.alivepdf.images
-{	
-	import flash.utils.ByteArray;
-	
-	public class PDFImage implements IImage
-	{
-		protected var _width:int;
-		protected var _height:int;
-		protected var _resourceId:int;
-		protected var _n:int;
-		protected var _colorSpace:String;
-		protected var _bitsPerComponent:int = 8;
-		protected var _filter:String;
-		protected var _transparency:String;
-		protected var _parameters:String;
-		protected var _pal:String;
-		protected var _masked:Boolean;
-		protected var ct:Number;
-		protected var progressive:Boolean;
-		protected var stream:ByteArray;
-				
-		public function PDFImage ( imageStream:ByteArray, colorSpace:String, id:int )
-		{	
-			stream = imageStream;
-			_colorSpace = colorSpace;
-			resourceId = id;
-			parse();
-		}
-		
-		public function get masked():Boolean
-		{
-			return _masked;
-		}
+{
+    import flash.utils.ByteArray;
 
-		public function get transparency():String
-		{
-			return _transparency;
-		}
+    public class PDFImage implements IImage
+    {
+        protected var _width:int;
+        protected var _height:int;
+        protected var _resourceId:int;
+        protected var _n:int;
+        protected var _colorSpace:String;
+        protected var _bitsPerComponent:int = 8;
+        protected var _filter:String;
+        protected var _transparency:String;
+        protected var _parameters:String;
+        protected var _pal:String;
+        protected var _masked:Boolean;
+        protected var ct:Number;
+        protected var progressive:Boolean;
+        protected var stream:ByteArray;
 
-		public function get resourceId():int
-		{
-			return _resourceId;
-		}
+        public function PDFImage( imageStream:ByteArray, colorSpace:String, id:int )
+        {
+            stream = imageStream;
+            _colorSpace = colorSpace;
+            resourceId = id;
+            parse();
+        }
 
-		public function set resourceId(value:int):void
-		{
-			_resourceId = value;
-		}
+        public function get masked() : Boolean
+        {
+            return _masked;
+        }
 
-		public function get parameters():String
-		{
-			return _parameters;
-		}
+        public function get transparency() : String
+        {
+            return _transparency;
+        }
 
-		public function set pal(value:String):void
-		{
-			_pal = value;
-		}
+        public function get resourceId() : int
+        {
+            return _resourceId;
+        }
 
-		public function get pal():String
-		{
-			return _pal;
-		}
+        public function set resourceId( value:int ) : void
+        {
+            _resourceId = value;
+        }
 
-		public function set n(value:int):void
-		{
-			_n = value;
-		}
+        public function get parameters() : String
+        {
+            return _parameters;
+        }
 
-		public function get n():int
-		{
-			return _n;
-		}
+        public function set pal( value:String ) : void
+        {
+            _pal = value;
+        }
 
-		public function get filter():String
-		{
-			return _filter;
-		}
+        public function get pal() : String
+        {
+            return _pal;
+        }
 
-		public function set colorSpace(value:String):void
-		{
-			_colorSpace = value;
-		}
+        public function set n( value:int ) : void
+        {
+            _n = value;
+        }
 
-		public function get colorSpace():String
-		{
-			return _colorSpace;
-		}
+        public function get n() : int
+        {
+            return _n;
+        }
 
-		public function set bitsPerComponent(value:int):void
-		{
-			_bitsPerComponent = value;
-		}
+        public function get filter() : String
+        {
+            return _filter;
+        }
 
-		public function get bitsPerComponent():int
-		{
-			return _bitsPerComponent;
-		}
+        public function set colorSpace( value:String ) : void
+        {
+            _colorSpace = value;
+        }
 
-		public function get height():int
-		{
-			return _height;
-		}
+        public function get colorSpace() : String
+        {
+            return _colorSpace;
+        }
 
-		public function get width():int
-		{
-			return _width;
-		}
+        public function set bitsPerComponent( value:int ) : void
+        {
+            _bitsPerComponent = value;
+        }
 
-		protected function parse():void{};
-		
-	    public function get bytes():ByteArray
-	    {
-	    	return stream;	
-	    }
-		
-		
-		
-	}
+        public function get bitsPerComponent() : int
+        {
+            return _bitsPerComponent;
+        }
+
+        public function get height() : int
+        {
+            return _height;
+        }
+
+        public function get width() : int
+        {
+            return _width;
+        }
+
+        protected function parse() : void
+        {
+        }
+        ;
+
+        public function get bytes() : ByteArray
+        {
+            return stream;
+        }
+
+
+
+    }
 }

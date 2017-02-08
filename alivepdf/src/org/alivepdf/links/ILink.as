@@ -1,6 +1,7 @@
 package org.alivepdf.links
 {
-	public interface ILink
-	{
-	}
+
+    public interface ILink
+    {
+    }
 }

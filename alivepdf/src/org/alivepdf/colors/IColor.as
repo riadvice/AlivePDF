@@ -1,6 +1,7 @@
 package org.alivepdf.colors
-{	
-	public interface IColor
-	{		
-	}
+{
+
+    public interface IColor
+    {
+    }
 }

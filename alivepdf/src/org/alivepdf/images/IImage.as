@@ -1,6 +1,7 @@
 package org.alivepdf.images
 {
-	public interface IImage
-	{	
-	}
+
+    public interface IImage
+    {
+    }
 }
