@@ -1,0 +1,19 @@
+buildscript {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+    dependencies {
+        classpath group: 'org.gradlefx', name: 'gradlefx', version: '1.4.0'
+    }
+}
+
+apply plugin: 'gradlefx'
+apply plugin: 'flashbuilder'
+
+type = 'swc'
+version = '0.1.6-SNAPSHOT'
+
+srcDirs = ['alivepdf/src']
+
+output = '../alivepdf/bin/AlivePDF'
