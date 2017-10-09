@@ -17,7 +17,7 @@
  * This library lets you generate PDF files with the Adobe Flash Player 9 and 10.
  * AlivePDF contains some code from the FPDF PHP library by Olivier Plathey (http://www.fpdf.org/)
  * Core Team : Thibault Imbert, Mark Lynch, Alexandre Pires, Marc Hugues
- * @version 0.1.5 RC current release
+ * @version 0.1.5 current release
  * @url http://alivepdf.bytearray.org
  */
 
@@ -227,7 +227,7 @@ package org.alivepdf.pdf
     {
 
         protected static const PDF_VERSION:String      = '1.3';
-        protected static const ALIVEPDF_VERSION:String = '0.1.5 RC';
+        protected static const ALIVEPDF_VERSION:String = '0.1.5';
         protected const I1000:int                      = 1000;
 
         protected static const STATE_0:int             = 0;
