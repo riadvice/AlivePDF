@@ -17,7 +17,7 @@
  * This library lets you generate PDF files with the Adobe Flash Player 9 and 10.
  * AlivePDF contains some code from the FPDF PHP library by Olivier Plathey (http://www.fpdf.org/)
  * Core Team : Thibault Imbert, Mark Lynch, Alexandre Pires, Marc Hugues
- * @version 0.1.6 current release
+ * @version 0.1.7 RC current release
  * @url http://alivepdf.bytearray.org
  */
 
@@ -228,7 +228,7 @@ package org.alivepdf.pdf
     {
 
         protected static const PDF_VERSION:String      = '1.3';
-        protected static const ALIVEPDF_VERSION:String = '0.1.6';
+        protected static const ALIVEPDF_VERSION:String = '0.1.7 RC';
         protected const I1000:int                      = 1000;
 
         protected static const STATE_0:int             = 0;
@@ -2876,7 +2876,7 @@ package org.alivepdf.pdf
 
         /**
          * Lets you set a specific font.
-         * Note : Since release 0.1.6, you do not need to call the addFont method anymore. It will be called automatically internally if needed.
+         * Note : Since release 0.1.7 RC, you do not need to call the addFont method anymore. It will be called automatically internally if needed.
          *
          * @param A font, can be a core font (org.alivepdf.fonts.CoreFont), or an embedded font (org.alivepdf.fonts.EmbeddedFont)
          * @param size Any font size
