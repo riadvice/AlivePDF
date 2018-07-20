@@ -12,7 +12,7 @@ apply plugin: 'gradlefx'
 apply plugin: 'flashbuilder'
 
 type = 'swc'
-version = '0.1.6-SNAPSHOT'
+version = '0.1.6'
 
 srcDirs = ['alivepdf/src']
 
