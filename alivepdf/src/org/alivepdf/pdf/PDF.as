@@ -94,6 +94,7 @@ package org.alivepdf.pdf
     import org.alivepdf.layout.Border;
     import org.alivepdf.layout.HorizontalAlign;
     import org.alivepdf.layout.Layout;
+    import org.alivepdf.layout.LineBreakPolicy;
     import org.alivepdf.layout.Mode;
     import org.alivepdf.layout.Position;
     import org.alivepdf.layout.Resize;
@@ -292,6 +293,7 @@ package org.alivepdf.pdf
         protected var helvetica:IFont;
         protected var autoPageBreak:Boolean;
         protected var pageBreakTrigger:Number;
+        protected var lineBreakPolicy:String           = LineBreakPolicy.MARGIN;
         protected var inHeader:Boolean;
         protected var inFooter:Boolean;
         protected var zoomMode:*;
@@ -562,6 +564,10 @@ package org.alivepdf.pdf
                 pageBreakTrigger = currentPage.h - margin;
             }
         }
+
+		public function setLineBreakPolicy( value : String ) : void {
+			lineBreakPolicy = value;
+		}
 
         /**
          * Lets you set a specific display mode, the DisplayMode takes care of the general layout of the PDF in the PDF reader
@@ -3825,7 +3831,9 @@ package org.alivepdf.pdf
 
                             renderLine(currentLine, textAlign);
                             currentLine = new Array();
-                            currentX = leftMargin;
+                            if (lineBreakPolicy == LineBreakPolicy.MARGIN) {
+                                currentX = leftMargin;
+                            }
                             textAlign = '';
                             ns = 0;
 
@@ -3969,7 +3977,9 @@ package org.alivepdf.pdf
                         if (currentLine.length > 0)
                         {
                             renderLine(currentLine, textAlign);
-                            currentX = leftMargin;
+                            if (lineBreakPolicy == LineBreakPolicy.MARGIN) {
+                                currentX = leftMargin;
+                            }
                             currentLine = new Array();
                         }
                         break;
@@ -4254,7 +4264,9 @@ package org.alivepdf.pdf
 
         protected function lineBreak( pHeight:Number ) : void
         {
-            currentX = leftMargin;
+            if (lineBreakPolicy == LineBreakPolicy.MARGIN) {
+                currentX = leftMargin;
+            }
             currentY += pHeight;
         }
 
